@@ -1,157 +1,140 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+	<head>
 
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Validation Form</title>
+		<title>Validation Form</title>
 
-	<link rel="stylesheet" href="static/demo.css">
-	<link rel="stylesheet" href="static/form-validation.css">
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="static/demo.css">
+		<link rel="stylesheet" href="static/form-validation.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
-</head>
+		<!--JQuery Library-->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<!--jquery forms library-->
+		<script src="http://malsup.github.com/jquery.form.js"></script>
 
+		<script src="./static/script.js"></script>
 
-	<header>
-		<h1>Dublin Bus Route Estimator</h1>
-    </header>
+	</head>
 
-    <ul>
+	<body>
+		
+		<header>
+			<h1>Dublin Bus Route Estimator</h1>
+		</header>
 
-        <li><a href="form-validation.html" class="active">Trip details</a></li>
+		<ul>
 
-    </ul>
+			<li><a href="form-validation.html" class="active">Trip details</a></li>
 
-
-    <div class="main-content">
-
-        <!-- You only need this form and the form-validation.css -->
-
-        <form class="form-validation" method="post" action="#">
-
-            <div class="form-title-row">
-                <h1>Trip Details</h1>
-            </div>
-
-            <div class="form-row form-input-name-row">
-
-                <label>
-                    <span>Route Number</span>
-                    <input type="text" name="name">
-                </label>
-
-                <!--
-                    Add these three elements to every form row. They will be shown by the
-                    .form-valid-data and .form-invalid-data classes (see the JS for an example).
-                -->
-
-                <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
-
-                <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
-                <span class="form-invalid-data-info"></span>
-
-            </div>
+		</ul>
 
 
-            <div class="form-row">
-
-                <label>
-                    <span>Source</span>
-                    <select name="Source">
-                        <option>Choose an option</option>
-                        <option>Option One</option>
-                        <option>Option Two</option>
-                        <option>Option Three</option>
-                        <option>Option Four</option>
-                    </select>
-                </label>
-
-                <label>
-                    <span>Destination</span>
-                    <select name="Destination">
-                        <option>Choose an option</option>
-                        <option>Option One</option>
-                        <option>Option Two</option>
-                        <option>Option Three</option>
-                        <option>Option Four</option>
-                    </select>
-                </label>
-
-
-            </div>
-
-            <div class="form-row">
-
-                <label class="form-checkbox">
-                    <span>Today</span>
-                    <input type="checkbox" name="checkbox" checked>
-                </label>
-
-            </div>
-                
-                <div class="form-row form-input-name-row">
-
-                <label>
-                    <span>Date</span>
-                    <input type="text" name="name">
-                </label>
-
-            </div>
-
-                <div class="form-row form-input-name-row">
-
-                <label>
-                    <span>Time</span>
-                    <input type="text" name="name">
-                </label>
+		<div class="main-content">
 
 
 
-            </div>
+			<!-- You only need this form and the form-validation.css -->
+
+			<form class="form-validation" id="getTime">
+
+				<div class="form-title-row">
+					<h1>Trip Details</h1>
+				</div>
+
+				<div class="form-row form-input-name-row">
+
+					<label>
+						<span>Route Number</span>
+						<input type = "text" id = "routeId" name = "routeId">
+					</label>
+
+					<!--
+						Add these three elements to every form row. They will be shown by the
+						.form-valid-data and .form-invalid-data classes (see the JS for an example).
+					-->
+
+					<span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+
+					<span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+					<span class="form-invalid-data-info"></span>
+
+				</div>
+
+
+				<div class="form-row">
+
+					<label>
+						<span>Source</span>
+						<select name="source">
+							<option>Choose an option</option>
+							<option>Option One</option>
+							<option>Option Two</option>
+							<option>Option Three</option>
+							<option>Option Four</option>
+						</select>
+					</label>
+
+					<label>
+						<span>Destination</span>
+						<select name="destination">
+							<option>Choose an option</option>
+							<option>Option One</option>
+							<option>Option Two</option>
+							<option>Option Three</option>
+							<option>Option Four</option>
+						</select>
+					</label>
+
+
+				</div>
+
+				<div class="form-row">
+
+					<label class="form-checkbox">
+						<span>Today</span>
+						<input type="checkbox" name="now" checked>
+					</label>
+
+				</div>
+
+					<div class="form-row form-input-name-row">
+
+					<label>
+						<span>Date</span>
+						<input type="text" name="date">
+					</label>
+
+				</div>
+
+					<div class="form-row form-input-name-row">
+
+					<label>
+						<span>Time</span>
+						<input type="text" name="time">
+					</label>
 
 
 
-            <div class="form-row">
-
-                <button type="submit">Submit Form</button>
-
-            </div>
-
-        </form>
-
-    </div>
+				</div>
 
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-<script>
+				<div class="form-row">
 
-    $(document).ready(function() {
+					<button type="submit">Submit Form</button>
 
-        // Here is how to show an error message next to a form field
+				</div>
 
-        var errorField = $('.form-input-name-row');
+			</form>
 
-        // Adding the form-invalid-data class will show
-        // the error message and the red x for that field
+		</div>
 
-        errorField.addClass('form-invalid-data');
-        errorField.find('.form-invalid-data-info').text('Please enter the route number');
-
-
-        // Here is how to mark a field with a green check mark
-
-        var successField = $('.form-input-email-row');
-
-        successField.addClass('form-valid-data');
-    });
-
-</script>
-
-</body>
+	</body>
 
 </html>
