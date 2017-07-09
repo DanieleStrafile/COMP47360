@@ -46,9 +46,6 @@ with pd.HDFStore(hdf_path, mode='w', complevel=5, complib='blosc') as store:
         #cleaning part
         df = pd.read_csv(filename, names=COLNAMES, usecols=[0,3,4,5,6,8,9,10,11,12,13,14], dtype=COLTYPES)
         
-        df = df[df.At_Stop == 1]
-        df.drop("At_Stop", inplace=True, axis=1)
-        
         df.Timestamp = df.Timestamp//1000000
         df.Timestamp = pd.to_datetime(df['Timestamp'], unit='s')
         
