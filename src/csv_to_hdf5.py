@@ -2,12 +2,13 @@ import os
 import glob
 import pandas as pd
 import gc
+import numpy as np
 
 #change folder to where the csv files are
 os.chdir("C:\\Users\\Daniele\\Desktop\\historical_data")
 
 
-#match all csv files in the folder
+#match all csv files in the folder, these are all days of november 2012 and the last 3 weeks of January Dublin bus gps data from Dublinked
 files = glob.glob("*.csv")
 
 #name of my hdf5
@@ -38,27 +39,42 @@ COLTYPES = {
     }
 
 
-
 with pd.HDFStore(hdf_path, mode='w', complevel=5, complib='blosc') as store:
     # This compresses the final file by 5 using blosc. You can avoid that or
     # change it as per your needs.
     for filename in files:
         #cleaning part
-        df = pd.read_csv(filename, names=COLNAMES, usecols=[0,3,4,5,6,8,9,10,11,12,13,14], dtype=COLTYPES)
+        df = pd.read_csv(filename, names=COLNAMES, usecols=[0,1,3,4,5,6,8,9,10,11,12,13,14], dtype=COLTYPES)
         
         df.Timestamp = df.Timestamp//1000000
+        
+        #insert format yy-mm-dd
         df.Timestamp = pd.to_datetime(df['Timestamp'], unit='s')
         
         df.Time_Frame = pd.to_datetime(df['Time_Frame'])
         
+        #replace strign null with NaN, to be deleted
+        df.replace({'null': np.nan}, inplace=True)
+        
         df.dropna(inplace=True)
         df.drop_duplicates(inplace=True)
         
-        df = df[df.Time_Frame != '2012-11-05']
-        df = df[df.Time_Frame != '2013-02-01']
+        #dropping line_id after deleting 'null' values
+        df.drop('Line_ID', axis=1, inplace=True)
         
-        df = df[df.Stop_ID != 'null']
-        df = df[df.Journey_Pattern_ID != 'null']
+        #filter first recorded day of november
+        df = df[df.Time_Frame > '2012-11-05']
+        
+        #filter last record day of november
+        df = df[df.Time_Frame != '2012-11-30']
+        
+        
+        #filter first recorded day of january
+        df = df[df.Time_Frame != '2013-01-06']
+        
+        #filter last record day of january
+        df = df[df.Time_Frame < '2013-01-31']
+        
         
         #0 is monday, 6 is sunday
         df['Week_Day'] = df['Time_Frame'].dt.dayofweek
