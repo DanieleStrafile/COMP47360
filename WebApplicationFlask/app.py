@@ -1,8 +1,10 @@
-from flask import Flask, render_template
-from flask_cors import CORS
 import json
 
-from model import place_holder_func
+from flask import Flask, render_template
+from flask_cors import CORS
+
+from model import get_model_prediction
+from database import Db
 
 
 app = Flask(__name__)
@@ -21,9 +23,12 @@ def main():
 def get_travel_time(routeId, source, destination, now, date, time):
     """ For getting response from model after user query """
 
-    query = [routeId, source, destination, now, date, time]
+    # Convert Stops to Distances
+    distances = Db().get_distances(source, destination)
+    query = [routeId, distances[0], distances[1], now, date, time]
+
     # Use model to predict travel time of query
-    travel_time = place_holder_func(query)
+    travel_time = get_model_prediction(query)
 
     return json.dumps(travel_time)
 
