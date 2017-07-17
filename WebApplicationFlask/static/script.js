@@ -18,17 +18,22 @@ $(document).ready(function() {
 		// Transform form data into array of objects
 		var data = $("#getTime :input").serializeArray();
 
+		if (data.length == 6) {
 		// For ease of reading later...
 		var routeId = String(data[0].value); var source = String(data[1].value);
 		var dest = String(data[2].value); var now = String(data[3].value);
 		var date = String(data[4].value); var time = String(data[5].value);
-
-		// Make API get request to flask
+		}
+		
+		if (data.length == 5) {
+		// For ease of reading later...
+		var routeId = String(data[0].value); var source = String(data[1].value);
+		var dest = String(data[2].value); var now = "off";
+		var date = String(data[3].value); var time = String(data[4].value);
+		}
+			
 	    $.getJSON("http://localhost:5000/_sign_up/" + routeId + "/" + source + "/" + dest + "/" + now + "/" + date + "/" + time, function(info) {
-			// For temporary debugging...
-			// Info is the information returned from the flask server
-	        console.log("info returned in get request: " + info)
-            alert("Get Request Worked!");
+            alert("Your travel time is: " + info);
 	    });
 	});
 });
