@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Get Bus Times</title>
+
+		<link rel="stylesheet" href="static/style.css">
+		<!--JQuery Library-->
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+		<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script src="https://cdn.jsdelivr.net/jquery.ui.timepicker.addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+		<!--jquery forms library-->
+		<script src="http://malsup.github.com/jquery.form.js"></script>
+		
+		<!--Bootstrap Libraries-->
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+						
+		<!--Google Map-->
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkUZsgbKCDZNWjntnPv5mQJplie2G4h64"></script>
+		<!--External JS Script-->
+		<script src="./static/script.js"></script>
+
+
+	</head>
+
+	<body>		
+		<div class="container">
+			<div class="frame">
+				<h1 class="bg-primary"><p class="text-center">Dublin Bus Journey Time Estimator</p></h1>
+				<img src="{{url_for('static', filename='dublinbus1.jpg')}}" class="img-responsive" alt="Responsive image">
+			</div>
+			
+			<div id="selectRouteAndSearchPreference">
+				<div class="frame2">
+					<div class="row" id="selectRouteAndSearchByPreference">
+						<form id = "stopIdOrAddress">
+							<div class="col-md-5">
+
+								<h2 class="bg-info">Pick Route</h2>
+								<select class="form-control" name="pickRoute">
+									<option value="15">15</option>
+									<option value="45A">45A</option>
+									<option value="145">145</option>
+									<option value="11">11</option>
+									<option value="89X">89X</option>
+								</select>
+							</div>
+							
+							<div class="col-md-5">
+								<h2 class="bg-info">Search By</h2>
+								<label class="radio-inline">
+									<input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="stopId"> Stop ID
+								</label>
+								<label class="radio-inline">
+									<input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="address"> Address
+								</label>
+							</div>
+							
+							<div class="col-md-2">
+								<h2 class="bg-info"><button type="submit" class="btn btn-primary btn-lg btn-block" id="firstForm">Go!</button></h2>
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+			
+			<div id="searchMapDiv">
+				<div class="frame2">
+					<h1><p class="text-center">Don't Know The Address?</p></h1>
+					<button type="button" class="btn btn-primary btn-lg btn-block" id="selectMapSearch">Search With Map</button>
+
+				</div>
+			</div>
+				
+			<div id="selectDirectionDiv">
+				<div class="frame2">
+					<div class="row">
+						<div class="col-md-3">
+							<h2 class="bg-info">Select Direction</h2>
+							
+							<br>
+							
+							<button type="button" class="btn btn-default btn-lg" id="returnHomeButton">
+								<span class="glyphicon glyphicon-home"></span> Return
+							</button>
+							
+						</div>
+						<div class="col-md-9">
+							<button type="button" class="btn btn-default btn-lg" id="direction1">
+								<span class="glyphicon glyphicon-circle-arrow-left"></span> From B to A
+							</button>
+							<br>
+							<hr>
+							<br>
+							<button type="button" class="btn btn-default btn-lg" id="direction0">
+								<span class="glyphicon glyphicon-circle-arrow-right"></span> From A to B
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="sourceDestTimeGoDiv">
+				<div class="frame2">
+					<div class="row">
+						<form id = "selectSourceDestFrom">
+							
+							<div class="col-md-3">
+								<h2 class="customBusHeading">Select Time/Date</h2>
+								<div id="datepicker"></div>
+							</div>
+							
+							<div class="col-md-3">
+								<h2 class="customBusHeading">Source</h2>
+								<select class="form-control" name="pickRoute">
+									<option value="15">15</option>
+									<option value="45A">45A</option>
+									<option value="145">145</option>
+									<option value="11">11</option>
+									<option value="89X">89X</option>
+								</select>
+							
+								<hr>
+							
+								<h2 class="customBusHeading">Destination</h2>
+								<select class="form-control" name="pickRoute">
+									<option value="15">15</option>
+									<option value="45A">45A</option>
+									<option value="145">145</option>
+									<option value="11">11</option>
+									<option value="89X">89X</option>
+								</select>
+								
+								<br>
+								<hr>
+								<br>
+								
+								<button type="submit" class="btn btn-primary btn-lg btn-block" id="lastForm" >Go!</button>
+								
+								<br>
+
+							</form>
+							
+							<button type="button" class="btn btn-default btn-lg" id="returnHomeButton2">
+								<span class="glyphicon glyphicon-home"></span> Return
+							</button>
+
+							</div>
+
+						<div class="col-md-6">
+							Insert travel info here...
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="googleMapDiv">
+				<div class="row">
+					<div class="col-md-12">
+						<div id="googleMap" style="width:100%;height:600px"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
