@@ -2,9 +2,8 @@ import json
 
 from flask import Flask, render_template
 from flask_cors import CORS
-
-from model import get_travel_time
-from database import Db
+from app.model import get_travel_time
+from app.database import Db
 
 
 app = Flask(__name__)
@@ -23,30 +22,24 @@ def main():
 def get_routes():
     """ For getting list of Journey Pattern ID's at startup """
 
-    line_ids = Db().get_line_ids()
-
-    return json.dumps(line_ids)
+    return Db().get_line_ids()
 
 
 @app.route('/_getStartEndAddresses/<lineId>', methods=['GET'])
-def get_start_end_addresses(lineId):
+def get_start_end_addresses(jpid):
     """ For getting list of Journey Pattern ID's at startup """
 
-    addresses = Db().get_first_and_last_address(lineId)
-
-    return json.dumps(addresses)
+    return  Db().get_first_and_last_address(jpid)
 
 
 @app.route('/_preference/<pref>/<lineId>', methods=['GET'])
-def get_preference(pref, lineId):
+def get_preference(pref, jpid):
     """ For getting list of stops/addresses for a route """
 
     if pref == "address":
-        drop_down_list = Db().get_addresses(lineId)
+        return Db().get_addresses(jpid)
     else:
-        drop_down_list = Db().get_stop_id(lineId)
-
-    return json.dumps(drop_down_list)
+        return Db().get_stop_id(jpid)
 
 
 @app.route('/_getTravelTime/<lineId>/<source>/<destination>/<time>/<rain>', methods=['GET'])
@@ -58,7 +51,6 @@ def get_travel_time(lineId, source, destination, time, rain):
     travel_time = get_travel_time(model_query)
 
     return json.dumps(travel_time)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
