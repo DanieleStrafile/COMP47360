@@ -27,7 +27,7 @@ class Db:
         self.sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End;"
         self.rows = self.conn.execute(self.sql1).fetchall()
         print('#found {} different line IDs', len(self.rows))
-        return jsonify(stations=[dict(row.items()) for row in self.rows])
+        return jsonify(lineids=[dict(row.items()) for row in self.rows])
 
 
     def get_first_and_last_address(self, line_id):

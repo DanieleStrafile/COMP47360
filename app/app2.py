@@ -25,14 +25,14 @@ def get_routes():
     return Db().get_line_ids()
 
 
-@app.route('/_getStartEndAddresses/<lineId>', methods=['GET'])
+@app.route('/_getStartEndAddresses/<jpid>', methods=['GET'])
 def get_start_end_addresses(jpid):
     """ For getting list of Journey Pattern ID's at startup """
 
     return  Db().get_first_and_last_address(jpid)
 
 
-@app.route('/_preference/<pref>/<lineId>', methods=['GET'])
+@app.route('/_preference/<pref>/<jpid>', methods=['GET'])
 def get_preference(pref, jpid):
     """ For getting list of stops/addresses for a route """
 

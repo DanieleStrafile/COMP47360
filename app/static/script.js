@@ -97,6 +97,9 @@ $(document).ready(function() {
 			
 	    });
 	});
+	
+	dropDown();
+	
 });
 
 
@@ -142,4 +145,28 @@ function placeMarker(location, map) {
 	position: location, 
 	map: map
 	});
+}
+
+
+function dropDown() {
+	
+	
+	
+	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getRoutes", function(data) {
+		
+		alert("into the function");
+		console.log(data);
+		
+		lineids = data.lineids;
+		var options = "";
+		
+		_.forEach(lineids, function(lineid) {
+			
+			options += "<option>"+ lineid.Line_ID +"</option>";
+			
+		})
+		
+		document.getElementById("form-control").innerHTML = options;
+	})
+	
 }

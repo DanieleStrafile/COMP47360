@@ -10,13 +10,17 @@
 		<title>Get Bus Times</title>
 
 		<link rel="stylesheet" href="static/style.css">
+		
 		<!--JQuery Library-->
 		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 		<script src="//code.jquery.com/jquery-1.12.4.js"></script>
 		<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<script src="https://cdn.jsdelivr.net/jquery.ui.timepicker.addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
 		<!--jquery forms library-->
 		<script src="http://malsup.github.com/jquery.form.js"></script>
+		
+		<script> $SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; </script>
 		
 		<!--Bootstrap Libraries-->
 		<!-- Latest compiled and minified CSS -->
@@ -48,12 +52,8 @@
 							<div class="col-md-5">
 
 								<h2 class="bg-info">Pick Route</h2>
-								<select class="form-control" name="pickRoute">
-									<option value="15">15</option>
-									<option value="45A">45A</option>
-									<option value="145">145</option>
-									<option value="11">11</option>
-									<option value="89X">89X</option>
+								<select id="form-control" name="pickRoute">
+
 								</select>
 							</div>
 							
@@ -125,11 +125,7 @@
 							<div class="col-md-3">
 								<h2 class="customBusHeading">Source</h2>
 								<select class="form-control" name="pickRoute">
-									<option value="15">15</option>
-									<option value="45A">45A</option>
-									<option value="145">145</option>
-									<option value="11">11</option>
-									<option value="89X">89X</option>
+
 								</select>
 							
 								<hr>
