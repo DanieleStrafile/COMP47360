@@ -38,11 +38,11 @@ class Db:
 
         self.sql2 = """
         
-        SELECT j.Source_Stop_ID, j.Destination_Stop_ID
+        SELECT j.Source_Stop_ID, j.Destination_Stop_ID, j.Journey_Pattern_ID
         FROM JPID_LineID_Start_End AS j
         WHERE j.Journey_Pattern_ID IN (SELECT x.Main_Journey_Pattern_ID 
                                         FROM JPID_LineID_Start_End AS x
-                                        WHERE x.Journey_Pattern_ID = %(number)s)
+                                        WHERE x.Line_ID = %(number)s)
         """
         
         self.df = pd.read_sql_query(self.sql2, self.conn, params={"number": line_id})
