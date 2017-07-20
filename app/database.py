@@ -3,18 +3,16 @@ import json
 import datetime
 from flask import *
 import pandas as pd
+from app.db_info import *
+from sqlalchemy import *    
+    
     
 class Db:
 
     def __init__(self):
         """Connect to database"""
 
-        self.conn = pymysql.connect(host='busthesisproject.cun91scffwzf.eu-west-1.rds.amazonaws.com',
-            user='bus_bus_go',
-            password='summerproject9',
-            db='busthesisproject',
-            port = 3306,
-            charset='utf8')
+        self.conn = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(name,password,rds_host,port,db_name),echo=True)
 
     def close(self):
         """Close connection"""
