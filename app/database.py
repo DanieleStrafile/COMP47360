@@ -189,7 +189,7 @@ class Db:
         
         """
         
-        self.df = pd.read_sql_query(self.sql5, self.conn, params={"source_lat" : source_lat, "source_lon" : source_lon, "destination_lat" : destination_lat,"destination_lon" : destination_lon })
+        self.df = pd.read_sql_query(self.sql8, self.conn, params={"source_lat" : source_lat, "source_lon" : source_lon, "destination_lat" : destination_lat,"destination_lon" : destination_lon })
         return json.dumps(json.loads(self.df.to_json(orient='index')))
         
 

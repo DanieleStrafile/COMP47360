@@ -162,6 +162,7 @@ function initialize() {
 			
 			destination = event.latLng;
 			placeMarker(destination, map);
+			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());
 			
 			alert("Source: " + source + "\nDestination: " + destination);
 		}
@@ -169,9 +170,15 @@ function initialize() {
 		else {
 			
 			//resetting markers array
-			markersArray[0].setMap(null);
-			markersArray[1].setMap(null);
-			markersArray.length = [];
+			var arrayLength = markersArray.length;
+			
+			for (var i = 0; i < arrayLength; i++) {
+			    
+				markersArray[i].setMap(null);
+				
+			}
+
+			markersArray = [];
 			
 		}
 	})
@@ -226,10 +233,6 @@ function getSourceDestination(lineid,direction,pref) {
 		
 		var jpid = data[direction].Journey_Pattern_ID;
 		
-		alert("into function");
-		console.log(pref);
-		console.log(jpid);
-		
 		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/_preference/" + pref + "/" + jpid, function(data2) {
 			
 			var options = "";
@@ -242,6 +245,29 @@ function getSourceDestination(lineid,direction,pref) {
 			
 			document.getElementById("form-control2").innerHTML = options;
 			document.getElementById("form-control3").innerHTML = options;
+			
+		})
+		
+	})
+	
+}
+
+//find best possible route jpid, get coords of its stops and display them
+function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
+
+	var jqxhr = $.getJSON($SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
+		
+		var jpid = data[0].JPID_Source;
+		
+		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data2) {
+			
+			_.forEach(data2, function(stop) {
+				
+				placeMarker({lat: stop.Latitude, lng: stop.Longitude},map);
+				
+			})
+			
+			alert("Journey Pattern ID " + jpid);
 			
 		})
 		

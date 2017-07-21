@@ -39,6 +39,23 @@ def get_preference(pref, jpid):
         return Db().get_addresses(jpid)
     else:
         return Db().get_stop_id(jpid)
+    
+
+@app.route('/best_route/<srcLat>/<srcLon>/<destLat>/<destLon>', methods=['GET'])
+def possible_routes(srcLat, srcLon, destLat, destLon):
+    
+    """
+    getting all possible routes, from best to worst from point A to point B
+    """
+    return Db().get_best_route(srcLat, srcLon, destLat, destLon)
+
+
+@app.route('/gps_coords/<jpid>', methods=['GET'])
+def retrieve_gps(jpid):
+    """
+    Retrieves gps coordinates of a given journey pattern id
+    """
+    return Db().get_gps(jpid)
 
 
 @app.route('/_getTravelTime/<lineId>/<source>/<destination>/<time>/<rain>', methods=['GET'])
