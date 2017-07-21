@@ -74,7 +74,7 @@ class Db:
         
         
         self.sql3 = """
-        SELECT j.Stop_ID, j.Distance
+        SELECT j.Stop_ID as Stop_info, j.Distance
         FROM JourneyPatternID_StopID as j
         WHERE j.Journey_Pattern_ID = %(number)s
         ORDER BY j.Distance ASC
@@ -95,7 +95,7 @@ class Db:
         This needs to return both Journey Pattern ID's for both directions also."""
 
         self.sql4 = """
-        SELECT s.Stop_ID, j.Distance, s.Address
+        SELECT s.Stop_ID, j.Distance, s.Address as Stop_info
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
         WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
         ORDER BY j.Distance ASC

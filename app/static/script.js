@@ -3,10 +3,8 @@
 // This is needed to save the Line ID for the end of the form when the user requests a travel time estimation.
 // If we can find a better solution to this issue later we will erase this global variable.
 var lineid;
-var stopIdOrAddress;
-var jpid;
 
-// To store the user's preferene of searching by Stop ID or Addresses
+// To store the user's preference of searching by Stop ID or Addresses
 var pref;
 
 $(document).ready(function() {
@@ -48,15 +46,11 @@ $(document).ready(function() {
 		
 		//get line id chosen by user
 		lineid = $("#form-control :selected").text();
-		console.log(lineid);
 		
 		//get choice between stopid or address chosen by user
-		stopIdOrAddress = $('input[name=inlineRadioOptions]:checked').val();
-		console.log(stopIdOrAddress);
+		pref = $('input[name=inlineRadioOptions]:checked').val();
 		
 		getFirstandLastAddress(lineid);
-		
-		
 		
 		
 		//hide other divs
@@ -74,14 +68,25 @@ $(document).ready(function() {
 	
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 0
     $("#direction0").click(function(){
+    	
+        getSourceDestination(lineid,0,pref);
+    	
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
+        
+        
+        
     });
 	
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 1
     $("#direction1").click(function(){
+    	
+        getSourceDestination(lineid,1,pref);
+    	
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
+        
+        
     });
 	
 	// 'GET' request for source and destination addresses after first form
@@ -168,10 +173,7 @@ function placeMarker(location, map) {
 //function to populate the line id dropdown menu on front page
 function dropDown() {
 	
-	
-	
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getRoutes", function(data) {
-		
 		
 		lineids = data.lineids;
 		var options = "";
@@ -191,16 +193,44 @@ function dropDown() {
 //populate the start and destination in second page with some addresses, i.e. from A to B and from B to A
 function getFirstandLastAddress(lineid) {
 	
+	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
+		
+		document.getElementById('direction0').innerText = 'From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID;
+		document.getElementById('direction1').innerText = 'From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID;
+	})
+}
+
+
+function getSourceDestination(lineid,direction,pref) {
 	
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
 		
-		console.log(data);
-		document.getElementById('direction0').innerText = 'From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID;
-		document.getElementById('direction1').innerText = 'From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID;
+		var jpid = data[direction].Journey_Pattern_ID;
+		
+		alert("into function");
+		console.log(pref);
+		console.log(jpid);
+		
+		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/_preference/" + pref + "/" + jpid, function(data2) {
+			
+			var options = "";
+			
+			_.forEach(data2, function(stop) {
+				
+				options += "<option>"+ stop.Stop_info +"</option>";
+				
+			})
+			
+			document.getElementById("form-control2").innerHTML = options;
+			document.getElementById("form-control3").innerHTML = options;
+			
+		})
 		
 	})
 	
 }
+
+
 
 
 
