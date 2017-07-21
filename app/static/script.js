@@ -68,7 +68,7 @@ $(document).ready(function() {
     });
 	
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 0
-    $("#direction0").click(function(){
+    $("#direction0").click(function() {
     	
         getSourceDestination(lineid,0,pref);
     	
@@ -210,7 +210,7 @@ function dropDown() {
 			
 		})
 		
-		document.getElementById("form-control").innerHTML = options;
+		$("#form-control").append(options);
 	})
 	
 }
@@ -221,8 +221,8 @@ function getFirstandLastAddress(lineid) {
 	
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
 		
-		document.getElementById('direction0').innerText = 'From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID;
-		document.getElementById('direction1').innerText = 'From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID;
+		$('#direction0').append('From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID);
+		$('#direction1').append('From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID);
 	})
 }
 
@@ -243,8 +243,8 @@ function getSourceDestination(lineid,direction,pref) {
 				
 			})
 			
-			document.getElementById("form-control2").innerHTML = options;
-			document.getElementById("form-control3").innerHTML = options;
+			$("#form-control2").append(options);
+			$("#form-control3").append(options);
 			
 		})
 		
