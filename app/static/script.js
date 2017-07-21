@@ -2,11 +2,12 @@
 
 // This is needed to save the Line ID for the end of the form when the user requests a travel time estimation.
 // If we can find a better solution to this issue later we will erase this global variable.
-var lineId;
+var lineid;
+var stopIdOrAddress;
+var jpid;
 
 // To store the user's preferene of searching by Stop ID or Addresses
 var pref;
-
 
 $(document).ready(function() {
 	
@@ -41,8 +42,24 @@ $(document).ready(function() {
 	
 	// Toggle the direction options after first form
     $("#firstForm").click(function(){
+    	
+    	//show the div and work on it
 		$("#selectDirectionDiv").show(700);
 		
+		//get line id chosen by user
+		lineid = $("#form-control :selected").text();
+		console.log(lineid);
+		
+		//get choice between stopid or address chosen by user
+		stopIdOrAddress = $('input[name=inlineRadioOptions]:checked').val();
+		console.log(stopIdOrAddress);
+		
+		getFirstandLastAddress(lineid);
+		
+		
+		
+		
+		//hide other divs
 		$("#selectRouteAndSearchPreference").hide(700);
 		$("#searchMapDiv").hide(700);
     });
@@ -148,14 +165,13 @@ function placeMarker(location, map) {
 }
 
 
+//function to populate the line id dropdown menu on front page
 function dropDown() {
 	
 	
 	
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getRoutes", function(data) {
 		
-		alert("into the function");
-		console.log(data);
 		
 		lineids = data.lineids;
 		var options = "";
@@ -170,3 +186,21 @@ function dropDown() {
 	})
 	
 }
+
+
+//populate the start and destination in second page with some addresses, i.e. from A to B and from B to A
+function getFirstandLastAddress(lineid) {
+	
+	
+	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
+		
+		console.log(data);
+		document.getElementById('direction0').innerText = 'From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID;
+		document.getElementById('direction1').innerText = 'From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID;
+		
+	})
+	
+}
+
+
+

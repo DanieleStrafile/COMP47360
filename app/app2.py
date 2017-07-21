@@ -1,5 +1,4 @@
 import json
-
 from flask import Flask, render_template
 from flask_cors import CORS
 from app.model import get_travel_time
@@ -25,11 +24,11 @@ def get_routes():
     return Db().get_line_ids()
 
 
-@app.route('/_getStartEndAddresses/<jpid>', methods=['GET'])
-def get_start_end_addresses(jpid):
+@app.route('/_getStartEndAddresses/<lineid>', methods=['GET'])
+def get_start_end_addresses(lineid):
     """ For getting list of Journey Pattern ID's at startup """
 
-    return  Db().get_first_and_last_address(jpid)
+    return Db().get_first_and_last_address(lineid)
 
 
 @app.route('/_preference/<pref>/<jpid>', methods=['GET'])

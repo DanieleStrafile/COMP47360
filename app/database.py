@@ -5,7 +5,7 @@ from flask import *
 import pandas as pd
 from app.db_info import *
 from sqlalchemy import *    
-    
+import pandas    
     
 class Db:
 
@@ -46,7 +46,21 @@ class Db:
         """
         
         self.df = pd.read_sql_query(self.sql2, self.conn, params={"number": line_id})
-        return json.dumps(json.loads(self.df.to_json(orient='index')))
+        
+        #get the stop id and their short addresses
+        self.sql10 = """
+        SELECT s.Stop_ID, s.Short_Address FROM Stop_ID_Address as s;
+        """
+        self.df2 = pd.read_sql_query(self.sql10, self.conn)
+        
+        dictionary = dict(zip(self.df2.Stop_ID,self.df2.Short_Address))
+        
+        #translate the source and stop destination ID in short addresses
+        for index,row in self.df.iterrows():
+            self.df.set_value(index, "Source_Stop_ID" , dictionary[row[0]])
+            self.df.set_value(index, "Destination_Stop_ID" , dictionary[row[1]])
+            
+        return json.dumps(json.loads(self.df.to_json(orient='records')),ensure_ascii=False)
         
 
     def get_stop_id(self, jpid):
@@ -67,7 +81,7 @@ class Db:
         
         """
         self.df = pd.read_sql_query(self.sql3, self.conn, params={"number": jpid})
-        return json.dumps(json.loads(self.df.to_json(orient='index')))
+        return json.dumps(json.loads(self.df.to_json(orient='index')),ensure_ascii=True).encode('latin-1')
 
     def get_addresses(self, jpid):
         """Get the addresses for a given line ID in a single direction
