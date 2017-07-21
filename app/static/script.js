@@ -3,6 +3,7 @@
 // This is needed to save the Line ID for the end of the form when the user requests a travel time estimation.
 // If we can find a better solution to this issue later we will erase this global variable.
 var lineid;
+var markersArray = [];
 
 // To store the user's preference of searching by Stop ID or Addresses
 var pref;
@@ -136,9 +137,7 @@ $(document).ready(function() {
 
 // For Google Map
 function initialize() {
-
-	var totalMarkers = 0;
-
+	
 	var myLatlng = new google.maps.LatLng(53.350140,-6.266155);
 	var myOptions = {
 		zoom: 12,
@@ -152,13 +151,30 @@ function initialize() {
 	map = new google.maps.Map(document.getElementById("googleMap"), myOptions);
 
 	google.maps.event.addListener(map, 'click', function(event) {
-		totalMarkers += 1;
-		if (totalMarkers < 3) {
-			if (totalMarkers == 1) {source = event.latLng};
-			if (totalMarkers == 2) {destination = event.latLng};
-			placeMarker(event.latLng, map);
-		} else {alert("Source: " + source + "\nDestination: " + destination)};
-	});
+		
+		if (markersArray.length == 0) {
+			
+			source = event.latLng;
+			placeMarker(source, map);
+		}
+		
+		else if (markersArray.length == 1) {
+			
+			destination = event.latLng;
+			placeMarker(destination, map);
+			
+			alert("Source: " + source + "\nDestination: " + destination);
+		}
+			
+		else {
+			
+			//resetting markers array
+			markersArray[0].setMap(null);
+			markersArray[1].setMap(null);
+			markersArray.length = [];
+			
+		}
+	})
 }
 
 // So the user can place markers on the Map
@@ -167,6 +183,9 @@ function placeMarker(location, map) {
 	position: location, 
 	map: map
 	});
+	
+	//put marker into markers array
+	markersArray.push(marker);
 }
 
 
