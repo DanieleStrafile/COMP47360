@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from app.model import get_travel_time
 from app.database import Db
+from app import app
 
 
 app = Flask(__name__)
