@@ -76,7 +76,7 @@ class Db:
         self.sql3 = """
         SELECT j.Stop_ID as Stop_info, j.Distance
         FROM JourneyPatternID_StopID as j
-        WHERE j.Journey_Pattern_ID = %(number)s
+        WHERE j.Journey_Pattern_ID = %(number)s AND j.At_Stop = 1
         ORDER BY j.Distance ASC
         
         """
@@ -97,7 +97,7 @@ class Db:
         self.sql4 = """
         SELECT s.Stop_ID, j.Distance, s.Address as Stop_info
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
+        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
         ORDER BY j.Distance ASC
         """
         self.df = pd.read_sql_query(self.sql4, self.conn, params={"number": jpid})
@@ -180,7 +180,7 @@ class Db:
             ) AS Distance_Destination
             
             FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-            WHERE j.Stop_ID = s.Stop_ID
+            WHERE j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
             HAVING Distance_Destination <= 0.5) as second_query
 
         ON first_query.JPID_Source = second_query.JPID_Destination
@@ -202,7 +202,7 @@ class Db:
         self.sql7 = """
         SELECT s.Latitude, s.Longitude
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
+        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
         """
         self.df = pd.read_sql_query(self.sql7, self.conn, params={"number": jpid})
         return json.dumps(json.loads(self.df.to_json(orient='index')))

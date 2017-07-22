@@ -210,7 +210,7 @@ function dropDown() {
 			
 		})
 		
-		$("#form-control").append(options);
+		$("#form-control").html(options);
 	})
 	
 }
@@ -221,8 +221,8 @@ function getFirstandLastAddress(lineid) {
 	
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
 		
-		$('#direction0').append('From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID);
-		$('#direction1').append('From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID);
+		$('#direction0').html('From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID);
+		$('#direction1').html('From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID);
 	})
 }
 
@@ -243,8 +243,8 @@ function getSourceDestination(lineid,direction,pref) {
 				
 			})
 			
-			$("#form-control2").append(options);
-			$("#form-control3").append(options);
+			$("#form-control2").html(options);
+			$("#form-control3").html(options);
 			
 		})
 		
