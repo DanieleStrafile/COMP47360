@@ -3,14 +3,13 @@ import json
 from flask import Flask, render_template
 from flask_cors import CORS
 
-from flask_app.database import Db
-from flask_app.model import get_travel_time
+from FlaskApp.database import Db
+from FlaskApp.model import get_travel_time
 
 
 app = Flask(__name__)
 # Enable Cross Origin Resource Sharing
 CORS(app)
-
 
 
 @app.route('/')
@@ -58,13 +57,13 @@ def retrieve_gps(jpid):
     return Db().get_gps(jpid)
 
 
-@app.route('/_getTravelTime/<lineId>/<source>/<destination>/<dateTime>', methods=['GET'])
-def get_travel_time(lineId, source, destination, dateTime):
+@app.route('/_getTravelTime/<lineId>||<source>||<destination>||<dateTime>||<pref>', methods=['GET'])
+def get_model_answer(lineId, source, destination, dateTime, pref):
     """Get estimated travel time"""
 
-    distances = Db().get_distance(source, destination)
-    model_query = [lineId, distances[0], distances[1], dateTime]
-    travel_time = get_travel_time(model_query)
+    # distances = Db().get_distance(lineId, source, destination, pref)
+
+    travel_time = get_travel_time(lineId, 1, 5, dateTime)
 
     return json.dumps(travel_time)
 

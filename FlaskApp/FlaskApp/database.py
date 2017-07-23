@@ -1,10 +1,10 @@
 import json
+import pandas as pd
 
 from flask import *
-import pandas as pd
 from sqlalchemy import *
 
-from flask_app.db_info import *
+from FlaskApp.db_info import *
 
 
 class Db:
@@ -25,7 +25,6 @@ class Db:
         
         self.sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End;"
         self.rows = self.conn.execute(self.sql1).fetchall()
-        print('#found {} different line IDs', len(self.rows))
 
         return jsonify(lineids=[dict(row.items()) for row in self.rows])
 
@@ -200,6 +199,3 @@ class Db:
         self.df = pd.read_sql_query(self.sql7, self.conn, params={"number": jpid})
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
-
-# test = Db()
-# test.disconnect()

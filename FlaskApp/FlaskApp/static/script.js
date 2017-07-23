@@ -120,26 +120,24 @@ $(document).ready(function() {
 		var data = $("#selectSourceDestFrom :input").serializeArray();
 		
 		var source = String(data[0].value);
-		var time = String(data[1].value);
-		var destination = String(data[2].value);
+		var destination = String(data[1].value);
+		var dateTime = $('#datepicker').datepicker('getDate');
+		
+		console.log(lineid);
+		console.log(data);
+		console.log(dateTime);
 
-	    $.getJSON("http://localhost:5000/_getTravelTime/" + source + "/" + time + "/" + destination, function(info) {
-			// Here we can get the list of Stop ID's or Addresses for the Route
-			
-	    });
+	    $.getJSON("http://localhost:5000/_getTravelTime/" + lineid + "||" + source + "||" + destination + "||" + dateTime + "||" + pref, function(info) {
+
+			console.log(info);
+			document.getElementById("travelTimeDiv").innerHTML = "Bus will arrive in " + info[1] + "seconds. Travel time will be " + (info[0] - info[1]) + "seconds";
+		
+		});
 	});
 	
 	dropDown();
-	
 });
 
-
-
-//// GET list of routes for the initial drop down menu selection (launches at start up before HTML)
-//$.getJSON("http://localhost:5000/_getRoutes", function(info) {
-//	// Here we can get the list of JourneyPatternId's for the drop down menu
-//	console.log(info);
-//});
 
 
 
@@ -183,11 +181,8 @@ function initialize() {
 			for (var i = 0; i < arrayLength; i++) {
 			    
 				markersArray[i].setMap(null);
-				
 			}
-
 			markersArray = [];
-			
 		}
 	})
 }
@@ -219,8 +214,7 @@ function dropDown() {
 		})
 		
 		$("#form-control").html(options);
-	})
-	
+	})	
 }
 
 
@@ -240,13 +234,14 @@ function getFirstandLastAddress(lineid) {
 		//setting direction's value for later query in function getSourceDestination
 		direction0.val(data[0].Journey_Pattern_ID + "");
 		direction1.val(data[1].Journey_Pattern_ID + "");
-		
-		
 	})
 }
 
 
 function getSourceDestination(jpid,direction,pref) {
+	
+	// Modify Global Variable for final form (I think you're query might already do this for us though Daniele?, can we delete linid Global?)
+	lineid = jpid;
 	
 	console.log("jpid is " + jpid );
 		
@@ -264,7 +259,6 @@ function getSourceDestination(jpid,direction,pref) {
 		$("#form-control3").html(options);
 			
 	})
-	
 }
 
 //find best possible route jpid, get coords of its stops and display them
@@ -285,9 +279,7 @@ function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
 			alert("Journey Pattern ID " + jpid);
 			
 		})
-		
-	})
-	
+	})	
 }
 
 
