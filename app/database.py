@@ -81,7 +81,7 @@ class Db:
         
         """
         self.df = pd.read_sql_query(self.sql3, self.conn, params={"number": jpid})
-        return json.dumps(json.loads(self.df.to_json(orient='index')),ensure_ascii=True).encode('latin-1')
+        return json.dumps(json.loads(self.df.to_json(orient='index')))
 
     def get_addresses(self, jpid):
         """Get the addresses for a given line ID in a single direction

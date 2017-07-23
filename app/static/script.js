@@ -40,7 +40,7 @@ $(document).ready(function() {
     });
 	
 	// Toggle the direction options after first form
-    $("#firstForm").click(function(){
+    $("#firstForm").click(function() {
     	
     	//show the div and work on it
 		$("#selectDirectionDiv").show(700);
@@ -70,26 +70,30 @@ $(document).ready(function() {
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 0
     $("#direction0").click(function() {
     	
-        getSourceDestination(lineid,0,pref);
+    	console.log("$(this).val() " + $(this).val());
     	
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
         
-        
+        getSourceDestination($(this).val(),0,pref);
         
     });
 	
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 1
     $("#direction1").click(function(){
     	
-        getSourceDestination(lineid,1,pref);
+    	console.log("$(this).val() " + $(this).val());
+    	
     	
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
         
+        getSourceDestination($(this).val(),1,pref);
         
     });
 	
+    
+    
 	// 'GET' request for source and destination addresses after first form
 	$('#stopIdOrAddress').ajaxForm(function() {
 
@@ -98,11 +102,15 @@ $(document).ready(function() {
 		
 		var route = String(data[0].value);
 		var preference = String(data[1].value);
-
+		
+		/*
+		
 	    $.getJSON("http://localhost:5000/_preference/" + preference + "/" + route, function(info) {
 			// Here we can get the list of Stop ID's or Addresses for the Route
 			
 	    });
+	    
+	    */
 	});
 	
 	// 'GET' request for Time Estimation
@@ -221,33 +229,40 @@ function getFirstandLastAddress(lineid) {
 	
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
 		
-		$('#direction0').html('From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID);
-		$('#direction1').html('From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID);
+		var direction0 = $('#direction0');
+		var direction1 = $('#direction1');
+		
+		
+		//populating directions
+		direction0.html('From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID);
+		direction1.html('From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID);
+		
+		//setting direction's value for later query in function getSourceDestination
+		direction0.val(data[0].Journey_Pattern_ID + "");
+		direction1.val(data[1].Journey_Pattern_ID + "");
+		
+		
 	})
 }
 
 
-function getSourceDestination(lineid,direction,pref) {
+function getSourceDestination(jpid,direction,pref) {
 	
-	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
+	console.log("jpid is " + jpid );
 		
-		var jpid = data[direction].Journey_Pattern_ID;
-		
-		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/_preference/" + pref + "/" + jpid, function(data2) {
+	var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/_preference/" + pref + "/" + jpid, function(data2) {
 			
-			var options = "";
+		var options = "";
 			
-			_.forEach(data2, function(stop) {
+		_.forEach(data2, function(stop) {
 				
-				options += "<option>"+ stop.Stop_info +"</option>";
+			options += "<option>"+ stop.Stop_info +"</option>";
 				
-			})
-			
-			$("#form-control2").html(options);
-			$("#form-control3").html(options);
-			
 		})
-		
+			
+		$("#form-control2").html(options);
+		$("#form-control3").html(options);
+			
 	})
 	
 }
