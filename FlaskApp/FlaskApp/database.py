@@ -12,9 +12,10 @@ class Db:
     def __init__(self):
         """Connect to database"""
 
-        self.conn = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(name,password,rds_host,port,db_name),echo=True)
+        self.conn = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(name, password, rds_host,
+                                                                                 port, db_name), echo=True)
 
-    def close(self):
+    def disconnect(self):
         """Close connection"""
 
         self.conn.close()
@@ -200,5 +201,5 @@ class Db:
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
 
-
-print(Db().get_line_ids())
+# test = Db()
+# test.disconnect()
