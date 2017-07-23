@@ -1,7 +1,7 @@
 import pickle
 import pandas as pd
 
-from FlaskApp.static.Data_Structures import timeCategoryToSpeed
+from flask_app.static.Data_Structures import *
 
 
 def get_travel_time(query):

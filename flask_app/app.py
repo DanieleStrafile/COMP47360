@@ -3,13 +3,14 @@ import json
 from flask import Flask, render_template
 from flask_cors import CORS
 
-from FlaskApp.database import Db
-from FlaskApp.model import get_travel_time
+from flask_app.database import Db
+from flask_app.model import get_travel_time
 
 
 app = Flask(__name__)
 # Enable Cross Origin Resource Sharing
 CORS(app)
+
 
 
 @app.route('/')
