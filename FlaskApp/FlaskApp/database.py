@@ -69,7 +69,7 @@ class Db:
         information."""
 
         self.sql3 = """
-        SELECT j.Stop_ID as Stop_info, j.Distance
+        SELECT j.Stop_ID as Stop_info, j.Distance, j.Stop_ID
         FROM JourneyPatternID_StopID as j
         WHERE j.Journey_Pattern_ID = %(number)s AND j.At_Stop = 1
         ORDER BY j.Distance ASC
@@ -101,31 +101,20 @@ class Db:
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
 
-    def get_distance(self, jpid, source, destination, preference):
+    def get_distance(self, jpid, source, destination):
         """Returns the source and destination as distances"""
         
-        # First row returned is the source, 2nd row is destination
-        if preference == "Address":
-            self.sql5 = """
-            SELECT s.Address, j.Distance
-            FROM JourneyPatternID_StopID AS j, Stop_ID_Address AS s
-            WHERE (s.Address = %(source)s
-                    OR s.Address = %(destination)s) AND j.Stop_ID = s.Stop_ID AND j.Journey_Pattern_ID = %(jpid)s
-            ORDER BY j.Distance ASC
-            """
-
-        else:
-            self.sql5 = """
-            SELECT s.Stop_ID, j.Distance
-            FROM JourneyPatternID_StopID AS j, Stop_ID_Address AS s
-            WHERE (s.Stop_ID = %(source)s
-                    OR s.Stop_ID = %(destination)s) AND j.Stop_ID = s.Stop_ID AND j.Journey_Pattern_ID = %(jpid)s
-            ORDER BY j.Distance ASC
-            """
+        self.sql5 = """
+        SELECT s.Stop_ID, j.Distance
+        FROM JourneyPatternID_StopID AS j, Stop_ID_Address AS s
+        WHERE (s.Stop_ID = %(source)s
+                OR s.Stop_ID = %(destination)s) AND j.Stop_ID = s.Stop_ID AND j.Journey_Pattern_ID = %(jpid)s
+        ORDER BY j.Distance ASC
+        """
             
-            self.df = pd.read_sql_query(self.sql5, self.conn, params={"jpid" : jpid, "source": source, "destination":destination })
+        self.df = pd.read_sql_query(self.sql5, self.conn, params={"jpid" : jpid, "source": source, "destination":destination })
 
-            return json.dumps(json.loads(self.df.to_json(orient='index')))
+        return self.df
 
     def get_best_route(self, source_lat, source_lon, destination_lat, destination_lon):
         """Returns the closest route to a source and destination GPS

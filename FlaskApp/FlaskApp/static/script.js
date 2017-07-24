@@ -116,15 +116,27 @@ $(document).ready(function() {
 	// 'GET' request for Time Estimation
 	$('#selectSourceDestFrom').ajaxForm(function() {
 
-		// Transform form data into array of objects
-		var data = $("#selectSourceDestFrom :input").serializeArray();
+		var source;
+		var destination;
 		
-		var source = String(data[0].value);
-		var destination = String(data[1].value);
+		if (pref == "address") {
+		
+			source = $('#form-control2 :selected').val();
+			destination = $('#form-control3 :selected').val();
+			
+		}
+		
+		else {
+			
+			source = $('#form-control2 :selected').text();
+			destination = $('#form-control3 :selected').text();
+			
+		}
 		var dateTime = $('#datepicker').datepicker('getDate');
 		
 		console.log(lineid);
-		console.log(data);
+		console.log(source);
+		console.log(destination);
 		console.log(dateTime);
 
 	    $.getJSON("http://localhost:5000/_getTravelTime/" + lineid + "||" + source + "||" + destination + "||" + dateTime + "||" + pref, function(info) {
@@ -251,10 +263,11 @@ function getSourceDestination(jpid,direction,pref) {
 			
 		_.forEach(data2, function(stop) {
 				
-			options += "<option>"+ stop.Stop_info +"</option>";
+			options += '<option value = "' + stop.Stop_ID + '">' +  stop.Stop_info + "</option>";
 				
 		})
-			
+		
+		//set html content of form
 		$("#form-control2").html(options);
 		$("#form-control3").html(options);
 			

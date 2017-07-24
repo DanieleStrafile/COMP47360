@@ -18,6 +18,7 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
     # Get model's predictions
     source_time = get_prediction(journey_pattern_id, source, speed, day)
     destination_time = get_prediction(journey_pattern_id, destination, speed, day)
+    
 
     return [destination_time[0], source_time[0]]
 
