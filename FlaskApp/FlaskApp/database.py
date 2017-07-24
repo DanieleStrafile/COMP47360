@@ -4,7 +4,7 @@ import pandas as pd
 from flask import *
 from sqlalchemy import *
 
-from FlaskApp.db_info import *
+from FlaskApp.FlaskApp.db_info import *
 
 
 class Db:
