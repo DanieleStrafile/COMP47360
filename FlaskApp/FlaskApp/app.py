@@ -57,13 +57,13 @@ def retrieve_gps(jpid):
     return Db().get_gps(jpid)
 
 
-@app.route('/_getTravelTime/<lineId>||<source>||<destination>||<dateTime>||<pref>', methods=['GET'])
-def get_model_answer(lineId, source, destination, dateTime, pref):
+@app.route('/_getTravelTime/<jpid>||<source>||<destination>||<dateTime>', methods=['GET'])
+def get_model_answer(jpid, source, destination, dateTime):
     """Get estimated travel time"""
     
-    distances = Db().get_distance(lineId, source, destination)
+    distances = Db().get_distance(jpid, source, destination)
 
-    travel_time = get_travel_time(lineId, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
+    travel_time = get_travel_time(jpid, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
     
     print("travel time", travel_time)
 

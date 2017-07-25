@@ -7,6 +7,7 @@ var markersArray = [];
 
 // To store the user's preference of searching by Stop ID or Addresses
 var pref;
+var jpid;
 
 $(document).ready(function() {
 	
@@ -70,25 +71,30 @@ $(document).ready(function() {
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 0
     $("#direction0").click(function() {
     	
-    	console.log("$(this).val() " + $(this).val());
-    	
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
         
         getSourceDestination($(this).val(),0,pref);
+        
+        //set jpid here
+        jpid = $(this).val() + "";
+        
+        console.log("jpid is " + jpid);
         
     });
 	
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 1
     $("#direction1").click(function(){
     	
-    	console.log("$(this).val() " + $(this).val());
-    	
-    	
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
         
         getSourceDestination($(this).val(),1,pref);
+        
+        //set jpid here
+        jpid = $(this).val() + "";
+        
+        console.log("jpid is " + jpid);
         
     });
 	
@@ -135,12 +141,12 @@ $(document).ready(function() {
 		
 		var dateTime = $('#datepicker').datepicker('getDate');
 		
-		console.log(lineid);
+		console.log(jpid);
 		console.log(source);
 		console.log(destination);
 		console.log(dateTime);
 		
-		getTravelTime(lineid,source,destination,dateTime,pref);
+		getTravelTime(jpid,source,destination,dateTime);
 		
 		
 	});
@@ -249,11 +255,6 @@ function getFirstandLastAddress(lineid) {
 
 
 function getSourceDestination(jpid,direction,pref) {
-	
-	// Modify Global Variable for final form (I think you're query might already do this for us though Daniele?, can we delete linid Global?)
-	lineid = jpid;
-	
-	console.log("jpid is " + jpid );
 		
 	var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/_preference/" + pref + "/" + jpid, function(data2) {
 			
@@ -277,7 +278,7 @@ function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
 
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
 		
-		var jpid = data[0].JPID_Source;
+		jpid = data[0].JPID_Source;
 		
 		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data2) {
 			
@@ -294,9 +295,9 @@ function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
 }
 
 //display in a small box when the bus will arrive (timetable) and how long it will take to arrive to destination from source
-function getTravelTime(lineid,source,destination,dateTime,pref) {
+function getTravelTime(jpid,source,destination,dateTime) {
 	
-    $.getJSON("http://localhost:5000/_getTravelTime/" + lineid + "||" + source + "||" + destination + "||" + dateTime + "||" + pref, function(info) {
+    $.getJSON("http://localhost:5000/_getTravelTime/" + jpid + "||" + source + "||" + destination + "||" + dateTime, function(info) {
 
 		console.log(info);
 		
@@ -313,6 +314,13 @@ function getTravelTime(lineid,source,destination,dateTime,pref) {
 		}
 	
 	});
+    
+}
+
+
+function getTravelTimewithTimetable(jpid,dateTime,sourceTime) {
+	
+	
 	
 	
 }
