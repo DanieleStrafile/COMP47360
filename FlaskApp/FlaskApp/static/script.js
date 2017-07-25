@@ -132,30 +132,17 @@ $(document).ready(function() {
 			destination = $('#form-control3 :selected').text();
 			
 		}
+		
 		var dateTime = $('#datepicker').datepicker('getDate');
 		
 		console.log(lineid);
 		console.log(source);
 		console.log(destination);
 		console.log(dateTime);
-
-	    $.getJSON("http://localhost:5000/_getTravelTime/" + lineid + "||" + source + "||" + destination + "||" + dateTime + "||" + pref, function(info) {
-
-			console.log(info);
-			
-			if (isNumeric(info[0]) && isNumeric(info[1])) {
-			
-			document.getElementById("travelTimeDiv").innerHTML = "Bus will arrive in " + info[1] + "seconds. Travel time will be " + (info[0] - info[1]) + "seconds";
-			
-			}
-			
-			else {
-				
-				document.getElementById("travelTimeDiv").innerHTML = "Bus does not run on this day";
-					
-			}
 		
-		});
+		getTravelTime(lineid,source,destination,dateTime,pref);
+		
+		
 	});
 	
 	dropDown();
@@ -304,6 +291,30 @@ function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
 			
 		})
 	})	
+}
+
+//display in a small box when the bus will arrive (timetable) and how long it will take to arrive to destination from source
+function getTravelTime(lineid,source,destination,dateTime,pref) {
+	
+    $.getJSON("http://localhost:5000/_getTravelTime/" + lineid + "||" + source + "||" + destination + "||" + dateTime + "||" + pref, function(info) {
+
+		console.log(info);
+		
+		if (isNumeric(info[0]) && isNumeric(info[1])) {
+		
+		document.getElementById("travelTimeDiv").innerHTML = "Bus will arrive in " + info[1] + "seconds. Travel time will be " + (info[0] - info[1]) + "seconds";
+		
+		}
+		
+		else {
+			
+			document.getElementById("travelTimeDiv").innerHTML = "Bus does not run on this day";
+				
+		}
+	
+	});
+	
+	
 }
 
 
