@@ -64,6 +64,8 @@ def get_model_answer(lineId, source, destination, dateTime, pref):
     distances = Db().get_distance(lineId, source, destination)
 
     travel_time = get_travel_time(lineId, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
+    
+    print("travel time", travel_time)
 
     return json.dumps(travel_time)
 

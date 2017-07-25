@@ -142,7 +142,18 @@ $(document).ready(function() {
 	    $.getJSON("http://localhost:5000/_getTravelTime/" + lineid + "||" + source + "||" + destination + "||" + dateTime + "||" + pref, function(info) {
 
 			console.log(info);
+			
+			if (isNumeric(info[0]) && isNumeric(info[1])) {
+			
 			document.getElementById("travelTimeDiv").innerHTML = "Bus will arrive in " + info[1] + "seconds. Travel time will be " + (info[0] - info[1]) + "seconds";
+			
+			}
+			
+			else {
+				
+				document.getElementById("travelTimeDiv").innerHTML = "Bus does not run on this day";
+					
+			}
 		
 		});
 	});
@@ -296,6 +307,9 @@ function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
 }
 
 
-
+//function that return true if n is a number (float or integer), false otherwise
+function isNumeric(val) {
+    return Number(parseFloat(val))==val;
+}
 
 
