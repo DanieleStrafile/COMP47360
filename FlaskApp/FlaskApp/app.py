@@ -57,7 +57,7 @@ def retrieve_gps(jpid):
     return Db().get_gps(jpid)
 
 
-@app.route('/_getTravelTime/<jpid>||<source>||<destination>||<dateTime>', methods=['GET'])
+@app.route('/_getTravelTime/<jpid>/<source>/<destination>/<dateTime>', methods=['GET'])
 def get_model_answer(jpid, source, destination, dateTime):
     """Get estimated travel time"""
     
@@ -68,6 +68,12 @@ def get_model_answer(jpid, source, destination, dateTime):
     print("travel time", travel_time)
 
     return json.dumps(travel_time)
+
+@app.route('/get_bus_time/<jpidTruncated>/<srcStop>/<destStop>/<hour>/<minute>/<sec>/<sourceTime>/<timeCat>')
+def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
+    
+    return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat )
+
 
 
 if __name__ == "__main__":

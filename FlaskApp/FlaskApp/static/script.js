@@ -146,7 +146,7 @@ $(document).ready(function() {
 		console.log(destination);
 		console.log(dateTime);
 		
-		getTravelTime(jpid,source,destination,dateTime);
+		getTravelTime(lineid, jpid,source,destination,dateTime);
 		
 		
 	});
@@ -276,7 +276,7 @@ function getSourceDestination(jpid,direction,pref) {
 //find best possible route jpid, get coords of its stops and display them
 function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
 
-	var jqxhr = $.getJSON($SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
+	var jqxhr = $.getJSON( $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
 		
 		jpid = data[0].JPID_Source;
 		
@@ -295,15 +295,30 @@ function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
 }
 
 //display in a small box when the bus will arrive (timetable) and how long it will take to arrive to destination from source
-function getTravelTime(jpid,source,destination,dateTime) {
+function getTravelTime(lineid, jpid,source,destination,dateTime) {
 	
-    $.getJSON("http://localhost:5000/_getTravelTime/" + jpid + "||" + source + "||" + destination + "||" + dateTime, function(info) {
+    $.getJSON( $SCRIPT_ROOT + "/_getTravelTime/" + jpid + "/" + source + "/" + destination + "/" + dateTime, function(info) {
+    	
+    	
+		//seconds it takes for bus to travel from terminus to source chosen by user
+		var timeFromTerminusToSource = info[1];
+    	
+    	//seconds it takes for bus to travel from source to destination chosen by user
+		var timeFromSourceToDest = info[0] - info[1];
 
-		console.log(info);
-		
 		if (isNumeric(info[0]) && isNumeric(info[1])) {
 		
-		document.getElementById("travelTimeDiv").innerHTML = "Bus will arrive in " + info[1] + "seconds. Travel time will be " + (info[0] - info[1]) + "seconds";
+			//make jpid in the following form "0013000%" so that we can use the LIKE operator in mysql
+			var jpidTruncated = String(jpid);
+			jpidTruncated = (jpidTruncated.slice(0,-1)) + "%";
+			
+			//get label "Mon-Fr" or "Sat" or "Sun" from datetime
+			var timeCat = convertDateTimetoTimeCat(dateTime);
+			
+			alert("time is " + dateTime);
+			
+			getTravelTimewithTimetable(lineid, jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
+					dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest );
 		
 		}
 		
@@ -318,10 +333,32 @@ function getTravelTime(jpid,source,destination,dateTime) {
 }
 
 
-function getTravelTimewithTimetable(jpid,dateTime,sourceTime) {
+function getTravelTimewithTimetable(lineid, jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest ) {
+	
+	$.getJSON( $SCRIPT_ROOT + "/get_bus_time/"  + jpidTruncated + "/" + srcStop + "/" + destStop + "/" + hour + "/" + minute + "/" 
+			+ sec + "/" + sourceTime + "/" + timeCat, function(data) {
+		
+		alert( "jpid is " + jpid + " and lineid is " + lineid );
+		
+		document.getElementById("travelTimeDiv").innerHTML = "Bus " + lineid +  "  will arrive at " + data[0].Time_bus_arrives + ". Travel time will be " 
+			+ timeFromSourceToDest + "seconds";
+		
+		
+	});
 	
 	
+}
+
+function convertDateTimetoTimeCat(dateTime) {
 	
+	var day = dateTime.getDay();
+	
+	if (day == 0)
+		return "Sun";
+	else if (day >= 1 && day <= 5)
+		return "Mon-Fr";
+	else
+		return "Sat";
 	
 }
 
@@ -330,5 +367,6 @@ function getTravelTimewithTimetable(jpid,dateTime,sourceTime) {
 function isNumeric(val) {
     return Number(parseFloat(val))==val;
 }
+
 
 

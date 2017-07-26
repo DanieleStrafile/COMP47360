@@ -5,6 +5,7 @@ from flask import *
 from sqlalchemy import *
 
 from FlaskApp.db_info import *
+import re
 
 
 class Db:
@@ -145,7 +146,7 @@ class Db:
             
             FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
             WHERE j.Stop_ID = s.Stop_ID
-            HAVING Distance_Source <= 0.5) as first_query
+            HAVING Distance_Source <= 1.0) as first_query
 
         INNER JOIN
 
@@ -163,7 +164,7 @@ class Db:
             
             FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
             WHERE j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
-            HAVING Distance_Destination <= 0.5) as second_query
+            HAVING Distance_Destination <= 1.0) as second_query
 
         ON first_query.JPID_Source = second_query.JPID_Destination
         GROUP BY JPID_Source
@@ -188,3 +189,50 @@ class Db:
         self.df = pd.read_sql_query(self.sql7, self.conn, params={"number": jpid})
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
+    
+    
+    
+    def get_bus_time(self, jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
+        
+        """
+        Return time next bus is coming
+        """
+        
+        #maketime takes as input (hour,min,sec) and outputs hour:min:sec
+        
+        self.sql9 = """
+        SELECT j.Journey_Pattern_ID,
+            ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s)) AS Time_bus_arrives
+        FROM Timetable as t, JourneyPatternID_StopID as j
+        WHERE j.Journey_Pattern_ID LIKE %(jpidTruncated)s AND j.Journey_Pattern_ID = t.Journey_Pattern_ID 
+            AND (j.Stop_ID = %(srcStop)s OR j.Stop_ID = %(destStop)s) AND j.At_Stop = "1" AND t.Day_Cat = %(timeCat)s
+            AND MAKETIME ( %(hour)s,%(minute)s,%(sec)s ) <= ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s))
+        ORDER BY TIMESTAMPDIFF(SECOND, ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s)), MAKETIME ( %(hour)s,%(minute)s,%(sec)s ) ) DESC
+        LIMIT 1
+        """
+    
+        self.df = pd.read_sql_query(self.sql9, self.conn, params={"jpidTruncated" : jpidTruncated,
+                                                                   "srcStop" : srcStop,
+                                                                    "destStop" : destStop,
+                                                                    "hour" : hour,
+                                                                    "minute" : minute,
+                                                                    "sec" : sec,
+                                                                    "sourceTime" : sourceTime,
+                                                                    "timeCat" : timeCat  })
+        
+
+        self.df.Time_bus_arrives = self.df.Time_bus_arrives.astype(str)
+        # format string time_no_date
+        #delete 0 days e.g. 0 days 10:40:00.000000000 will become 10:40:00.000000000
+        self.df.Time_bus_arrives = self.df.Time_bus_arrives.apply(lambda x : re.sub('0 days ', '', x))
+        
+        #delete everything after and incuding .  e.g. 10:40:00.000000000 will become 10:40:00
+        self.df.Time_bus_arrives = self.df.Time_bus_arrives.apply(lambda x : re.sub('\..*', '', x))
+        print(self.df)
+
+        return json.dumps(json.loads(self.df.to_json(orient='index')))
+
+        
+def myconverter(o):
+    if isinstance(o, str):
+        return o.__str__()      
