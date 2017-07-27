@@ -27,3 +27,8 @@
     text-overflow: ellipsis;
 
 }
+
+.selectDirectionText {
+	text-align: center;
+	margin: auto;
+}
