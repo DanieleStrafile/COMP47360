@@ -140,10 +140,10 @@ $(document).ready(function() {
 		
 		var dateTime = $('#datepicker').datepicker('getDate');
 		
-		console.log(jpid);
-		console.log(source);
-		console.log(destination);
-		console.log(dateTime);
+//		console.log(jpid);
+//		console.log(source);
+//		console.log(destination);
+//		console.log(dateTime);
 		
 		getTravelTime(lineid, jpid,source,destination,dateTime);
 		
@@ -236,7 +236,7 @@ function getTravelTime(lineid, jpid,source,destination,dateTime) {
 			//get label "Mon-Fr" or "Sat" or "Sun" from datetime
 			var timeCat = convertDateTimetoTimeCat(dateTime);
 			
-			alert("time is " + dateTime);
+//			alert("time is " + dateTime);
 			
 			getTravelTimewithTimetable(lineid, jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
 					dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest );
@@ -254,11 +254,32 @@ function getTravelTimewithTimetable(lineid, jpidTruncated, srcStop, destStop, ho
 	$.getJSON( $SCRIPT_ROOT + "/get_bus_time/"  + jpidTruncated + "/" + srcStop + "/" + destStop + "/" + hour + "/" + minute + "/" 
 			+ sec + "/" + sourceTime + "/" + timeCat, function(data) {
 		
-		alert( "jpid is " + jpid + " and lineid is " + lineid );
+		var currentTime = new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
+		var timeBusArrives = data[0].Time_bus_arrives;
 		
-		document.getElementById("travelTimeDiv").innerHTML = "Bus " + lineid +  "  will arrive at " + data[0].Time_bus_arrives + ". Travel time will be " 
-			+ timeFromSourceToDest + "seconds";
+		var timeToArriveInMins = getTimeToArrive(timeBusArrives, currentTime);
+		var timeFromSourceToDestInMins = parseInt(timeFromSourceToDest/60);
+		
+		document.getElementById("travelTimeDiv").innerHTML = "The " + lineid +  "  will arrive at " + timeBusArrives + ".<BR>" + 
+			timeToArriveInMins + " Mins" +
+			"<BR><BR>Your Travel time will be " + timeFromSourceToDestInMins + "Mins";
 	});
+}
+
+function getTimeToArrive(arrival, current) {
+	// This won't work if a bus goes past midnight --> Something to fix
+	
+	arrival = arrival.slice(0,5);
+	var arrivalHour = parseInt(arrival.slice(0,2));
+	var arrivalMin = parseInt(arrival.slice(3, 5));
+	var currentHour = parseInt(current.slice(0,2));
+	var currentMin = parseInt(current.slice(3,5));
+	
+	var hour = arrivalHour - currentHour;
+	var min = arrivalMin - currentMin;
+	
+	return (hour + min).toString();
+	
 }
 
 
@@ -310,12 +331,9 @@ function initialize() {
 			
 			destination = event.latLng;
 			placeMarker(destination, map);
-			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());
+			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());	
 			
-			alert("Source: " + source + "\nDestination: " + destination);
-		}
-			
-		else {
+		} else {
 			
 			//resetting markers array
 			var arrayLength = markersArray.length;
