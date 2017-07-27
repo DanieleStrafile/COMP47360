@@ -45,6 +45,18 @@
 				<img src="{{url_for('static', filename='dublinbus1.jpg')}}" class="img-responsive" alt="Responsive image">
 			</div>
 			
+			<div id="navBar">
+				<div class="frame2">
+					
+					<ul class="nav nav-pills">
+					  <li role="presentation" class="active" id="returnHomeButton"><a href="#"><span class="glyphicon glyphicon-home"> Home</span></a></li>
+					  <li role="presentation"><a href="#">View Timetables</a></li>
+					  <li role="presentation" id="selectMapSearch"><a href="#">Search With Google Map</a></li>
+					</ul>
+					
+				</div>
+			</div>
+			
 			<div id="selectRouteAndSearchPreference">
 				<div class="frame2">
 					<div class="row" id="selectRouteAndSearchByPreference">
@@ -76,13 +88,6 @@
 				</div>
 			</div>
 			
-			<div id="searchMapDiv">
-				<div class="frame2">
-					<h1><p class="text-center">Don't Know The Address?</p></h1>
-					<button type="button" class="btn btn-primary btn-lg btn-block" id="selectMapSearch">Search With Map</button>
-
-				</div>
-			</div>
 				
 			<div id="selectDirectionDiv">
 				<div class="frame2">
@@ -91,10 +96,6 @@
 							<h2 class="bg-info">Select Direction</h2>
 							
 							<br>
-							
-							<button type="button" class="btn btn-default btn-lg" id="returnHomeButton">
-								<span class="glyphicon glyphicon-home"></span> Return
-							</button>
 							
 						</div>
 						<div class="col-md-9">
@@ -119,19 +120,19 @@
 							
 							<div class="col-md-3">
 								<h2 class="customBusHeading">Select Time/Date</h2>
-								<div id="datepicker"></div>
+								<div id="datepicker" class="datePicker"></div>
 							</div>
 							
-							<div class="col-md-6">
+							<div class="col-md-3">
 								<h2 class="customBusHeading">Source</h2>
-								<select id="form-control2" name="pickRoute">
+								<select id="form-control2" name="pickRoute" class="specialWidthSelectMenu">
 
 								</select>
 							
 								<hr>
 							
 								<h2 class="customBusHeading">Destination</h2>
-								<select id="form-control3" name="pickRoute">
+								<select id="form-control3" name="pickRoute" class="specialWidthSelectMenu">
 								</select>
 								
 								<br>
@@ -142,15 +143,12 @@
 								
 								<br>
 								
-								<button type="button" class="btn btn-default btn-lg" id="returnHomeButton2">
-									<span class="glyphicon glyphicon-home"></span> Return
-								</button>
 							</div>
 						</form>
 							
 							
 
-						<div class="col-md-3">
+						<div class="col-md-6">
 							<div id="travelTimeDiv">
 								Travel Information Will Appear Here...
 							</div>
