@@ -140,11 +140,6 @@ $(document).ready(function() {
 		
 		var dateTime = $('#datepicker').datepicker('getDate');
 		
-//		console.log(jpid);
-//		console.log(source);
-//		console.log(destination);
-//		console.log(dateTime);
-		
 		getTravelTime(lineid, jpid,source,destination,dateTime);
 		
 		
@@ -217,7 +212,7 @@ function getSourceDestination(jpid,direction,pref) {
 // FOR DISPLAYING THE MODEL'S PREDICTIONS
 
 // Display in a small box when the bus will arrive (timetable) and how long it will take to arrive to destination from source
-function getTravelTime(lineid, jpid,source,destination,dateTime) {
+function getTravelTime(lineid, jpid, source, destination, dateTime) {
 	
     $.getJSON( $SCRIPT_ROOT + "/_getTravelTime/" + jpid + "/" + source + "/" + destination + "/" + dateTime, function(info) {
     	
@@ -236,13 +231,23 @@ function getTravelTime(lineid, jpid,source,destination,dateTime) {
 			//get label "Mon-Fr" or "Sat" or "Sun" from datetime
 			var timeCat = convertDateTimetoTimeCat(dateTime);
 			
-//			alert("time is " + dateTime);
-			
+			//display travel time
 			getTravelTimewithTimetable(lineid, jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
 					dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest );
+			
+			//display pricing
+			//jpid.charAt(4) is the direction already encoded within jpid
+			
+			console.log(jpid); 
+			console.log(source); 
+			console.log(destination); 
+			console.log(jpid.charAt(4)); 
+			
+			getPricing(jpid, source, destination, jpid.charAt(4));
+			
 		} else {
 			
-			document.getElementById("travelTimeDiv").innerHTML = "Bus does not run on this day";	
+			$("#travelTimeDiv").html("Bus does not run on this day");
 		}
 	});
 }
@@ -260,11 +265,37 @@ function getTravelTimewithTimetable(lineid, jpidTruncated, srcStop, destStop, ho
 		var timeToArriveInMins = getTimeToArrive(timeBusArrives, currentTime);
 		var timeFromSourceToDestInMins = parseInt(timeFromSourceToDest/60);
 		
-		document.getElementById("travelTimeDiv").innerHTML = "The " + lineid +  "  will arrive at " + timeBusArrives + ".<BR>" + 
-			timeToArriveInMins + " Mins" +
-			"<BR><BR>Your Travel time will be " + timeFromSourceToDestInMins + "Mins";
+		$("#travelTimeDiv").html("The " + lineid +  "  will arrive at " + timeBusArrives + ".<BR>" + 
+				"<BR>Your Travel time will be " + timeFromSourceToDestInMins + "Mins <BR><BR>");
+		
 	});
 }
+
+function getPricing(jpid, stop1, stop2, direction) {
+	
+	info = ["Adult Cash", "Adult Leap", "Child Cash (Under 16)", "Child Leap (Under 19)", "School Hours Cash", "School Hours Leap"]
+	
+	$.getJSON( $SCRIPT_ROOT + "/getPricing/" + jpid + "/" + stop1 + "/" + stop2 + "/" + direction, function(data) {
+		
+		console.log(data);
+		
+		options = "Prices : <BR>";
+		
+		_.each(data, function(value, key) {
+			
+			options += value + " : " + key + "<BR>";
+			
+		});
+		
+		$("#travelPriceDiv").html(options);
+		
+		
+	});
+	
+}
+	
+	
+
 
 function getTimeToArrive(arrival, current) {
 	// This won't work if a bus goes past midnight --> Something to fix

@@ -1,10 +1,11 @@
 import json
-
 from flask import Flask, render_template
 from flask_cors import CORS
-
 from FlaskApp.database import Db
 from FlaskApp.model import get_travel_time
+import requests
+from bs4 import BeautifulSoup
+import re
 
 
 app = Flask(__name__)
@@ -75,6 +76,82 @@ def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, source
     return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat )
 
 
+@app.route('/getPricing/<jpid>/<stop1>/<stop2>/<direction>')
+def display_prices(jpid, stop1, stop2, direction):
+    
+    try:
+        #get lineid and stop numbers of those stops
+        df = Db().get_stop_numbers(jpid, stop1, stop2)
+        lineid = df.loc[0,"Line_ID"]
+        
+        #convert upper cases to lower cases letter
+        lineid = lineid.lower()
+        
+        stop_number1 = df.loc[0,"Stop_number"]
+        stop_number2 = df.loc[1,"Stop_number"]
+        
+        #change direction parsing for url
+        if direction == '0' or direction == 0:
+            direction = 'I'
+        else:
+            direction = 'O'
+        
+        article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
+        
+
+        
+        return get_prices(article_url)
+    
+    except Exception as e:
+        
+        print("error with parsing")
+        print(e)
+        pass
+
+#this is a helper method for function display_prices
+def get_prices(article_url):
+    
+    #get table with prices from url
+    page = requests.get(article_url)
+    soup = BeautifulSoup(page.text,"html.parser")
+    table = soup.find("div", class_="other-fares-display")
+    rows = table.findChildren(['th', 'tr'])
+    
+    
+    # we got the table with prices from url, now we need to organise it in a dictionary e.g. Adult prices : 2.4 Euros etc...
+    count = 0
+    dictionary = dict()
+
+    for row in rows:
+        cells = row.findChildren('td')
+        for cell in cells:
+            
+            # we want to stop here, the next cell is None
+            if count > 11:
+                break
+                
+            value = cell.string.strip()
+            
+            
+            #even rows, these are our key pairs in dictionary, ie labels
+            if count % 2 == 0:
+                
+                key = value
+                
+            #uneven rows, these are our value pairs in dictionary, ie prices  
+            else:
+                
+                value = re.findall(r'\d+', value)
+                dictionary[key] = str(value[0]) + "."  + str(value[1]) + " Euros"
+                
+            count += 1
+    
+    #return the dictionary as a json object
+    return json.dumps(dictionary)
+            
+    
+    
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

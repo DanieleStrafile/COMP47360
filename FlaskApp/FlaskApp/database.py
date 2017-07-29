@@ -231,7 +231,26 @@ class Db:
         print(self.df)
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
-
+    
+    def get_stop_numbers(self, jpid, stop1, stop2):
+        
+        self.sql11 = """
+        
+        SELECT jse.Line_ID, j.Stop_ID, j.Stop_number
+        FROM JourneyPatternID_StopID as j, JPID_LineID_Start_End as jse
+        WHERE j.At_Stop = 1 AND (j.Stop_ID = %(stop1)s OR j.Stop_ID = %(stop2)s ) 
+            AND j.Journey_Pattern_ID = %(jpid)s AND jse.Journey_Pattern_ID = j.Journey_Pattern_ID
+        ORDER BY j.Stop_number ASC
+        
+        """
+        
+        self.df = pd.read_sql_query(self.sql11, self.conn, params={"jpid" : jpid,
+                                                                   "stop1" : stop1,
+                                                                    "stop2" : stop2
+                                                                     })
+        #no need to return json, we need to use the stop numbers to scrape the 
+        return self.df
+        
         
 def myconverter(o):
     if isinstance(o, str):
