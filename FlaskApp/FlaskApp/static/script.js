@@ -337,6 +337,9 @@ function isNumeric(val) {
 // FOR GOOGLE MAP INNOVATIVE FEATURE
 
 function initialize() {
+
+    var directionsService = new google.maps.DirectionsService;
+	var directionsDisplay = new google.maps.DirectionsRenderer;
 	
 	var myLatlng = new google.maps.LatLng(53.350140,-6.266155);
 	var myOptions = {
@@ -348,29 +351,28 @@ function initialize() {
 	var source;
 	var destination;
 
-	map = new google.maps.Map(document.getElementById("googleMap"), myOptions);
+	var map = new google.maps.Map(document.getElementById("googleMap"), myOptions);
 
+	directionsDisplay.setMap(map);
+
+    // Listener for placing markers
 	google.maps.event.addListener(map, 'click', function(event) {
 		
 		if (markersArray.length == 0) {
-			
 			source = event.latLng;
 			placeMarker(source, map);
 		}
 		
 		else if (markersArray.length == 1) {
-			
 			destination = event.latLng;
 			placeMarker(destination, map);
-			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());	
-			
+			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng(), directionsService, directionsDisplay);
 		} else {
 			
 			//resetting markers array
 			var arrayLength = markersArray.length;
 			
 			for (var i = 0; i < arrayLength; i++) {
-			    
 				markersArray[i].setMap(null);
 			}
 			markersArray = [];
@@ -385,25 +387,49 @@ function placeMarker(location, map) {
 	position: location, 
 	map: map
 	});
-	
 	//put marker into markers array
 	markersArray.push(marker);
 }
 
 //find best possible route jpid, get coords of its stops and display them
-function getJpidBestRoute(map, srcLat,srcLon,destLat,destLon) {
+function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon, directionsService, directionsDisplay) {
 
 	var jqxhr = $.getJSON( $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
 		
 		jpid = data[0].JPID_Source;
-		
+
 		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data2) {
-			
+
+            var waypts = [];
+
+            console.log(data2);
+            debugger;
+
 			_.forEach(data2, function(stop) {
-				
-				placeMarker({lat: stop.Latitude, lng: stop.Longitude},map);
-			})
+
+                var wayPoint = new google.maps.LatLng(stop.Latitude, stop.Longitude);
+
+                waypts.push({
+                    location: wayPoint,
+                    stopover: true
+                });
+            });
+
+            	var srcb = new google.maps.LatLng(data2[0].Latitude, data2[0].Longitude);
+                var dest = new google.maps.LatLng(data2[waypts.length - 1].Latitude, data2[waypts.length - 1].Longitude);
+
+                directionsService.route({
+                origin: srcb,
+                destination: dest,
+                waypoints: waypts,
+                provideRouteAlternatives :false,
+                travelMode: 'DRIVING'
+              }, function(response, status) {
+                if (status === 'OK') {
+                  directionsDisplay.setDirections(response);
+                }
+              });
 			alert("Journey Pattern ID " + jpid);
-		})
-	})	
+		});
+	});
 }

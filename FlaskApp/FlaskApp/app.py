@@ -97,9 +97,7 @@ def display_prices(jpid, stop1, stop2, direction):
             direction = 'O'
         
         article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
-        
 
-        
         return get_prices(article_url)
     
     except Exception as e:
@@ -148,10 +146,7 @@ def get_prices(article_url):
     
     #return the dictionary as a json object
     return json.dumps(dictionary)
-            
-    
-    
-    
+
 
 if __name__ == "__main__":
     app.run(debug=True)
