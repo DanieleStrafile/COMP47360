@@ -31,7 +31,8 @@ $(document).ready(function() {
         $("#selectSourceDestDiv").hide(700);
 		$("#selectDirectionDiv").hide(700);
 		$("#googleMapDiv").hide(700);
-		$("#sourceDestTimeGoDiv").hide(700);		
+		$("#sourceDestTimeGoDiv").hide(700);
+		document.getElementById("displayRouteInNavBarForMap").innerHTML = "";
 		
 		$("#selectRouteAndSearchPreference").show(700);
 		$("#searchMapDiv").show(700);
@@ -109,21 +110,7 @@ $(document).ready(function() {
     
 	// 'GET' request for source and destination addresses after first form
 	$('#stopIdOrAddress').ajaxForm(function() {
-
-		// Transform form data into array of objects
-		var data = $("#stopIdOrAddress :input").serializeArray();
-		
-		var route = String(data[0].value);
-		var preference = String(data[1].value);
-		
-		/*
-		
-	    $.getJSON("http://localhost:5000/_preference/" + preference + "/" + route, function(info) {
-			// Here we can get the list of Stop ID's or Addresses for the Route
-			
-	    });
-	    
-	    */
+		// Do nothing
 	});
 	
 	// 'GET' request for Time Estimation
@@ -419,23 +406,51 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 			_.forEach(data2, function(stop) {
                 waypts.push({"lat": stop.Latitude, "lng": stop.Longitude});
             });
+			
+			// Define the symbol, using one of the predefined paths ('CIRCLE')
+        // supplied by the Google Maps JavaScript API.
+        var lineSymbol = {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 8,
+          strokeColor: '#393'
+        };
 
 			  flightPath = new google.maps.Polyline({
 			  path: waypts,
 			  geodesic: true,
 			  strokeColor: '#FF0000',
 			  strokeOpacity: 1.0,
-			  strokeWeight: 2
+			  strokeWeight: 2,
+			  icons: [{
+              icon: lineSymbol,
+              offset: '100%'
+          		}]
 			});
+			
+			
 
 			flightPath.setMap(map);
 
 			drawBusStops(waypts, map);
 
-			alert("Journey Pattern ID " + jpid);
+			animateCircle(flightPath);
+			
+			document.getElementById("displayRouteInNavBarForMap").innerHTML = "<h1 class='customBusHeading'>" + jpid + "</h1>";
 		});
 	});
 }
+// Use the DOM setInterval() function to change the offset of the symbol
+// at fixed intervals.
+function animateCircle(line) {
+          var count = 0;
+          window.setInterval(function() {
+            count = (count + 1) % 200;
+
+            var icons = line.get('icons');
+            icons[0].offset = (count / 2) + '%';
+            line.set('icons', icons);
+        }, 20);
+      }
 
 
 function drawBusStops(waypts, map) {
