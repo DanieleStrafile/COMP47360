@@ -181,14 +181,16 @@ class Db:
         On Google maps when the user discovers the best bus route this query will return the full set of GPS
         coordinates for the route displaying it on the map alongside their source and destination icons."""
         
-        self.sql7 = """
+        sql7 = """
         SELECT s.Latitude, s.Longitude
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
         WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
+        ORDER BY j.Stop_number ASC
         """
-        self.df = pd.read_sql_query(self.sql7, self.conn, params={"number": jpid})
 
-        return json.dumps(json.loads(self.df.to_json(orient='index')))
+        df = pd.read_sql_query(sql7, self.conn, params={"number": jpid})
+
+        return json.dumps(json.loads(df.to_json(orient='records')))
     
     
     

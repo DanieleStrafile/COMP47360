@@ -3,11 +3,19 @@
 // This is needed to save the Line ID for the end of the form when the user requests a travel time estimation.
 // If we can find a better solution to this issue later we will erase this global variable.
 var lineid;
+// For the user's map markers
 var markersArray = [];
+
+// For google markers representing bus stops
+var busStops = [];
+// For the array which must draw the bus polyline between stops
+var waypts = [];
 
 // To store the user's preference of searching by Stop ID or Addresses
 var pref;
 var jpid;
+// For the polygon lines drawing the bus routes on Google Map
+var flightPath;
 
 $(document).ready(function() {
 	
@@ -142,7 +150,6 @@ $(document).ready(function() {
 		
 		getTravelTime(lineid, jpid,source,destination,dateTime);
 		
-		
 	});
 	
 	dropDown();
@@ -267,7 +274,6 @@ function getTravelTimewithTimetable(lineid, jpidTruncated, srcStop, destStop, ho
 		
 		$("#travelTimeDiv").html("The " + lineid +  "  will arrive at " + timeBusArrives + ".<BR>" + 
 				"<BR>Your Travel time will be " + timeFromSourceToDestInMins + "Mins <BR><BR>");
-		
 	});
 }
 
@@ -288,15 +294,10 @@ function getPricing(jpid, stop1, stop2, direction) {
 		});
 		
 		$("#travelPriceDiv").html(options);
-		
-		
 	});
-	
 }
 	
 	
-
-
 function getTimeToArrive(arrival, current) {
 	// This won't work if a bus goes past midnight --> Something to fix
 	
@@ -338,8 +339,9 @@ function isNumeric(val) {
 
 function initialize() {
 
-    var directionsService = new google.maps.DirectionsService;
-	var directionsDisplay = new google.maps.DirectionsRenderer;
+    // Only needed for road directions functionality (maybe add back later if we can figure out a way to use it)
+	//  var directionsService = new google.maps.DirectionsService;
+	//	var directionsDisplay = new google.maps.DirectionsRenderer;
 	
 	var myLatlng = new google.maps.LatLng(53.350140,-6.266155);
 	var myOptions = {
@@ -353,7 +355,8 @@ function initialize() {
 
 	var map = new google.maps.Map(document.getElementById("googleMap"), myOptions);
 
-	directionsDisplay.setMap(map);
+//  This is needed for the road mapping if we use it later
+//	directionsDisplay.setMap(map);
 
     // Listener for placing markers
 	google.maps.event.addListener(map, 'click', function(event) {
@@ -366,16 +369,23 @@ function initialize() {
 		else if (markersArray.length == 1) {
 			destination = event.latLng;
 			placeMarker(destination, map);
-			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng(), directionsService, directionsDisplay);
+			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());
 		} else {
-			
-			//resetting markers array
-			var arrayLength = markersArray.length;
-			
-			for (var i = 0; i < arrayLength; i++) {
+						
+			//resetting markers array			
+			for (var i = 0; i < markersArray.length; i++) {
 				markersArray[i].setMap(null);
 			}
+						
+			//resetting bus stops array			
+			for (var i = 0; i < waypts.length; i++) {
+				busStops[i].setMap(null);
+			}
+			
 			markersArray = [];
+			waypts = [];
+			busStops = [];
+			flightPath.setMap(null);
 		}
 	})
 }
@@ -383,53 +393,110 @@ function initialize() {
 
 // So the user can place markers on the Map
 function placeMarker(location, map) {
-	var marker = new google.maps.Marker({
-	position: location, 
-	map: map
-	});
-	//put marker into markers array
+	var marker = new google.maps.Circle({
+            strokeColor: '#000000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#3131ff',
+            fillOpacity: 0.35,
+            map: map,
+            center: location,
+            radius: 1000
+          });
+	
 	markersArray.push(marker);
 }
 
 //find best possible route jpid, get coords of its stops and display them
-function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon, directionsService, directionsDisplay) {
+function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 
 	var jqxhr = $.getJSON( $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
-		
+
 		jpid = data[0].JPID_Source;
 
 		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data2) {
 
-            var waypts = [];
-
-            console.log(data2);
-            debugger;
-
 			_.forEach(data2, function(stop) {
-
-                var wayPoint = new google.maps.LatLng(stop.Latitude, stop.Longitude);
-
-                waypts.push({
-                    location: wayPoint,
-                    stopover: true
-                });
+                waypts.push({"lat": stop.Latitude, "lng": stop.Longitude});
             });
 
-            	var srcb = new google.maps.LatLng(data2[0].Latitude, data2[0].Longitude);
-                var dest = new google.maps.LatLng(data2[waypts.length - 1].Latitude, data2[waypts.length - 1].Longitude);
+			  flightPath = new google.maps.Polyline({
+			  path: waypts,
+			  geodesic: true,
+			  strokeColor: '#FF0000',
+			  strokeOpacity: 1.0,
+			  strokeWeight: 2
+			});
 
-                directionsService.route({
-                origin: srcb,
-                destination: dest,
-                waypoints: waypts,
-                provideRouteAlternatives :false,
-                travelMode: 'DRIVING'
-              }, function(response, status) {
-                if (status === 'OK') {
-                  directionsDisplay.setDirections(response);
-                }
-              });
+			flightPath.setMap(map);
+
+			drawBusStops(waypts, map);
+
 			alert("Journey Pattern ID " + jpid);
 		});
 	});
 }
+
+
+function drawBusStops(waypts, map) {
+
+    for (var i = 0; i < waypts.length; i++) {
+
+    var marker = new google.maps.Circle({
+			strokeColor: '#000000',
+			strokeOpacity: 0.8,
+			strokeWeight: 2,
+			fillColor: '#edff11',
+			fillOpacity: 0.35,
+			map: map,
+			center: waypts[i],
+			radius: 50
+		  });
+		
+		busStops.push(marker);
+	  }
+}
+
+
+// -------------------------------------------------------------------------------------------------------------- //
+// PRESERVE IN CASE WE WANT TO TRY ROAD MAPPINGS AGAIN
+
+////find best possible route jpid, get coords of its stops and display them
+//function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon, directionsService, directionsDisplay) {
+//
+//	var jqxhr = $.getJSON( $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
+//
+//		jpid = data[0].JPID_Source;
+//
+//		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data2) {
+//
+//            var waypts = [];
+//
+//			_.forEach(data2, function(stop) {
+//
+//                var wayPoint = new google.maps.LatLng(stop.Latitude, stop.Longitude);
+//
+//                waypts.push({
+//                    location: wayPoint,
+//                    stopover: true
+//                });
+//            });
+//
+//            	var srcb = new google.maps.LatLng(data2[0].Latitude, data2[0].Longitude);
+//                var dest = new google.maps.LatLng(data2[waypts.length - 1].Latitude, data2[waypts.length - 1].Longitude);
+//
+//                directionsService.route({
+//                origin: srcb,
+//                destination: dest,
+//                waypoints: waypts,
+//                provideRouteAlternatives :false,
+//                travelMode: 'DRIVING'
+//              }, function(response, status) {
+//                if (status === 'OK') {
+//                  directionsDisplay.setDirections(response);
+//                }
+//              });
+//			alert("Journey Pattern ID " + jpid);
+//		});
+//	});
+//}
