@@ -399,46 +399,60 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 
 	var jqxhr = $.getJSON( $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon, function(data) {
 
-		jpid = data[0].JPID_Source;
-
-		var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data2) {
-
-			_.forEach(data2, function(stop) {
-                waypts.push({"lat": stop.Latitude, "lng": stop.Longitude});
-            });
-			
-			// Define the symbol, using one of the predefined paths ('CIRCLE')
-        // supplied by the Google Maps JavaScript API.
-        var lineSymbol = {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 8,
-          strokeColor: '#393'
-        };
-
-			  flightPath = new google.maps.Polyline({
-			  path: waypts,
-			  geodesic: true,
-			  strokeColor: '#FF0000',
-			  strokeOpacity: 1.0,
-			  strokeWeight: 2,
-			  icons: [{
-              icon: lineSymbol,
-              offset: '100%'
-          		}]
-			});
-			
-			
-
-			flightPath.setMap(map);
-
-			drawBusStops(waypts, map);
-
-			animateCircle(flightPath);
-			
-			document.getElementById("displayRouteInNavBarForMap").innerHTML = "<h1 class='customBusHeading'>" + jpid + "</h1>";
-		});
+		// For displaying the route number, or displaying an error
+		var result;
+		
+		try {
+			jpid = data[0].JPID_Source;
+			result = jpid;
+			drawMapRoute(map);
+		}
+		catch(TypeError){
+			result = "No Route Found";
+		}
+		finally {
+			document.getElementById("displayRouteInNavBarForMap").innerHTML = "<h1 class='customBusHeading'>" + result + "</h1>";
+		}
 	});
 }
+
+
+function drawMapRoute(map) {
+	
+	var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data2) {
+
+		_.forEach(data2, function(stop) {
+			waypts.push({"lat": stop.Latitude, "lng": stop.Longitude});
+		});
+
+		// Define the symbol, using one of the predefined paths ('CIRCLE')
+	// supplied by the Google Maps JavaScript API.
+	var lineSymbol = {
+	  path: google.maps.SymbolPath.CIRCLE,
+	  scale: 8,
+	  strokeColor: '#393'
+	};
+
+		  flightPath = new google.maps.Polyline({
+		  path: waypts,
+		  geodesic: true,
+		  strokeColor: '#FF0000',
+		  strokeOpacity: 1.0,
+		  strokeWeight: 2,
+		  icons: [{
+		  icon: lineSymbol,
+		  offset: '100%'
+			}]
+		});
+
+		flightPath.setMap(map);
+		drawBusStops(waypts, map);
+		animateCircle(flightPath);
+
+		});
+}
+
+
 // Use the DOM setInterval() function to change the offset of the symbol
 // at fixed intervals.
 function animateCircle(line) {
