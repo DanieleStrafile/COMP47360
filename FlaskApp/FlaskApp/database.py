@@ -185,7 +185,7 @@ class Db:
         SELECT s.Latitude, s.Longitude
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
         WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
-        ORDER BY j.Stop_number ASC
+        ORDER BY CAST(j.Stop_number AS UNSIGNED) ASC
         """
 
         df = pd.read_sql_query(sql7, self.conn, params={"number": jpid})
