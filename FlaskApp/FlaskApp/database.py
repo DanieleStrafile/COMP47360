@@ -122,53 +122,80 @@ class Db:
 
         On Google maps we must display the best bus route for a person who queries with a source and destination
         GPS. It is possible that this query could return several options for best routes, but for now one is okay."""
-
+        
+        
         self.sql8 = """
         
-        SELECT first_query.JPID_Source, first_query.STOP_ID_Source, first_query.Distance_Source,
-            second_query.STOP_ID_Destination, second_query.Distance_Destination,
-
-            MIN(ABS(first_query.Distance_Source - second_query.Distance_Destination)) as Minimum_Total_Walking
-
-        FROM
-
-            (SELECT j.Journey_Pattern_ID as JPID_Source, j.Stop_ID as STOP_ID_Source,
-            ( 6371 * 
-                ACOS( 
-                    COS( RADIANS( s.Latitude ) ) * 
-                    COS( RADIANS( %(source_lat)s ) ) * 
-                    COS( RADIANS( %(source_lon)s ) - 
-                    RADIANS( s.Longitude ) ) + 
-                    SIN( RADIANS( s.Latitude  ) ) * 
-                    SIN( RADIANS( %(source_lat)s) ) 
-                ) 
-            ) AS Distance_Source
+        SELECT fifth_query.JPID_Source, fifth_query.STOP_ID_Source, fifth_query.Distance_Source,
+            fifth_query.Stop_ID_Destination, fifth_query.Distance_destination,  fifth_query.Minimum_Total_Walking
+    
+        FROM         
             
-            FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-            WHERE j.Stop_ID = s.Stop_ID
-            HAVING Distance_Source <= 1.0) as first_query
-
+            (SELECT *       
+            FROM
+                    (SELECT first_query.JPID_Source, first_query.STOP_ID_Source, first_query.Distance_Source,
+                        second_query.STOP_ID_Destination, second_query.Distance_Destination,
+    
+                        MIN(ABS(first_query.Distance_Source + second_query.Distance_Destination)) as Minimum_Total_Walking
+    
+                    FROM
+    
+                        (SELECT j.Journey_Pattern_ID as JPID_Source, j.Stop_ID as STOP_ID_Source,
+                        ( 6371 * 
+                            ACOS( 
+                                COS( RADIANS( s.Latitude ) ) * 
+                                COS( RADIANS( %(source_lat)s ) ) * 
+                                COS( RADIANS( %(source_lon)s ) - 
+                                RADIANS( s.Longitude ) ) + 
+                                SIN( RADIANS( s.Latitude  ) ) * 
+                                SIN( RADIANS( %(source_lat)s) ) 
+                            ) 
+                        ) AS Distance_Source
+                        
+                        FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
+                        WHERE j.Stop_ID = s.Stop_ID
+                        HAVING Distance_Source <= 1.0) as first_query
+    
+                    INNER JOIN
+    
+                        (SELECT j.Journey_Pattern_ID as JPID_Destination, j.Stop_ID as STOP_ID_Destination,
+                        ( 6371 * 
+                            ACOS( 
+                                COS( RADIANS( s.Latitude ) ) * 
+                                COS( RADIANS( %(destination_lat)s ) ) * 
+                                COS( RADIANS( %(destination_lon)s ) - 
+                                RADIANS( s.Longitude ) ) + 
+                                SIN( RADIANS( s.Latitude  ) ) * 
+                                SIN( RADIANS( %(destination_lat)s ) ) 
+                        ) 
+                        ) AS Distance_Destination
+                        
+                        FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
+                        WHERE j.Stop_ID = s.Stop_ID
+                        HAVING Distance_Destination <= 1.0) as second_query
+    
+                    ON first_query.JPID_Source = second_query.JPID_Destination
+                    GROUP BY JPID_Source) AS third_query
+                    
+            INNER JOIN
+    
+                (SELECT jj.Stop_number AS STOP_ID_Source_Number, jj.Journey_Pattern_ID, jj.Stop_ID
+                FROM JourneyPatternID_StopID AS jj) AS fourth_query
+                
+            ON third_query.JPID_Source = fourth_query.Journey_Pattern_ID
+            WHERE third_query.STOP_ID_Source = fourth_query.Stop_ID) AS fifth_query
+            
         INNER JOIN
-
-            (SELECT j.Journey_Pattern_ID as JPID_Destination, j.Stop_ID as STOP_ID_Destination,
-            ( 6371 * 
-                ACOS( 
-                    COS( RADIANS( s.Latitude ) ) * 
-                    COS( RADIANS( %(destination_lat)s ) ) * 
-                    COS( RADIANS( %(destination_lon)s ) - 
-                    RADIANS( s.Longitude ) ) + 
-                    SIN( RADIANS( s.Latitude  ) ) * 
-                    SIN( RADIANS( %(destination_lat)s ) ) 
-            ) 
-            ) AS Distance_Destination
-            
-            FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-            WHERE j.Stop_ID = s.Stop_ID
-            HAVING Distance_Destination <= 1.0) as second_query
-
-        ON first_query.JPID_Source = second_query.JPID_Destination
-        GROUP BY JPID_Source
-        ORDER BY Minimum_Total_Walking
+    
+                (SELECT jj.Stop_number AS STOP_ID_Destination_Number, jj.Journey_Pattern_ID, jj.Stop_ID as Stop_ID2
+                FROM JourneyPatternID_StopID AS jj) AS sixth_query
+                
+        ON fifth_query.JPID_Source = sixth_query.Journey_Pattern_ID
+        WHERE fifth_query.STOP_ID_Destination = sixth_query.Stop_ID2
+            AND ( CAST(fifth_query.STOP_ID_Source_Number AS UNSIGNED) <=  CAST(sixth_query.STOP_ID_Destination_Number AS UNSIGNED) )
+        ORDER BY fifth_query.Minimum_Total_Walking ASC
+        
+        
         """
         
         self.df = pd.read_sql_query(self.sql8, self.conn, params={"source_lat" : source_lat, "source_lon" : source_lon, "destination_lat" : destination_lat,"destination_lon" : destination_lon })
