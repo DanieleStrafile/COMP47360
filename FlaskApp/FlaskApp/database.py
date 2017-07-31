@@ -179,7 +179,7 @@ class Db:
                     
             INNER JOIN
     
-                (SELECT jj.Stop_number AS STOP_ID_Source_Number, jj.Journey_Pattern_ID, jj.Stop_ID
+                (SELECT jj.Distance AS STOP_ID_Source_Distance, jj.Journey_Pattern_ID, jj.Stop_ID
                 FROM JourneyPatternID_StopID AS jj) AS fourth_query
                 
             ON third_query.JPID_Source = fourth_query.Journey_Pattern_ID
@@ -187,12 +187,12 @@ class Db:
             
         INNER JOIN
     
-                (SELECT jj.Stop_number AS STOP_ID_Destination_Number, jj.Journey_Pattern_ID, jj.Stop_ID as Stop_ID2
+                (SELECT jj.Distance AS STOP_ID_Destination_Distance, jj.Journey_Pattern_ID, jj.Stop_ID as Stop_ID2
                 FROM JourneyPatternID_StopID AS jj) AS sixth_query
                 
         ON fifth_query.JPID_Source = sixth_query.Journey_Pattern_ID
         WHERE fifth_query.STOP_ID_Destination = sixth_query.Stop_ID2
-            AND ( CAST(fifth_query.STOP_ID_Source_Number AS UNSIGNED) <=  CAST(sixth_query.STOP_ID_Destination_Number AS UNSIGNED) )
+            AND ( fifth_query.STOP_ID_Source_Distance <=  sixth_query.STOP_ID_Destination_Distance )
         ORDER BY fifth_query.Minimum_Total_Walking ASC
         
         
