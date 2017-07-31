@@ -175,8 +175,8 @@ function getFirstandLastAddress(lineid) {
 		
 		
 		//populating directions
-		direction0.html("<span class='glyphicon glyphicon-circle-arrow-right'></span>" + ' From ' + data[0].Source_Stop_ID + ' To ' + data[0].Destination_Stop_ID);
-		direction1.html("<span class='glyphicon glyphicon-circle-arrow-left'></span>" + ' From ' + data[1].Source_Stop_ID + ' To ' + data[1].Destination_Stop_ID);
+		direction0.html("<span class='glyphicon glyphicon-circle-arrow-right'></span>" + ' From ' + data[0].Short_Address_Source + ' To ' + data[0].Short_Address_Destination);
+		direction1.html("<span class='glyphicon glyphicon-circle-arrow-left'></span>" + ' From ' + data[1].Short_Address_Source + ' To ' + data[1].Short_Address_Destination);
 		
 		//setting direction's value for later query in function getSourceDestination
 		direction0.val(data[0].Journey_Pattern_ID + "");

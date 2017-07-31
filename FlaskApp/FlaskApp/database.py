@@ -36,27 +36,32 @@ class Db:
         user can pick a direction and allow us to display the appropriate information."""
 
         self.sql2 = """
-        SELECT j.Source_Stop_ID, j.Destination_Stop_ID, j.Journey_Pattern_ID
-        FROM JPID_LineID_Start_End AS j
-        WHERE j.Journey_Pattern_ID IN (SELECT x.Main_Journey_Pattern_ID 
-                                        FROM JPID_LineID_Start_End AS x
-                                        WHERE x.Line_ID = %(number)s)
+        SELECT third_query.Journey_Pattern_ID, third_query.Short_Address_Source, fourth_query.Short_Address_Destination
+        FROM         
+                (SELECT *        
+                FROM
+                        (SELECT j.Source_Stop_ID, j.Destination_Stop_ID, j.Journey_Pattern_ID
+                        FROM JPID_LineID_Start_End AS j
+                        WHERE j.Journey_Pattern_ID IN (SELECT x.Main_Journey_Pattern_ID 
+                                                FROM JPID_LineID_Start_End AS x
+                                                WHERE x.Line_ID = %(line_id)s ) ) AS first_query
+                    
+                INNER JOIN
+
+                        (SELECT s.Stop_ID AS Stop_ID1, s.Short_Address as Short_Address_Source
+                        FROM Stop_ID_Address AS s) AS second_query
+                
+                ON first_query.Source_Stop_ID = second_query.Stop_ID1) AS third_query
+
+        INNER JOIN
+
+                (SELECT s.Stop_ID AS Stop_ID2, s.Short_Address as Short_Address_Destination
+                FROM Stop_ID_Address AS s) AS fourth_query
+        
+        ON third_query.Destination_Stop_ID = fourth_query.Stop_ID2
         """
         
-        self.df = pd.read_sql_query(self.sql2, self.conn, params={"number": line_id})
-        
-        # Get the stop id and their short addresses
-        self.sql10 = """
-        SELECT s.Stop_ID, s.Short_Address FROM Stop_ID_Address as s;
-        """
-        self.df2 = pd.read_sql_query(self.sql10, self.conn)
-        
-        dictionary = dict(zip(self.df2.Stop_ID, self.df2.Short_Address))
-        
-        # Translate the source and stop destination ID in short addresses
-        for index, row in self.df.iterrows():
-            self.df.set_value(index, "Source_Stop_ID" , dictionary[row[0]])
-            self.df.set_value(index, "Destination_Stop_ID" , dictionary[row[1]])
+        self.df = pd.read_sql_query(self.sql2, self.conn, params={"line_id": line_id})
             
         return json.dumps(json.loads(self.df.to_json(orient='records')),ensure_ascii=False)
 
@@ -72,11 +77,11 @@ class Db:
         self.sql3 = """
         SELECT j.Stop_ID as Stop_info, j.Distance, j.Stop_ID
         FROM JourneyPatternID_StopID as j
-        WHERE j.Journey_Pattern_ID = %(number)s
+        WHERE j.Journey_Pattern_ID = %(jpid)s
         ORDER BY j.Distance ASC
         """
 
-        self.df = pd.read_sql_query(self.sql3, self.conn, params={"number": jpid})
+        self.df = pd.read_sql_query(self.sql3, self.conn, params={"jpid": jpid})
 
         return json.dumps(json.loads(self.df.to_json(orient='index')),ensure_ascii=True).encode('latin-1')
 
@@ -94,11 +99,11 @@ class Db:
         self.sql4 = """
         SELECT s.Stop_ID, j.Distance, s.Address as Stop_info
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
+        WHERE j.Journey_Pattern_ID = %(jpid)s AND j.Stop_ID = s.Stop_ID
         ORDER BY j.Distance ASC
         """
 
-        self.df = pd.read_sql_query(self.sql4, self.conn, params={"number": jpid})
+        self.df = pd.read_sql_query(self.sql4, self.conn, params={"jpid": jpid})
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
 
