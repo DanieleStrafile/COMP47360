@@ -24,7 +24,7 @@ class Db:
     def get_line_ids(self):
         """Query a list of all Line ID's"""
         
-        self.sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End;"
+        self.sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End ORDER BY Line_ID + 0 ASC;"
         self.rows = self.conn.execute(self.sql1).fetchall()
 
         return jsonify(lineids=[dict(row.items()) for row in self.rows])
