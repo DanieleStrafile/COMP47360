@@ -72,7 +72,7 @@ class Db:
         self.sql3 = """
         SELECT j.Stop_ID as Stop_info, j.Distance, j.Stop_ID
         FROM JourneyPatternID_StopID as j
-        WHERE j.Journey_Pattern_ID = %(number)s AND j.At_Stop = 1
+        WHERE j.Journey_Pattern_ID = %(number)s
         ORDER BY j.Distance ASC
         """
 
@@ -94,7 +94,7 @@ class Db:
         self.sql4 = """
         SELECT s.Stop_ID, j.Distance, s.Address as Stop_info
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
+        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
         ORDER BY j.Distance ASC
         """
 
@@ -163,7 +163,7 @@ class Db:
             ) AS Distance_Destination
             
             FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-            WHERE j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
+            WHERE j.Stop_ID = s.Stop_ID
             HAVING Distance_Destination <= 1.0) as second_query
 
         ON first_query.JPID_Source = second_query.JPID_Destination
@@ -184,7 +184,7 @@ class Db:
         sql7 = """
         SELECT s.Latitude, s.Longitude
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID AND j.At_Stop = 1
+        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
         ORDER BY j.Stop_number ASC
         """
 
@@ -207,7 +207,7 @@ class Db:
             ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s)) AS Time_bus_arrives
         FROM Timetable as t, JourneyPatternID_StopID as j
         WHERE j.Journey_Pattern_ID LIKE %(jpidTruncated)s AND j.Journey_Pattern_ID = t.Journey_Pattern_ID 
-            AND (j.Stop_ID = %(srcStop)s OR j.Stop_ID = %(destStop)s) AND j.At_Stop = "1" AND t.Day_Cat = %(timeCat)s
+            AND (j.Stop_ID = %(srcStop)s OR j.Stop_ID = %(destStop)s) AND t.Day_Cat = %(timeCat)s
             AND MAKETIME ( %(hour)s,%(minute)s,%(sec)s ) <= ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s))
         ORDER BY TIMESTAMPDIFF(SECOND, ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s)), MAKETIME ( %(hour)s,%(minute)s,%(sec)s ) ) DESC
         LIMIT 1
@@ -240,7 +240,7 @@ class Db:
         
         SELECT jse.Line_ID, j.Stop_ID, j.Stop_number
         FROM JourneyPatternID_StopID as j, JPID_LineID_Start_End as jse
-        WHERE j.At_Stop = 1 AND (j.Stop_ID = %(stop1)s OR j.Stop_ID = %(stop2)s ) 
+        WHERE (j.Stop_ID = %(stop1)s OR j.Stop_ID = %(stop2)s ) 
             AND j.Journey_Pattern_ID = %(jpid)s AND jse.Journey_Pattern_ID = j.Journey_Pattern_ID
         ORDER BY j.Stop_number ASC
         
