@@ -36,10 +36,15 @@ $(document).ready(function() {
 		
 		$("#selectRouteAndSearchPreference").show(700);
 		$("#searchMapDiv").show(700);
+		
+		clearBusTimeaAndPrediction();
+		
+		
     });
 	
 	// Return Home Button2
     $("#returnHomeButton2").click(function(){
+    	
         $("#selectSourceDestDiv").hide(700);
 		$("#selectDirectionDiv").hide(700);
 		$("#googleMapDiv").hide(700);
@@ -47,6 +52,9 @@ $(document).ready(function() {
 		
 		$("#selectRouteAndSearchPreference").show(700);
 		$("#searchMapDiv").show(700);
+		
+		clearBusTimeaAndPrediction();
+		
     });
 	
 	// Toggle the direction options after first form
@@ -298,6 +306,14 @@ function getTimeToArrive(arrival, current) {
 	var min = arrivalMin - currentMin;
 	
 	return (hour + min).toString();
+	
+}
+
+//clear bus time and prediction
+function clearBusTimeaAndPrediction() {
+	
+	$("#travelTimeDiv").html("");
+	$("#travelPriceDiv").html("");
 	
 }
 
