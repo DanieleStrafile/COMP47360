@@ -123,6 +123,11 @@ $(document).ready(function() {
 	
 	// 'GET' request for Time Estimation
 	$('#selectSourceDestFrom').ajaxForm(function() {
+		
+		document.getElementById("travelTimeDiv").innerHTML = "";
+		document.getElementById("travelPriceDiv").innerHTML = "";
+		
+		$("#loader").addClass("loader");
 
 		var source;
 		var destination;
@@ -144,6 +149,7 @@ $(document).ready(function() {
 		var dateTime = $('#datepicker').datepicker('getDate');
 		
 		getTravelTime(lineid, jpid,source,destination,dateTime);
+		
 		
 	});
 	
@@ -250,8 +256,10 @@ function getTravelTime(lineid, jpid, source, destination, dateTime) {
 		} else {
 			
 			$("#travelTimeDiv").html("Bus does not run on this day");
+			
 		}
 	});
+	
 }
 
 
@@ -267,8 +275,10 @@ function getTravelTimewithTimetable(lineid, jpidTruncated, srcStop, destStop, ho
 		var timeToArriveInMins = getTimeToArrive(timeBusArrives, currentTime);
 		var timeFromSourceToDestInMins = parseInt(timeFromSourceToDest/60);
 		
-		$("#travelTimeDiv").html("The " + lineid +  "  will arrive at " + timeBusArrives + ".<BR>" + 
-				"<BR>Your Travel time will be " + timeFromSourceToDestInMins + "Mins <BR><BR>");
+		$("#travelTimeDiv").html("The <b>" + lineid +  "</b>  will arrive at <b>" + timeBusArrives + "</b>.<BR>" + 
+				"<BR>Your Travel time will be <b>" + timeFromSourceToDestInMins + "Mins</b> <BR><BR>").promise().done(function(){
+			$("#loader").removeClass("loader");
+		});
 	});
 }
 
@@ -280,7 +290,7 @@ function getPricing(jpid, stop1, stop2, direction) {
 		
 		console.log(data);
 		
-		options = "Prices : <BR>";
+		options = "<b>Prices</b> : <BR>";
 		
 		_.each(data, function(value, key) {
 			
@@ -290,6 +300,7 @@ function getPricing(jpid, stop1, stop2, direction) {
 		
 		$("#travelPriceDiv").html(options);
 	});
+	
 }
 	
 	

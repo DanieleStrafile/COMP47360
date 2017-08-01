@@ -31,6 +31,7 @@
 .selectDirectionText {
 	text-align: center;
 	margin: auto;
+	margin-top: 30px;
 }
 
 .travelTimeDiv {
@@ -45,4 +46,37 @@
 
 .GoogleMapDiv {
 	padding-bottom: 50px;
+}
+
+.travelTimeDiv {
+	text-align: center;
+	font-size: 20px;
+}
+
+.travelPriceDiv {
+	text-align: center;
+	font-size: 20px;
+}
+
+.loader {
+  display: block;
+  margin: 0 auto;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 200px;
+  height: 200px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+	margin-top: 110px;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
