@@ -13,7 +13,7 @@ class Db:
     def __init__(self):
         """Connect to database"""
 
-        self.conn = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format(name, password, rds_host,
+        self.conn = create_engine("mysql+pymysql://{}:{}@{}:{}/{}".format(name, password, rds_host,
                                                                                  port, db_name), echo=True)
 
     def disconnect(self):
