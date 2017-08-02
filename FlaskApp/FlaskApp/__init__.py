@@ -1,8 +1,8 @@
 import json
 from flask import Flask, render_template
 from flask_cors import CORS
-from database import Db
-from model import get_travel_time
+from FlaskApp.database import Db
+from FlaskApp.model import get_travel_time
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -149,4 +149,4 @@ def get_prices(article_url):
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0', port=80)
+    app.run(debug=False)

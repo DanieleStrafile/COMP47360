@@ -1,7 +1,7 @@
 import pickle
 import pandas as pd
-
-from static.Data_Structures import timeCategoryToSpeed
+import os
+from FlaskApp.static.Data_Structures import timeCategoryToSpeed
 
 
 def get_travel_time(journey_pattern_id, source, destination, date_time):
@@ -20,6 +20,7 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
     print("this is journey_pattern_id", journey_pattern_id)
     print("this is day", day)
     print("this is speed", speed)
+    print(os.path.dirname(os.path.realpath(__file__)))
 
     # Get model's predictions
     source_time = get_prediction(journey_pattern_id, source, speed, day)
@@ -44,7 +45,11 @@ def get_prediction(journey_pattern_id, distance, speed, day):
 
     df = pd.DataFrame(query)
 
-    with open('static/Models/' + journey_pattern_id + '.sav', 'rb') as handle:
+    absolute_path = os.path.dirname(os.path.realpath(__file__))
+    absolute_path = absolute_path.replace('\\', '/')
+    
+
+    with open( os.path.abspath(absolute_path + '/static/Models/' + journey_pattern_id + '.sav'), 'rb') as handle:
         lm = pickle.load(handle)
         
         try:

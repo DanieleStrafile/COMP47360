@@ -234,7 +234,8 @@ function getTravelTime(lineid, jpid, source, destination, dateTime) {
 		
 			//make jpid in the following form "0013000%" so that we can use the LIKE operator in mysql
 			var jpidTruncated = String(jpid);
-			jpidTruncated = (jpidTruncated.slice(0,-1)) + "%";
+			//we dont need 25 in %25 but apache decodes %25 as % and % gives a 400 error so we have to go for this solution
+			jpidTruncated = (jpidTruncated.slice(0,-1)) + "%25";
 			
 			//get label "Mon-Fr" or "Sat" or "Sun" from datetime
 			var timeCat = convertDateTimetoTimeCat(dateTime);
