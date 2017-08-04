@@ -91,17 +91,30 @@ def display_prices(jpid, stop1, stop2, direction):
         stop_number1 = int(stop_number1) + 1
         stop_number2 = int(df.loc[1,"Stop_number"]) + 1
         
+        try:
+            #change direction parsing for url but sometimes o and I are switched
+            #must account for this and try both ways
+            if direction == '0' or direction == 0:
+                direction = 'I'
+            else:
+                direction = 'O'
         
-        #change direction parsing for url
-        if direction == '0' or direction == 0:
-            direction = 'I'
-        else:
-            direction = 'O'
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
+            print('XXXXXXXXXXXXXXXXX TESTING YOU FOOLS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+            print (article_url)
+            return get_prices(article_url)
         
-        article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
-
-        return get_prices(article_url)
-    
+        except Exception as e: 
+            if direction == '0' or direction == 0:
+                direction = 'O'
+            else:
+                direction = 'I'
+        
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
+            print('XXXXXXXXXXXXXXXXX TESTING YOU FOOLS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
+            print (article_url)
+            return get_prices(article_url)
+        
     except Exception as e:
         
         print("error with parsing")
