@@ -89,7 +89,7 @@ def display_prices(jpid, stop1, stop2, direction):
         
         stop_number1 = df.loc[0,"Stop_number"]
         stop_number1 = int(stop_number1) + 1
-        stop_number2 = df.loc[1,"Stop_number"]
+        stop_number2 = int(df.loc[1,"Stop_number"]) + 1
         
         
         #change direction parsing for url
@@ -151,4 +151,4 @@ def get_prices(article_url):
 
 
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True)

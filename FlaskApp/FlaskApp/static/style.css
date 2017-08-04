@@ -23,7 +23,7 @@
 }
 
 .specialWidthSelectMenu {
-	width: 240px;
+	width: 100%;
     text-overflow: ellipsis;
 
 }
@@ -79,4 +79,16 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+@media (min-width: 992px) {
+    .datePicker{
+        font-size: 0.75em;
+    }
+}
+
+@media (min-width: 1200px) {
+    .datePicker{
+        font-size: 0.95em;
+    }
 }
