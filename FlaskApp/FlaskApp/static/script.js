@@ -17,9 +17,7 @@ $(document).ready(function() {
 	$("#selectDirectionDiv").hide();
 	$("#googleMapDiv").hide();
 	$("#sourceDestTimeGoDiv").hide();
-	$("#searchByFare").hide();
-	$("#searchByWalkingDistance").hide();
-	$("#searchByArrivalTime").hide();
+	$("#mapSearchPreferenceDiv").hide();
 	
 	// Return Home Button
     $("#returnHomeButton").click(function(){
@@ -27,29 +25,29 @@ $(document).ready(function() {
 		$("#selectDirectionDiv").hide(700);
 		$("#googleMapDiv").hide(700);
 		$("#sourceDestTimeGoDiv").hide(700);
-		document.getElementById("displayRouteInNavBarForMap").innerHTML = "";
 		$("#loader").removeClass("loader");
+		$("#mapSearchPreferenceDiv").hide();
 
 		$("#selectRouteAndSearchPreference").show(700);
-		$("#searchMapDiv").show(700);
 
 		clearBusTimeaAndPrediction();
     });
-
-	// Return Home Button2
-    $("#returnHomeButton2").click(function(){
-
+	
+	// Search By Map Button
+    $("#selectMapSearch").click(function(){
         $("#selectSourceDestDiv").hide(700);
 		$("#selectDirectionDiv").hide(700);
 		$("#googleMapDiv").hide(700);
 		$("#sourceDestTimeGoDiv").hide(700);
-
-		$("#selectRouteAndSearchPreference").show(700);
-		$("#searchMapDiv").show(700);
-
-		clearBusTimeaAndPrediction();
-
+		$("#loader").removeClass("loader");
+		$("#selectRouteAndSearchPreference").hide(700);
+		
+		// Show wanted div for search options
+		$("#mapSearchPreferenceDiv").show(700);
     });
+	
+	
+
 
 	// Toggle the direction options after first form
     $("#firstForm").click(function() {
@@ -67,15 +65,14 @@ $(document).ready(function() {
 
 		//hide other divs
 		$("#selectRouteAndSearchPreference").hide(700);
-		$("#searchMapDiv").hide(700);
     });
 
 	// Toggle the Map Option after first form
     $("#selectMapSearch").click(function(){
-		$("#selectRouteAndSearchPreference").hide(700);
-		$("#selectDirectionDiv").hide(700);
-		$("#sourceDestTimeGoDiv").hide(700);
-		$("#googleMapDiv").show(1000, function() {initialize();});
+		
+		$("#searchByFare").show(700);
+		$("#searchByWalkingDistance").show(700);
+		$("#searchByArrivalTime").show(700);
     });
 
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 0
@@ -319,6 +316,7 @@ function clearBusTimeaAndPrediction() {
 
 	$("#travelTimeDiv").html("");
 	$("#travelPriceDiv").html("");
+	$("#loader").removeClass("loader");
 
 }
 

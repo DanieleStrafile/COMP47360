@@ -7,6 +7,38 @@ var busStops = [];
 // For the array which must draw the bus polyline between stops
 var waypts = [];
 
+
+$(document).ready(function() {
+	
+	$("#searchByFare").click(function(){
+		$("#selectRouteAndSearchPreference").hide(700);
+		$("#selectDirectionDiv").hide(700);
+		$("#sourceDestTimeGoDiv").hide(700);
+		$("#mapSearchPreferenceDiv").hide(700);
+		
+		$("#googleMapDiv").show(1000, function() {initialize();});
+    });
+	
+	$("#searchByWalkingDistance").click(function(){
+		$("#selectRouteAndSearchPreference").hide(700);
+		$("#selectDirectionDiv").hide(700);
+		$("#sourceDestTimeGoDiv").hide(700);
+		$("#mapSearchPreferenceDiv").hide(700);
+		
+		$("#googleMapDiv").show(1000, function() {initialize();});
+    });
+	
+	$("#searchByArrivalTime").click(function(){
+		$("#selectRouteAndSearchPreference").hide(700);
+		$("#selectDirectionDiv").hide(700);
+		$("#sourceDestTimeGoDiv").hide(700);
+		$("#mapSearchPreferenceDiv").hide(700);
+		
+		$("#googleMapDiv").show(1000, function() {initialize();});
+    });
+		
+});
+
 // -------------------------------------------------------------------------------------------------- //
 // FOR GOOGLE MAP INNOVATIVE FEATURE
 
