@@ -61,14 +61,13 @@ def retrieve_gps(jpid):
 @app.route('/_getTravelTime/<jpid>/<source>/<destination>/<dateTime>', methods=['GET'])
 def get_model_answer(jpid, source, destination, dateTime):
     """Get estimated travel time"""
-    
+
     distances = Db().get_distance(jpid, source, destination)
 
     travel_time = get_travel_time(jpid, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
-    
-    print("travel time", travel_time)
 
     return json.dumps(travel_time)
+
 
 @app.route('/get_bus_time/<jpidTruncated>/<srcStop>/<destStop>/<hour>/<minute>/<sec>/<sourceTime>/<timeCat>')
 def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
@@ -100,8 +99,7 @@ def display_prices(jpid, stop1, stop2, direction):
                 direction = 'O'
         
             article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
-            print('XXXXXXXXXXXXXXXXX TESTING YOU FOOLS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-            print (article_url)
+
             return get_prices(article_url)
         
         except Exception as e: 
@@ -111,14 +109,11 @@ def display_prices(jpid, stop1, stop2, direction):
                 direction = 'I'
         
             article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
-            print('XXXXXXXXXXXXXXXXX TESTING YOU FOOLS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
-            print (article_url)
+
             return get_prices(article_url)
         
     except Exception as e:
         
-        print("error with parsing")
-        print(e)
         pass
 
 #this is a helper method for function display_prices

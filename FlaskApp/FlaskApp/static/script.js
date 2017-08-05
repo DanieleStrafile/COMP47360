@@ -6,8 +6,10 @@ var lineid;
 var pref;
 // Why do we need this??? (explain here)
 var jpid;
-
+// Organizing the 3 best map routes by arrival time
 var timeBusArrives;
+// For organizing map by prices
+var adultFare;
 
 
 $(document).ready(function() {
@@ -237,57 +239,59 @@ function getSourceDestination(jpid,direction,pref) {
 
 // Display in a small box when the bus will arrive (timetable) and how long it will take to arrive to destination from source
 function getTravelTime(source, destination, dateTime) {
-	
-	console.log("Got to script.js getTravelTime func");
-		
-    $.getJSON( $SCRIPT_ROOT + "/_getTravelTime/" + jpid + "/" + source + "/" + destination + "/" + dateTime, function(info) {
 
-		console.log("Got inside GET in getTravelTime func");
-		
-		
-		//seconds it takes for bus to travel from terminus to source chosen by user
-		var timeFromTerminusToSource = info[1];
+	$.ajax({
+	  dataType: "json",
+	  url: $SCRIPT_ROOT + "/_getTravelTime/" + jpid + "/" + source + "/" + destination + "/" + dateTime,
+	  async: false, 
+	  success: function(info) {
 
-    	//seconds it takes for bus to travel from source to destination chosen by user
-		var timeFromSourceToDest = info[0] - info[1];
+		  //seconds it takes for bus to travel from terminus to source chosen by user
+			var timeFromTerminusToSource = info[1];
 
-		if (isNumeric(info[0]) && isNumeric(info[1])) {
+			//seconds it takes for bus to travel from source to destination chosen by user
+			var timeFromSourceToDest = info[0] - info[1];
 
-			//make jpid in the following form "0013000%" so that we can use the LIKE operator in mysql
-  			var jpidTruncated = String(jpid);
- 			jpidTruncated = (jpidTruncated.slice(0,-1)) + "%";
- 			//we dont need 25 in %25 but apache decodes %25 as % and % gives a 400 error so we have to go for this solution
- 			jpidTruncated = (jpidTruncated.slice(0,-1)) + "%25";
+			if (isNumeric(info[0]) && isNumeric(info[1])) {
 
-  			//get label "Mon-Fr" or "Sat" or "Sun" from datetime
-  			var timeCat = convertDateTimetoTimeCat(dateTime);
+				//make jpid in the following form "0013000%" so that we can use the LIKE operator in mysql
+				var jpidTruncated = String(jpid);
+				jpidTruncated = (jpidTruncated.slice(0,-1)) + "%";
+				//we dont need 25 in %25 but apache decodes %25 as % and % gives a 400 error so we have to go for this solution
+				jpidTruncated = (jpidTruncated.slice(0,-1)) + "%25";
 
-			//display travel time
-			getTravelTimewithTimetable(jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
-					dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest );
+				//get label "Mon-Fr" or "Sat" or "Sun" from datetime
+				var timeCat = convertDateTimetoTimeCat(dateTime);
 
-			//display pricing
-			//jpid.charAt(4) is the direction already encoded within jpid
+				//display travel time
+				getTravelTimeWithTimetable(jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
+						dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest);
 
-			getPricing(jpid, source, destination, jpid.charAt(4));
+				//display pricing
+				//jpid.charAt(4) is the direction already encoded within jpid
 
-		} else {
+				getPricing(jpid, source, destination, jpid.charAt(4));
 
-			$("#travelTimeDiv").html("Bus does not run on this day");
+			} else {
 
-		}
+				$("#travelTimeDiv").html("Bus does not run on this day");
+
+			}
+	  }
 	});
-
 }
 
 
 // Give the time it will take for the bus to arrive at the user's location
-function getTravelTimewithTimetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest ) {
+function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest) {
+	
+	$.ajax({
+	  dataType: "json",
+	  url: $SCRIPT_ROOT + "/get_bus_time/"  + jpidTruncated + "/" + srcStop + "/" + destStop + "/" + hour + "/" + minute + "/"
+			+ sec + "/" + sourceTime + "/" + timeCat,
+	  async: false, 
+	  success: function(data) {
 
-	$.getJSON( $SCRIPT_ROOT + "/get_bus_time/"  + jpidTruncated + "/" + srcStop + "/" + destStop + "/" + hour + "/" + minute + "/"
-			+ sec + "/" + sourceTime + "/" + timeCat, function(data) {
-		
-		console.log("Got to func which changes timeBusArrives");
 		
 		var currentTime = new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
 		timeBusArrives = data[0].Time_bus_arrives;
@@ -299,24 +303,33 @@ function getTravelTimewithTimetable(jpidTruncated, srcStop, destStop, hour, minu
 				"<BR>Your Travel time will be <b>" + timeFromSourceToDestInMins + "Mins</b> <BR><BR>").promise().done(function(){
 			$("#loader").removeClass("loader");
 		});
+		
+	}
 	});
 }
 
 function getPricing(jpid, stop1, stop2, direction) {
 
 	info = ["Adult Cash", "Adult Leap", "Child Cash (Under 16)", "Child Leap (Under 19)", "School Hours Cash", "School Hours Leap"]
-
-	$.getJSON( $SCRIPT_ROOT + "/getPricing/" + jpid + "/" + stop1 + "/" + stop2 + "/" + direction, function(data) {
+		
+	$.ajax({
+	  dataType: "json",
+	  url: $SCRIPT_ROOT + "/getPricing/" + jpid + "/" + stop1 + "/" + stop2 + "/" + direction,
+	  async: false, 
+	  success: function(data) {
 
 		options = "<b>Prices</b> : <BR>";
 
 		_.each(data, function(value, key) {
-
+			
+			// For map.js file when getting cheapest journeys			
+			if (key == "Adult Leap") adultFare = value;
 			options += value + " : " + key + "<BR>";
-
 		});
 
 		$("#travelPriceDiv").html(options);
+	}
+		
 	});
 
 }

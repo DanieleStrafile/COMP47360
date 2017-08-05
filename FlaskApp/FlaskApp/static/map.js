@@ -1,10 +1,10 @@
-// For the polygon lines drawing the bus routes on Google Map
+// The polygon lines drawing the bus routes on Google Map
 var flightPath = [];
-// For the user's map markers
+// The user's map markers
 var markersArray = [];
-// For google markers representing bus stops
+// Google markers representing bus stops
 var busStops = [];
-// For the array which must draw the bus polyline between stops
+// The array which must draw the bus polyline between stops
 var waypts = [];
 // For when the user selects a search preference for the map
 var searchPreference;
@@ -83,6 +83,7 @@ function placeMarker(location, map) {
 	markersArray.push(marker);
 }
 
+
 //find best possible route jpid, get coords of its stops and display them
 function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 
@@ -91,21 +92,21 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 		// For displaying the route number, or displaying an error
 		var result;
 				
-		// Get the 3 best routes based on search preference
+		// Get the 3 best routes based on search preference --> 2D array [[info, JPID], [...]]
 		bestRoutes = bestJourneysBySearchPreference(data);
 
-			_.forEach(bestRoutes, function(journeys) {
-				jpid = journeys.JPID_Source;
-				sourceStop = journeys.STOP_ID_Source;
-				destStop = journeys.Stop_ID_Destination;
-				walkingDistance = journeys.Minimum_Total_Walking;
-				drawMapRoute(map);
-				console.log(jpid);
-
-			});
-
+		for (var i = 0; i < bestRoutes.length; i++) {
+			
+			information = bestRoutes[i][0];
+			jpid = bestRoutes[i][1];
+			
+			drawMapRoute(map);
+		}
+				
+			
 	});
 }
+
 
 function bestJourneysBySearchPreference(data) {
 			
@@ -122,34 +123,74 @@ function bestJourneysBySearchPreference(data) {
 }
 
 
-function getThreeRoutesBasedOnArrivalTime(mapData) {
+function getThreeRoutesBasedOnFare(mapData) {
 	
+	var routes = [];
 	
 	_.forEach(mapData, function(journey) {
 						
-		// Reference Global from script.js
+		// Reference Global 'jpid' from script.js
+		jpid = journey.JPID_Source;
+		var source = journey.STOP_ID_Source;
+		var destination = journey.Stop_ID_Destination;
+				
+		// Function from script.js
+		getPricing(jpid, source, destination, jpid.charAt(4))
+		
+		routes.push([adultFare, jpid])
+	});
+		
+	routes.sort(sortFunction);
+	
+	return [routes[0], routes[1], routes[2]];
+	
+}
+
+
+function getThreeRoutesBasedOnArrivalTime(mapData) {
+	
+	var routes = [];
+	
+	_.forEach(mapData, function(journey) {
+						
+		// Reference Global 'jpid' from script.js
 		jpid = journey.JPID_Source;
 		var source = journey.STOP_ID_Source;
 		var destination = journey.Stop_ID_Destination;
 		var dateTime = new Date();
+				
 		// Function from script.js
 		getTravelTime(source, destination, dateTime);
 
-		console.log(timeBusArrives);	
-
+		console.log(jpid + " Arrives at: " + timeBusArrives);
+		
+		routes.push([timeBusArrives, jpid])
 	});
+		
+	routes.sort(sortFunction);
+	
+	return [routes[0], routes[1], routes[2]];
+}
 
-	debugger;
-	return 0;
+// For getting the cheapest journey and the quickest journeys to arrive
+function sortFunction(a, b) {
+    if (a[0] === b[0]) {
+        return 0;
+    }
+    else {
+        return (a[0] < b[0]) ? -1 : 1;
+    }
 }
 
 
 function getThreeRoutesBasedOnWalkingDistance(data) {
+	
 	// It's already ordered by total walking so just take first three routes
-	var routes = [data[0], data[1], data[2]];
+	var routes = [[data[0].Minimum_Total_Walking, data[0].JPID_Source], [data[1].Minimum_Total_Walking, data[1].JPID_Source], [data[2].Minimum_Total_Walking, data[2].JPID_Source]];
 		
 	return routes;
 }
+
 
 function drawMapRoute(map) {
 
@@ -227,3 +268,5 @@ function drawBusStops(stops, map) {
 		busStops[busStops.length - 1].push(marker);
 	  }
 }
+
+

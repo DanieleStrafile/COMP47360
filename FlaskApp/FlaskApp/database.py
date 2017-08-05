@@ -262,7 +262,6 @@ class Db:
         
         #delete everything after and incuding .  e.g. 10:40:00.000000000 will become 10:40:00
         self.df.Time_bus_arrives = self.df.Time_bus_arrives.apply(lambda x : re.sub('\..*', '', x))
-        print(self.df)
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
     
