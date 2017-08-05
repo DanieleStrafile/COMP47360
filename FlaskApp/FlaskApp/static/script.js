@@ -55,7 +55,7 @@ $(document).ready(function() {
 		$("#mapSearchPreferenceDiv").hide(700);
 		searchPreference = "searchByFare"
 		
-		$("#googleMapDiv").show(1000, function() {initialize();});
+		$("#googleMapDiv").show(700, function() {initialize();});
     });
 	
 	$("#searchByWalkingDistance").click(function(){
@@ -65,7 +65,7 @@ $(document).ready(function() {
 		$("#mapSearchPreferenceDiv").hide(700);
 		searchPreference = "searchByWalkingDistance"
 		
-		$("#googleMapDiv").show(1000, function() {initialize();});
+		$("#googleMapDiv").show(700, function() {initialize();});
     });
 	
 	$("#searchByArrivalTime").click(function(){
@@ -75,7 +75,7 @@ $(document).ready(function() {
 		$("#mapSearchPreferenceDiv").hide(700);
 		searchPreference = "searchByArrivalTime"
 		
-		$("#googleMapDiv").show(1000, function() {initialize();});
+		$("#googleMapDiv").show(700, function() {initialize();});
     });
 	
 	
@@ -137,14 +137,15 @@ $(document).ready(function() {
 	$('#stopIdOrAddress').ajaxForm(function() {
 		// This is just to disable the form's usual function
 	});
+	
+	$("#lastForm").click(function() {
+		$("#loader").addClass("loader");
+		document.getElementById("travelTimeDiv").innerHTML = "";
+		document.getElementById("travelPriceDiv").innerHTML = "";
+	});
 
 	// 'GET' request for Time Estimation
 	$('#selectSourceDestFrom').ajaxForm(function() {
-
-		document.getElementById("travelTimeDiv").innerHTML = "";
-		document.getElementById("travelPriceDiv").innerHTML = "";
-
-		$("#loader").addClass("loader");
 
 		var source;
 		var destination;

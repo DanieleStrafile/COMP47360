@@ -17,6 +17,7 @@ function initialize() {
 		zoom: 12,
 		center: myLatlng,
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
+		disableDefaultUI: true
 		}
 
 	var source;
@@ -161,8 +162,6 @@ function getThreeRoutesBasedOnArrivalTime(mapData) {
 				
 		// Function from script.js
 		getTravelTime(source, destination, dateTime);
-
-		console.log(jpid + " Arrives at: " + timeBusArrives);
 		
 		routes.push([timeBusArrives, jpid])
 	});
