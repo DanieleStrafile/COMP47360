@@ -6,41 +6,9 @@ var markersArray = [];
 var busStops = [];
 // For the array which must draw the bus polyline between stops
 var waypts = [];
+// For when the user selects a search preference for the map
+var searchPreference;
 
-
-$(document).ready(function() {
-	
-	$("#searchByFare").click(function(){
-		$("#selectRouteAndSearchPreference").hide(700);
-		$("#selectDirectionDiv").hide(700);
-		$("#sourceDestTimeGoDiv").hide(700);
-		$("#mapSearchPreferenceDiv").hide(700);
-		
-		$("#googleMapDiv").show(1000, function() {initialize();});
-    });
-	
-	$("#searchByWalkingDistance").click(function(){
-		$("#selectRouteAndSearchPreference").hide(700);
-		$("#selectDirectionDiv").hide(700);
-		$("#sourceDestTimeGoDiv").hide(700);
-		$("#mapSearchPreferenceDiv").hide(700);
-		
-		$("#googleMapDiv").show(1000, function() {initialize();});
-    });
-	
-	$("#searchByArrivalTime").click(function(){
-		$("#selectRouteAndSearchPreference").hide(700);
-		$("#selectDirectionDiv").hide(700);
-		$("#sourceDestTimeGoDiv").hide(700);
-		$("#mapSearchPreferenceDiv").hide(700);
-		
-		$("#googleMapDiv").show(1000, function() {initialize();});
-    });
-		
-});
-
-// -------------------------------------------------------------------------------------------------- //
-// FOR GOOGLE MAP INNOVATIVE FEATURE
 
 function initialize() {
 
@@ -122,8 +90,11 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 
 		// For displaying the route number, or displaying an error
 		var result;
+				
+		// Get the 3 best routes based on search preference
+		bestRoutes = bestJourneysBySearchPreference(data);
 
-			_.forEach(data, function(journeys) {
+			_.forEach(bestRoutes, function(journeys) {
 				jpid = journeys.JPID_Source;
 				sourceStop = journeys.STOP_ID_Source;
 				destStop = journeys.Stop_ID_Destination;
@@ -136,6 +107,49 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 	});
 }
 
+function bestJourneysBySearchPreference(data) {
+			
+	if (searchPreference == "searchByWalkingDistance") {
+		// The total walking involved
+		return getThreeRoutesBasedOnWalkingDistance(data);
+	} else if (searchPreference == "searchByFare") {
+		// How much it's going to cost
+		return getThreeRoutesBasedOnFare(data); 
+	} else {
+		// What time each bus/jpid arrives at the bus stop
+		return getThreeRoutesBasedOnArrivalTime(data);
+	}
+}
+
+
+function getThreeRoutesBasedOnArrivalTime(mapData) {
+	
+	
+	_.forEach(mapData, function(journey) {
+						
+		// Reference Global from script.js
+		jpid = journey.JPID_Source;
+		var source = journey.STOP_ID_Source;
+		var destination = journey.Stop_ID_Destination;
+		var dateTime = new Date();
+		// Function from script.js
+		getTravelTime(source, destination, dateTime);
+
+		console.log(timeBusArrives);	
+
+	});
+
+	debugger;
+	return 0;
+}
+
+
+function getThreeRoutesBasedOnWalkingDistance(data) {
+	// It's already ordered by total walking so just take first three routes
+	var routes = [data[0], data[1], data[2]];
+		
+	return routes;
+}
 
 function drawMapRoute(map) {
 
@@ -146,7 +160,7 @@ function drawMapRoute(map) {
 		_.forEach(data, function(stop) {
 			tempJourneyArray.push({"lat": stop.Latitude, "lng": stop.Longitude});
 		});
-
+		// Add new array of lat/long objects to the 2d array
 		waypts.push(tempJourneyArray);
 
 	// Define the symbol, using one of the predefined paths ('CIRCLE')
@@ -209,7 +223,7 @@ function drawBusStops(stops, map) {
 			center: stops[i],
 			radius: 50
 		  });
-
+		// Add the next bus stop to the 2d array
 		busStops[busStops.length - 1].push(marker);
 	  }
 }

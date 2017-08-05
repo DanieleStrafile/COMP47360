@@ -7,10 +7,10 @@ var pref;
 // Why do we need this??? (explain here)
 var jpid;
 
+var timeBusArrives;
+
 
 $(document).ready(function() {
-
-	initialize();
 	
 	// Hide all items not needed on startup
 	$("#selectSourceDestDiv").hide();
@@ -46,6 +46,36 @@ $(document).ready(function() {
 		$("#mapSearchPreferenceDiv").show(700);
     });
 	
+		$("#searchByFare").click(function(){
+		$("#selectRouteAndSearchPreference").hide(700);
+		$("#selectDirectionDiv").hide(700);
+		$("#sourceDestTimeGoDiv").hide(700);
+		$("#mapSearchPreferenceDiv").hide(700);
+		searchPreference = "searchByFare"
+		
+		$("#googleMapDiv").show(1000, function() {initialize();});
+    });
+	
+	$("#searchByWalkingDistance").click(function(){
+		$("#selectRouteAndSearchPreference").hide(700);
+		$("#selectDirectionDiv").hide(700);
+		$("#sourceDestTimeGoDiv").hide(700);
+		$("#mapSearchPreferenceDiv").hide(700);
+		searchPreference = "searchByWalkingDistance"
+		
+		$("#googleMapDiv").show(1000, function() {initialize();});
+    });
+	
+	$("#searchByArrivalTime").click(function(){
+		$("#selectRouteAndSearchPreference").hide(700);
+		$("#selectDirectionDiv").hide(700);
+		$("#sourceDestTimeGoDiv").hide(700);
+		$("#mapSearchPreferenceDiv").hide(700);
+		searchPreference = "searchByArrivalTime"
+		
+		$("#googleMapDiv").show(1000, function() {initialize();});
+    });
+	
 	
 
 
@@ -61,7 +91,7 @@ $(document).ready(function() {
 		//get choice between stopid or address chosen by user
 		pref = $('input[name=inlineRadioOptions]:checked').val();
 
-		getFirstandLastAddress(lineid);
+		getFirstandLastAddress();
 
 		//hide other divs
 		$("#selectRouteAndSearchPreference").hide(700);
@@ -86,8 +116,6 @@ $(document).ready(function() {
         //set jpid here
         jpid = $(this).val() + "";
 
-        console.log("jpid is " + jpid);
-
     });
 
 	// Toggle the Address/Stop ID drop down menu Options after picking direction 1
@@ -100,8 +128,6 @@ $(document).ready(function() {
 
         //set jpid here
         jpid = $(this).val() + "";
-
-        console.log("jpid is " + jpid);
 
     });
 
@@ -137,12 +163,13 @@ $(document).ready(function() {
 
 		var dateTime = $('#datepicker').datepicker('getDate');
 
-		getTravelTime(lineid, jpid,source,destination,dateTime);
+		getTravelTime(source, destination, dateTime);
 
 
 	});
 
 	dropDown();
+	
 });
 
 
@@ -157,9 +184,9 @@ function dropDown() {
 		lineids = data.lineids;
 		var options = "";
 
-		_.forEach(lineids, function(lineid) {
+		_.forEach(lineids, function(data) {
 
-			options += "<option>"+ lineid.Line_ID +"</option>";
+			options += "<option>"+ data.Line_ID +"</option>";
 
 		})
 
@@ -169,7 +196,7 @@ function dropDown() {
 
 
 // Populate the start and destination in second page with some addresses, i.e. from A to B and from B to A
-function getFirstandLastAddress(lineid) {
+function getFirstandLastAddress() {
 
 	var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getStartEndAddresses/" + lineid, function(data) {
 
@@ -209,10 +236,15 @@ function getSourceDestination(jpid,direction,pref) {
 // FOR DISPLAYING THE MODEL'S PREDICTIONS
 
 // Display in a small box when the bus will arrive (timetable) and how long it will take to arrive to destination from source
-function getTravelTime(lineid, jpid, source, destination, dateTime) {
-
+function getTravelTime(source, destination, dateTime) {
+	
+	console.log("Got to script.js getTravelTime func");
+		
     $.getJSON( $SCRIPT_ROOT + "/_getTravelTime/" + jpid + "/" + source + "/" + destination + "/" + dateTime, function(info) {
 
+		console.log("Got inside GET in getTravelTime func");
+		
+		
 		//seconds it takes for bus to travel from terminus to source chosen by user
 		var timeFromTerminusToSource = info[1];
 
@@ -231,16 +263,11 @@ function getTravelTime(lineid, jpid, source, destination, dateTime) {
   			var timeCat = convertDateTimetoTimeCat(dateTime);
 
 			//display travel time
-			getTravelTimewithTimetable(lineid, jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
+			getTravelTimewithTimetable(jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
 					dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest );
 
 			//display pricing
 			//jpid.charAt(4) is the direction already encoded within jpid
-
-			console.log(jpid);
-			console.log(source);
-			console.log(destination);
-			console.log(jpid.charAt(4));
 
 			getPricing(jpid, source, destination, jpid.charAt(4));
 
@@ -255,13 +282,15 @@ function getTravelTime(lineid, jpid, source, destination, dateTime) {
 
 
 // Give the time it will take for the bus to arrive at the user's location
-function getTravelTimewithTimetable(lineid, jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest ) {
+function getTravelTimewithTimetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest ) {
 
 	$.getJSON( $SCRIPT_ROOT + "/get_bus_time/"  + jpidTruncated + "/" + srcStop + "/" + destStop + "/" + hour + "/" + minute + "/"
 			+ sec + "/" + sourceTime + "/" + timeCat, function(data) {
-
+		
+		console.log("Got to func which changes timeBusArrives");
+		
 		var currentTime = new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
-		var timeBusArrives = data[0].Time_bus_arrives;
+		timeBusArrives = data[0].Time_bus_arrives;
 
 		var timeToArriveInMins = getTimeToArrive(timeBusArrives, currentTime);
 		var timeFromSourceToDestInMins = parseInt(timeFromSourceToDest/60);
@@ -278,8 +307,6 @@ function getPricing(jpid, stop1, stop2, direction) {
 	info = ["Adult Cash", "Adult Leap", "Child Cash (Under 16)", "Child Leap (Under 19)", "School Hours Cash", "School Hours Leap"]
 
 	$.getJSON( $SCRIPT_ROOT + "/getPricing/" + jpid + "/" + stop1 + "/" + stop2 + "/" + direction, function(data) {
-
-		console.log(data);
 
 		options = "<b>Prices</b> : <BR>";
 
