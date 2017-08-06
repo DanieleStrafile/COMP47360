@@ -19,6 +19,7 @@ $(document).ready(function() {
 	$("#selectDirectionDiv").hide();
 	$("#googleMapDiv").hide();
 	$("#sourceDestTimeGoDiv").hide();
+	$("#timetableDiv").hide();
 	$("#mapSearchPreferenceDiv").hide();
 	
 	// Return Home Button
@@ -29,10 +30,22 @@ $(document).ready(function() {
 		$("#sourceDestTimeGoDiv").hide(700);
 		$("#loader").removeClass("loader");
 		$("#mapSearchPreferenceDiv").hide();
+	    	$("#timetableDiv").hide(700);
 
 		$("#selectRouteAndSearchPreference").show(700);
 
 		clearBusTimeaAndPrediction();
+    });
+	
+    //         Timetable Button
+    $("#showTimetables").click(function(){
+       	 	$("#selectRouteAndSearchPreference").hide(700);
+        	$("#selectSourceDestDiv").hide(700);
+		$("#selectDirectionDiv").hide(700);
+		$("#googleMapDiv").hide(700);
+		$("#sourceDestTimeGoDiv").hide(700);
+
+		$("#timetableDiv").show(700, function(){dropDownTimetable();});
     });
 	
 	// Search By Map Button
@@ -138,6 +151,18 @@ $(document).ready(function() {
 		// This is just to disable the form's usual function
 	});
 	
+	// 'GET' request for source and destination addresses after first form
+	$('#PickRouteTimetable').ajaxForm(function() {
+
+		// Transfrom data into array of objects
+         var data = $("#PickRouteTimetable :input").serializeArray();
+
+         var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getSelectedTimetable/" + data[0].value, function(timetables) {
+
+         console.log(timetables);
+         //just for testing
+    });
+	
 	$("#lastForm").click(function() {
 		$("#loader").addClass("loader");
 		document.getElementById("travelTimeDiv").innerHTML = "";
@@ -195,6 +220,26 @@ function dropDown() {
 
 		$("#form-control").html(options);
 	})
+}
+
+// Function to popilate the line id dropdown menu on the timetable page
+function dropDownTimetable() {
+
+// 'GET' request for timetable routes
+    var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getRoutes", function(data) {
+
+    lineids = data.lineids;
+    var options = "";
+
+    _.forEach(lineids, function(lineid) {
+
+        options += "<option>"+ lineid.Line_ID +"</option>";
+
+    })
+
+    $("#form-controltimetable").html(options);
+	})
+	;
 }
 
 
