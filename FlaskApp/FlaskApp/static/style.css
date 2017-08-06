@@ -68,7 +68,12 @@
   height: 200px;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
-	margin-top: 110px;
+  margin-top: 110px;
+}
+
+.loader2 {
+	display: block;
+	margin: 0 auto;
 }
 
 @-webkit-keyframes spin {
