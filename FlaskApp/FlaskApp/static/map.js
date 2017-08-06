@@ -52,11 +52,26 @@ function initialize() {
 			setTimeout(function(){// Get data and draw polylines
 			topThreeRoutes = getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());}, 1000);
 			
-			setTimeout(function(){// Make new infoWindow content
+			setTimeout(function(){
+				
+				// Convert the JPID into a Line ID
+				for (var i = 0; i < topThreeRoutes.length; i++) {
+					var temp = topThreeRoutes[i][1].slice(0,4);
+					if (temp.charAt(0) == "0") temp.replace(0, "");
+					if (temp.charAt(0) == "0") temp.replace(0, "");
+				}
+				
+				// Convert distance into km with one decimal point
+				if (searchPreference == "searchByWalkingDistance") {
+					for (var i = 0; i < topThreeRoutes.length; i++) {
+						topThreeRoutes[i][0] = topThreeRoutes[i][0].toFixed(1) + "km";
+					}
+				}
+				
 			infoWindow.setContent(
-			"<h3 style='color:#0014ff;'>" + topThreeRoutes[0][1] + "</h3><b>: " + topThreeRoutes[0][0] + "</b><BR>" + 
-			"<h3 style='color:#ffd800;'>" + topThreeRoutes[1][1] + "</h3><b>: " + topThreeRoutes[1][0] + "</b><BR>" + 
-			"<h3 style='color:#FF0000;'>" + topThreeRoutes[2][1] + "</h3><b>: " + topThreeRoutes[2][0] + "</b>");}, 1000);
+			"<h3 style='color:#0014ff;'>" + topThreeRoutes[0][1] + "</h3><h4>: " + topThreeRoutes[0][0] + "</h4><BR>" + 
+			"<h3 style='color:#ffd800;'>" + topThreeRoutes[1][1] + "</h3><h4>: " + topThreeRoutes[1][0] + "</h4><BR>" + 
+			"<h3 style='color:#FF0000;'>" + topThreeRoutes[2][1] + "</h3><h4>: " + topThreeRoutes[2][0] + "</h4>");}, 1000);
 
 		} else {
 
@@ -71,12 +86,13 @@ function initialize() {
 					busStops[i][j].setMap(null);
 				}
 			}
-
+			// Reset Globals
 			markersArray = [];
 			waypts = [];
 			busStops = [];
 
 			try {
+				// Reset the flightPath Global
 				for (var i = 0; i < flightPath.length; i++) {
 					flightPath[i].setMap(null);
 				}
