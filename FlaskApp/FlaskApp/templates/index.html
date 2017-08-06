@@ -51,7 +51,7 @@
 					
 					<ul class="nav nav-pills">
 					  <li role="presentation" class="active" id="returnHomeButton"><a href="#"><span class="glyphicon glyphicon-home"> Home</span></a></li>
-					  <li role="presentation"><a href="#">View Timetables</a></li>
+					  <li role="presentation" id="showTimetables"><a href="#">View Timetables</a></li>
 					  <li role="presentation" id="selectMapSearch"><a href="#">Search With Map</a></li>						
 					</ul>
 					
@@ -86,6 +86,38 @@
 
 						</form>
 					</div>
+				</div>
+			</div>
+			
+			<div id="timetableDiv" class = "timetableDiv">
+				<div class="frame2">
+					<div class="row" id="timetableDropdownRow">
+						<form id = "PickRouteTimetable">
+							<div class="col-md-12">
+
+								<h2 class="bg-info">Pick Route Timetable</h2>
+								<select id="form-controltimetable" name="pickRouteTimetable">
+
+								</select>
+							</div>
+
+							<div class="col-md-4">
+								<h2 class="bg-info"><button type="submit" class="btn btn-primary btn-lg btn-block" id="secondForm">Go!</button></h2>
+							</div>
+
+						</form>
+					</div>
+
+					<div class="row">
+							<div class="col-md-12">
+                                <div id="selectedTimetableDiv">
+                                    HELLO
+                                    <!--fill up id with flask url query-->
+                                </div>
+
+							</div>
+					</div>
+
 				</div>
 			</div>
 			
