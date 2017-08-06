@@ -57,21 +57,29 @@ function initialize() {
 				// Convert the JPID into a Line ID
 				for (var i = 0; i < topThreeRoutes.length; i++) {
 					var temp = topThreeRoutes[i][1].slice(0,4);
-					if (temp.charAt(0) == "0") temp.replace(0, "");
-					if (temp.charAt(0) == "0") temp.replace(0, "");
+					if (temp.charAt(0) == "0") temp = temp.replace(0, "");
+					if (temp.charAt(0) == "0") temp = temp.replace(0, "");
+					topThreeRoutes[i][1] = temp;
 				}
 				
-				// Convert distance into km with one decimal point
+				// Convert the Time into hh:mm
 				if (searchPreference == "searchByWalkingDistance") {
 					for (var i = 0; i < topThreeRoutes.length; i++) {
 						topThreeRoutes[i][0] = topThreeRoutes[i][0].toFixed(1) + "km";
 					}
 				}
 				
+				// Convert distance into km with one decimal point
+				if (searchPreference == "searchByArrivalTime") {
+					for (var i = 0; i < topThreeRoutes.length; i++) {
+						topThreeRoutes[i][0] = topThreeRoutes[i][0].slice(0, 5);
+					}
+				}
+				
 			infoWindow.setContent(
-			"<h3 style='color:#0014ff;'>" + topThreeRoutes[0][1] + "</h3><h4>: " + topThreeRoutes[0][0] + "</h4><BR>" + 
-			"<h3 style='color:#ffd800;'>" + topThreeRoutes[1][1] + "</h3><h4>: " + topThreeRoutes[1][0] + "</h4><BR>" + 
-			"<h3 style='color:#FF0000;'>" + topThreeRoutes[2][1] + "</h3><h4>: " + topThreeRoutes[2][0] + "</h4>");}, 1000);
+			"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" + 
+			"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" + 
+			"<h2 style='color:#FF0000;'>" + topThreeRoutes[2][1] + ": " + topThreeRoutes[2][0] + "</h2>");}, 1000);
 
 		} else {
 
@@ -90,6 +98,8 @@ function initialize() {
 			markersArray = [];
 			waypts = [];
 			busStops = [];
+			// Close the info Window
+			infoWindow.close();
 
 			try {
 				// Reset the flightPath Global
@@ -99,7 +109,8 @@ function initialize() {
 				flightPath = [];
 			}
 			catch (TypeError) {
-				document.getElementById("displayRouteInNavBarForMap").innerHTML = "<h1 class='customBusHeading'>No Route Found</h1>";
+				infoWindow.setContent("<h2>No Route Found</h2>");
+				infoWindow.open(map);
 			}
 		}
 	})

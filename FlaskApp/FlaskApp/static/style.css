@@ -58,6 +58,10 @@
 	font-size: 20px;
 }
 
+.threePicturesForMapSearch {
+	text-align: center;
+}
+
 .loader {
   display: block;
   margin: 0 auto;
