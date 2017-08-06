@@ -28,6 +28,21 @@ class Db:
         self.rows = self.conn.execute(self.sql1).fetchall()
 
         return jsonify(lineids=[dict(row.items()) for row in self.rows])
+    
+    def get_selected_route_timetable(self, line_id):
+        """return the timetable of the selected line ID"""
+        
+        self.sql12 = """
+        SELECT tbl.Journey_Pattern_ID, tbl.Day_Cat, tbl.Time_no_date
+        FROM Timetable AS tbl
+        WHERE tbl.Journey_Pattern_ID IN (SELECT x.Main_Journey_Pattern_ID 
+                                        FROM JPID_LineID_Start_End AS x
+                                        WHERE x.Line_ID = %(line_id)s)
+        """
+        
+        self.df = pd.read_sql_query(self.sql12, self.conn, params={"line_id": line_id})
+
+        return json.dumps(json.loads(self.df.to_json(orient='records')))
 
     def get_first_and_last_address(self, line_id):
         """Return the first and last address of both directions for a Line ID
