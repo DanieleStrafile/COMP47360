@@ -26,6 +26,19 @@ def get_routes():
 
     return Db().get_line_ids()
 
+@app.route('/_getRoutesTimetable', methods=['GET'])
+def get_routesTimetable():
+    """For getting list of journey id's for the timetable"""
+    return Db().get_line_ids()
+
+@app.route('/_getSelectedTimetable/<lineId>', methods=['GET'])
+def get_selected_timetable(lineId):
+    """for getting the timetable for the selected route"""
+    
+    print('XXXXXXXXXXXXXXX')
+    print(Db().get_selected_route_timetable(lineId))
+
+    return Db().get_selected_route_timetable(lineId)
 
 @app.route('/_getStartEndAddresses/<lineId>', methods=['GET'])
 def get_start_end_addresses(lineId):
