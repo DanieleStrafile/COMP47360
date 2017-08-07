@@ -141,6 +141,7 @@ $(document).ready(function() {
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
 
         getSourceDestination($(this).val(),1,pref);
+        
 
         //set jpid here
         jpid = $(this).val() + "";
@@ -371,7 +372,7 @@ function getPricing(jpid, stop1, stop2, direction) {
 			
 			// For map.js file when getting cheapest journeys			
 			if (key == "Adult Leap") adultFare = value;
-			options += value + " : " + key + "<BR>";
+			options += key + " : " + value + "<BR>";
 		});
 
 		$("#travelPriceDiv").html(options);
