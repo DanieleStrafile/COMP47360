@@ -145,6 +145,8 @@ $(document).ready(function() {
         jpid = $(this).val() + "";
 
     });
+    
+	dropDown();
 
 	// 'GET' request for source and destination addresses after first form
 	$('#stopIdOrAddress').ajaxForm(function() {
@@ -169,38 +171,36 @@ $(document).ready(function() {
 		document.getElementById("travelPriceDiv").innerHTML = "";
 	});
 
-	// 'GET' request for Time Estimation
-	$('#selectSourceDestFrom').ajaxForm(function() {
-
-		var source;
-		var destination;
-
-		if (pref == "address") {
-
-			source = $('#form-control2 :selected').val();
-			destination = $('#form-control3 :selected').val();
-
-		}
-
-		else {
-
-			source = $('#form-control2 :selected').text();
-			destination = $('#form-control3 :selected').text();
-
-		}
-
-		var dateTime = $('#datepicker').datepicker('getDate');
-
-		getTravelTime(source, destination, dateTime);
-
-
+		// 'GET' request for Time Estimation
+		$('#selectSourceDestFrom').ajaxForm(function() {
+	
+			var source;
+			var destination;
+	
+			if (pref == "address") {
+	
+				source = $('#form-control2 :selected').val();
+				destination = $('#form-control3 :selected').val();
+	
+			}
+	
+			else {
+	
+				source = $('#form-control2 :selected').text();
+				destination = $('#form-control3 :selected').text();
+	
+			}
+	
+			var dateTime = $('#datepicker').datepicker('getDate');
+	
+			getTravelTime(source, destination, dateTime);
+	
+	
+		});
+	
 	});
 
-	dropDown();
-	
 });
-
-
 //------------------------------------------------------------------------------------------------------------- //
 // POPULATE MENUS ON APPLICATION
 
