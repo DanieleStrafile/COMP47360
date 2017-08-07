@@ -126,7 +126,16 @@ def display_prices(jpid, stop1, stop2, direction):
             return get_prices(article_url)
         
     except Exception as e:
+        if stop_number2 - stop_number1 <= 10:
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=0&alight=10"
         
+        elif stop_number2 - stop_number1 <= 30:
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=0&alight=31"
+        
+        else:
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=9&alight=46"
+        
+        return get_prices(article_url)
         pass
 
 #this is a helper method for function display_prices
