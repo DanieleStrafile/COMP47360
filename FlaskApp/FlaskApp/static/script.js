@@ -56,6 +56,7 @@ $(document).ready(function() {
 		$("#sourceDestTimeGoDiv").hide(700);
 		$("#loader").removeClass("loader");
 		$("#selectRouteAndSearchPreference").hide(700);
+	    	$("#timetableDiv").hide(700);
 		
 		// Show wanted div for search options
 		$("#mapSearchPreferenceDiv").show(700);
