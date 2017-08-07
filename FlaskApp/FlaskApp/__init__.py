@@ -64,11 +64,11 @@ def possible_routes(srcLat, srcLon, destLat, destLon):
     return Db().get_best_route(srcLat, srcLon, destLat, destLon)
 
 
-@app.route('/gps_coords/<jpid>', methods=['GET'])
-def retrieve_gps(jpid):
+@app.route('/gps_coords/<jpid>/<srcStop>/<destStop>', methods=['GET'])
+def retrieve_gps(jpid, srcStop, destStop):
     """Retrieves gps coordinates of a given journey pattern id"""
 
-    return Db().get_gps(jpid)
+    return Db().get_gps(jpid, srcStop, destStop)
 
 
 @app.route('/_getTravelTime/<jpid>/<source>/<destination>/<dateTime>', methods=['GET'])

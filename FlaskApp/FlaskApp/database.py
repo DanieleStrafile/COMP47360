@@ -222,20 +222,28 @@ class Db:
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
 
-    def get_gps(self, jpid):
+    def get_gps(self, jpid, srcStop, destStop):
         """Return the set of GPS coordinates for a given journey pattern id
 
         On Google maps when the user discovers the best bus route this query will return the full set of GPS
         coordinates for the route displaying it on the map alongside their source and destination icons."""
         
         sql7 = """
-        SELECT s.Latitude, s.Longitude
+        SELECT s.Latitude, s.Longitude, s.Stop_ID
         FROM JourneyPatternID_StopID as j, Stop_ID_Address as s
-        WHERE j.Journey_Pattern_ID = %(number)s AND j.Stop_ID = s.Stop_ID
-        ORDER BY CAST(j.Stop_number AS UNSIGNED) ASC
+        WHERE j.Journey_Pattern_ID = %(jpid)s AND j.Stop_ID = s.Stop_ID
+        AND j.Distance >= (SELECT j2.Distance
+                            FROM JourneyPatternID_StopID AS j2
+                            WHERE j2.Journey_Pattern_ID = %(jpid)s AND j2.Stop_ID = %(srcStop)s)
+                            
+        AND j.Distance <= (SELECT j3.Distance
+                            FROM JourneyPatternID_StopID AS j3
+                            WHERE j3.Journey_Pattern_ID = %(jpid)s AND j3.Stop_ID = %(destStop)s)
+                                
+        ORDER BY j.Distance ASC
         """
 
-        df = pd.read_sql_query(sql7, self.conn, params={"number": jpid})
+        df = pd.read_sql_query(sql7, self.conn, params={"jpid": jpid, "srcStop": srcStop, "destStop": destStop })
 
         return json.dumps(json.loads(df.to_json(orient='records')))
     

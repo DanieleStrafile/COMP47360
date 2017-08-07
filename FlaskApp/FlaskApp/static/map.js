@@ -158,7 +158,10 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 			information = bestRoutes[i][0];
 			jpid = bestRoutes[i][1];
 			
-			drawMapRoute(map);
+			var srcStop = bestRoutes[i][2];
+			var destStop = bestRoutes[i][3];
+			
+			drawMapRoute(map, srcStop, destStop);
 		}	
 	}
 	});
@@ -196,7 +199,7 @@ function getThreeRoutesBasedOnFare(mapData) {
 		// Function from script.js
 		getPricing(jpid, source, destination, jpid.charAt(4))
 		
-		routes.push([adultFare, jpid])
+		routes.push([adultFare, jpid, source, destination])
 	});
 		
 	routes.sort(sortFunction);
@@ -221,7 +224,7 @@ function getThreeRoutesBasedOnArrivalTime(mapData) {
 		// Function from script.js
 		getTravelTime(source, destination, dateTime);
 		
-		routes.push([timeBusArrives, jpid])
+		routes.push([timeBusArrives, jpid, source, destination])
 	});
 		
 	routes.sort(sortFunction);
@@ -243,15 +246,17 @@ function sortFunction(a, b) {
 function getThreeRoutesBasedOnWalkingDistance(data) {
 	
 	// It's already ordered by total walking so just take first three routes
-	var routes = [[data[0].Minimum_Total_Walking, data[0].JPID_Source], [data[1].Minimum_Total_Walking, data[1].JPID_Source], [data[2].Minimum_Total_Walking, data[2].JPID_Source]];
+	var routes = [[data[0].Minimum_Total_Walking, data[0].JPID_Source, data[0].STOP_ID_Source, data[0].STOP_ID_Destination ],
+		[data[1].Minimum_Total_Walking, data[1].JPID_Source, data[1].STOP_ID_Source, data[1].STOP_ID_Destination],
+		[data[2].Minimum_Total_Walking, data[2].JPID_Source, data[2].STOP_ID_Source, data[2].STOP_ID_Destination]];
 		
 	return routes;
 }
 
 
-function drawMapRoute(map) {
+function drawMapRoute(map, srcStop, destStop) {
 
-	var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid, function(data) {
+	var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/gps_coords/" + jpid + "/" + srcStop + "/" + destStop, function(data) {
 
 		var tempJourneyArray = [];
 
