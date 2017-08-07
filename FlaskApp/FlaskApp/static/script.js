@@ -147,6 +147,33 @@ $(document).ready(function() {
     });
     
 	dropDown();
+	
+	// 'GET' request for Time Estimation
+	$('#selectSourceDestFrom').ajaxForm(function() {
+
+		var source;
+		var destination;
+
+		if (pref == "address") {
+
+			source = $('#form-control2 :selected').val();
+			destination = $('#form-control3 :selected').val();
+
+		}
+
+		else {
+
+			source = $('#form-control2 :selected').text();
+			destination = $('#form-control3 :selected').text();
+
+		}
+
+		var dateTime = $('#datepicker').datepicker('getDate');
+
+		getTravelTime(source, destination, dateTime);
+
+
+	});
 
 	// 'GET' request for source and destination addresses after first form
 	$('#stopIdOrAddress').ajaxForm(function() {
@@ -165,37 +192,10 @@ $(document).ready(function() {
          //just for testing
     });
 	
-	$("#lastForm").click(function() {
-		$("#loader").addClass("loader");
-		document.getElementById("travelTimeDiv").innerHTML = "";
-		document.getElementById("travelPriceDiv").innerHTML = "";
-	});
-
-		// 'GET' request for Time Estimation
-		$('#selectSourceDestFrom').ajaxForm(function() {
-	
-			var source;
-			var destination;
-	
-			if (pref == "address") {
-	
-				source = $('#form-control2 :selected').val();
-				destination = $('#form-control3 :selected').val();
-	
-			}
-	
-			else {
-	
-				source = $('#form-control2 :selected').text();
-				destination = $('#form-control3 :selected').text();
-	
-			}
-	
-			var dateTime = $('#datepicker').datepicker('getDate');
-	
-			getTravelTime(source, destination, dateTime);
-	
-	
+		$("#lastForm").click(function() {
+			$("#loader").addClass("loader");
+			document.getElementById("travelTimeDiv").innerHTML = "";
+			document.getElementById("travelPriceDiv").innerHTML = "";
 		});
 	
 	});
