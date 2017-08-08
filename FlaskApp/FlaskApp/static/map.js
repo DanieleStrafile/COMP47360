@@ -26,6 +26,11 @@ function initialize() {
 
 	var source;
 	var destination;
+
+	// For the loading icon when a user picks a source and destination
+    infoWindow = new google.maps.InfoWindow({
+          content: "<h2>Loading...</h2><BR><h3>(can take a while)</h3>"
+        });
 	
 	var map = new google.maps.Map(document.getElementById("googleMap"), myOptions);
 
@@ -41,99 +46,19 @@ function initialize() {
 			destination = event.latLng;
 			placeMarker(destination, map);
 			
-			// For the loading icon when a user picks a source and destination
-			infoWindow = new google.maps.InfoWindow({
-				  content: "<h2>Loading...</h2><BR><h3>(can take a while)</h3>"
-				});	
-			
 			infoWindow.setPosition(markersArray[1].center);
 			infoWindow.open(map);
 		
-			setTimeout(function(){// Get data and draw polylines
+			setTimeout(function(){
 			topThreeRoutes = getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());}, 1000);
 			
-			setTimeout(function(){
-				
-				// Convert the JPID into a Line ID
-				for (var i = 0; i < topThreeRoutes.length; i++) {
-					var temp = topThreeRoutes[i][1].slice(0,4);
-					if (temp.charAt(0) == "0") temp = temp.replace(0, "");
-					if (temp.charAt(0) == "0") temp = temp.replace(0, "");
-					topThreeRoutes[i][1] = temp;
-				}
-				
-				// Convert the Time into hh:mm
-				if (searchPreference == "searchByWalkingDistance") {
-					for (var i = 0; i < topThreeRoutes.length; i++) {
-						topThreeRoutes[i][0] = topThreeRoutes[i][0].toFixed(1) + "km";
-					}
-				}
-				
-				// Convert distance into km with one decimal point
-				if (searchPreference == "searchByArrivalTime") {
-					for (var i = 0; i < topThreeRoutes.length; i++) {
-						topThreeRoutes[i][0] = topThreeRoutes[i][0].slice(0, 5);
-					}
-				}
-				
-			infoWindow.setContent(
-			"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" + 
-			"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" + 
-			"<h2 style='color:#FF0000;'>" + topThreeRoutes[2][1] + ": " + topThreeRoutes[2][0] + "</h2>");}, 1000);
+			setTimeout(function(){formatInfoWindow();}, 1000);
 
 		} else {
 
-			// Resetting markers array
-			for (var i = 0; i < markersArray.length; i++) {
-				markersArray[i].setMap(null);
-			}
-
-			// Resetting bus stops array
-			for (var i = 0; i < waypts.length; i++) {
-				for (var j = 0; j < waypts[i].length; j++) {
-					busStops[i][j].setMap(null);
-				}
-			}
-			// Reset Globals
-			markersArray = [];
-			waypts = [];
-			busStops = [];
-			// Close the info Window
-			infoWindow.close();
-
-			try {
-				// Reset the flightPath Global
-				for (var i = 0; i < flightPath.length; i++) {
-					flightPath[i].setMap(null);
-				}
-				flightPath = [];
-			}
-			catch (TypeError) {
-				infoWindow.setContent("<h2>No Route Found</h2>");
-				infoWindow.open(map);
-			}
+			resetGlobals();
 		}
 	})
-}
-
-
-// So the user can place markers on the Map
-function placeMarker(location, map) {
-	var marker = new google.maps.Circle({
-            strokeColor: '#000000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#3131ff',
-            fillOpacity: 0.35,
-            map: map,
-            center: location,
-            radius: 1000
-          });
-	
-	if (markersArray.length == 0) marker.name = "source";
-	if (markersArray.length == 1) marker.name = "destination";
-
-	markersArray.push(marker);
 }
 
 
@@ -167,6 +92,7 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 	});
 		
 	return bestRoutes;
+
 }
 
 
@@ -340,6 +266,87 @@ function drawBusStops(stops, map) {
 		// Add the next bus stop to the 2d array
 		busStops[busStops.length - 1].push(marker);
 	  }
+}
+
+
+function formatInfoWindow() {
+
+    // Convert the JPID into a Line ID user can understand
+    for (var i = 0; i < topThreeRoutes.length; i++) {
+        var temp = topThreeRoutes[i][1].slice(0,4);
+        if (temp.charAt(0) == "0") temp = temp.replace(0, "");
+        if (temp.charAt(0) == "0") temp = temp.replace(0, "");
+        topThreeRoutes[i][1] = temp;
+    }
+
+    // Convert the Time into hh:mm
+    if (searchPreference == "searchByWalkingDistance") {
+        for (var i = 0; i < topThreeRoutes.length; i++) {
+            topThreeRoutes[i][0] = topThreeRoutes[i][0].toFixed(1) + "km";
+        }
+    }
+
+    // Convert distance into km with one decimal point
+    if (searchPreference == "searchByArrivalTime") {
+        for (var i = 0; i < topThreeRoutes.length; i++) {
+            topThreeRoutes[i][0] = topThreeRoutes[i][0].slice(0, 5);
+        }
+    }
+
+    infoWindow.setContent(
+    "<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
+    "<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" +
+    "<h2 style='color:#FF0000;'>" + topThreeRoutes[2][1] + ": " + topThreeRoutes[2][0] + "</h2>");
+}
+
+
+function resetGlobals() {
+
+    for (var i = 0; i < markersArray.length; i++) {
+        markersArray[i].setMap(null);
+    }
+
+    for (var i = 0; i < waypts.length; i++) {
+        for (var j = 0; j < waypts[i].length; j++) {
+            busStops[i][j].setMap(null);
+        }
+    }
+
+    markersArray = [];
+    waypts = [];
+    busStops = [];
+    infoWindow.close();
+
+    try {
+        for (var i = 0; i < flightPath.length; i++) {
+            flightPath[i].setMap(null);
+        }
+        flightPath = [];
+    }
+    catch (TypeError) {
+        infoWindow.setContent("<h2>No Route Found</h2>");
+        infoWindow.open(map);
+    }
+}
+
+
+// So the user can place markers on the Map
+function placeMarker(location, map) {
+	var marker = new google.maps.Circle({
+            strokeColor: '#000000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#3131ff',
+            fillOpacity: 0.35,
+            map: map,
+            center: location,
+            radius: 1000
+          });
+
+	if (markersArray.length == 0) marker.name = "source";
+	if (markersArray.length == 1) marker.name = "destination";
+
+	markersArray.push(marker);
 }
 
 
