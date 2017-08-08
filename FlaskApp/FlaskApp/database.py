@@ -42,7 +42,16 @@ class Db:
         
         self.df = pd.read_sql_query(self.sql12, self.conn, params={"line_id": line_id})
 
-        return json.dumps(json.loads(self.df.to_json(orient='records')))
+
+        self.df.Time_no_date = self.df.Time_no_date.astype(str)
+        # format string time_no_date
+        # delete 0 days e.g. 0 days 10:40:00.000000000 will become 10:40:00.000000000
+        self.df.Time_no_date = self.df.Time_no_date.apply(lambda x: re.sub('0 days ', '', x))
+
+        # delete everything after and incuding .  e.g. 10:40:00.000000000 will become 10:40:00
+        self.df.Time_no_date = self.df.Time_no_date.apply(lambda x: re.sub('\..*', '', x))
+
+        return json.dumps(json.loads(self.df.to_json(orient='index')))
 
     def get_first_and_last_address(self, line_id):
         """Return the first and last address of both directions for a Line ID
