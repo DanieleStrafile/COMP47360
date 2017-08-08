@@ -1,6 +1,7 @@
 import pickle
 import pandas as pd
 import os
+
 from FlaskApp.static.Data_Structures import timeCategoryToSpeed
 
 
@@ -14,23 +15,11 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
     time_category = get_time_category(date_time)
 
     speed = timeCategoryToSpeed.time_cat[day][time_category]
-    
-    print("this is source", source)
-    print("this is destination", destination)
-    print("this is journey_pattern_id", journey_pattern_id)
-    print("this is day", day)
-    print("this is speed", speed)
-    print(os.path.dirname(os.path.realpath(__file__)))
 
     # Get model's predictions
     source_time = get_prediction(journey_pattern_id, source, speed, day)
-    
-    print("this is source_time")
-    
-    print(source_time)
-    
+
     destination_time = get_prediction(journey_pattern_id, destination, speed, day)
-    
 
     return [destination_time[0], source_time[0]]
 
@@ -47,18 +36,16 @@ def get_prediction(journey_pattern_id, distance, speed, day):
 
     absolute_path = os.path.dirname(os.path.realpath(__file__))
     absolute_path = absolute_path.replace('\\', '/')
-    
 
-    with open( os.path.abspath(absolute_path + '/static/Models/' + journey_pattern_id + '.sav'), 'rb') as handle:
-        lm = pickle.load(handle)
-        
-        try:
+    try:
+        with open( os.path.abspath(absolute_path + '/static/Models/' + journey_pattern_id + '.sav'), 'rb') as handle:
+            lm = pickle.load(handle)
+
             prediction = lm.predict(df)
         
-        except:
-            
-            #if a bus does not work on a certain day and the user picks that day, return not a number
-            prediction = ['A']
+    except:
+        #if a bus does not work on a certain day and the user picks that day, return not a number
+        prediction = ['A']
 
     return prediction
 
@@ -82,6 +69,7 @@ def get_day(date_time):
 
     day = date_time[:3]
 
+    # This is for the last for when it uses this function
     if day == "Mon" or day == "Tue" or day == "Wed" or day == "Thu" or day == "Fri":
         day = "Mon-Fri"
 

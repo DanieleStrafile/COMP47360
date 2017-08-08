@@ -1,11 +1,14 @@
 import json
+import re
+import requests
+
 from flask import Flask, render_template
 from flask_cors import CORS
+from bs4 import BeautifulSoup
+
 from FlaskApp.database import Db
 from FlaskApp.model import get_travel_time
-import requests
-from bs4 import BeautifulSoup
-import re
+from FlaskApp.map_search import get_three_best_routes
 
 
 app = Flask(__name__)
@@ -26,19 +29,19 @@ def get_routes():
 
     return Db().get_line_ids()
 
+
 @app.route('/_getRoutesTimetable', methods=['GET'])
 def get_routesTimetable():
     """For getting list of journey id's for the timetable"""
     return Db().get_line_ids()
 
+
 @app.route('/_getSelectedTimetable/<lineId>', methods=['GET'])
 def get_selected_timetable(lineId):
     """for getting the timetable for the selected route"""
     
-    print('XXXXXXXXXXXXXXX')
-    print(Db().get_selected_route_timetable(lineId))
-
     return Db().get_selected_route_timetable(lineId)
+
 
 @app.route('/_getStartEndAddresses/<lineId>', methods=['GET'])
 def get_start_end_addresses(lineId):
@@ -57,11 +60,16 @@ def get_preference(pref, jpid):
         return Db().get_stop_id(jpid)
     
 
-@app.route('/best_route/<srcLat>/<srcLon>/<destLat>/<destLon>', methods=['GET'])
-def possible_routes(srcLat, srcLon, destLat, destLon):
+@app.route('/best_route/<srcLat>/<srcLon>/<destLat>/<destLon>/<searchPreference>/<dateTime>', methods=['GET'])
+def possible_routes(srcLat, srcLon, destLat, destLon, searchPreference, dateTime):
     """getting all possible routes, from best to worst from point A to point B"""
 
-    return Db().get_best_route(srcLat, srcLon, destLat, destLon)
+    dateTime = dateTime.split(",")
+
+    routes = Db().get_best_route(srcLat, srcLon, destLat, destLon)
+    best_routes = get_three_best_routes(routes, searchPreference, dateTime)
+
+    return json.dumps(best_routes)
 
 
 @app.route('/gps_coords/<jpid>/<srcStop>/<destStop>', methods=['GET'])
@@ -85,18 +93,18 @@ def get_model_answer(jpid, source, destination, dateTime):
 @app.route('/get_bus_time/<jpidTruncated>/<srcStop>/<destStop>/<hour>/<minute>/<sec>/<sourceTime>/<timeCat>')
 def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
     
-    return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat )
+    return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat)
 
 
 @app.route('/getPricing/<jpid>/<stop1>/<stop2>/<direction>')
 def display_prices(jpid, stop1, stop2, direction):
     
     try:
-        #get lineid and stop numbers of those stops
+        # Get lineid and stop numbers of those stops
         df = Db().get_stop_numbers(jpid, stop1, stop2)
         lineid = df.loc[0,"Line_ID"]
         
-        #convert upper cases to lower cases letter
+        # Convert upper cases to lower cases letter
         lineid = lineid.lower()
         
         stop_number1 = df.loc[0,"Stop_number"]
@@ -104,8 +112,8 @@ def display_prices(jpid, stop1, stop2, direction):
         stop_number2 = int(df.loc[1,"Stop_number"]) + 1
         
         try:
-            #change direction parsing for url but sometimes o and I are switched
-            #must account for this and try both ways
+            # Change direction parsing for url but sometimes o and I are switched
+            # Must account for this and try both ways
             if direction == '0' or direction == 0:
                 direction = 'I'
             else:
@@ -138,7 +146,7 @@ def display_prices(jpid, stop1, stop2, direction):
         return get_prices(article_url)
         pass
 
-#this is a helper method for function display_prices
+# This is a helper method for function display_prices
 def get_prices(article_url):
     
     #get table with prices from url
@@ -148,7 +156,7 @@ def get_prices(article_url):
     rows = table.findChildren(['th', 'tr'])
     
     
-    # we got the table with prices from url, now we need to organise it in a dictionary e.g. Adult prices : 2.4 Euros etc...
+    # We got the table with prices from url, now we need to organise it in a dictionary e.g. Adult prices : 2.4 Euros etc...
     count = 0
     dictionary = dict()
 
@@ -163,12 +171,12 @@ def get_prices(article_url):
             value = cell.string.strip()
             
             
-            #even rows, these are our key pairs in dictionary, ie labels
+            # Even rows, these are our key pairs in dictionary, ie labels
             if count % 2 == 0:
                 
                 key = value
                 
-            #uneven rows, these are our value pairs in dictionary, ie prices  
+            # Uneven rows, these are our value pairs in dictionary, ie prices
             else:
                 
                 value = re.findall(r'\d+', value)
@@ -176,7 +184,7 @@ def get_prices(article_url):
                 
             count += 1
     
-    #return the dictionary as a json object
+    # Return the dictionary as a json object
     return json.dumps(dictionary)
 
 

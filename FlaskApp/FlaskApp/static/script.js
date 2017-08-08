@@ -339,7 +339,6 @@ function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minu
 			+ sec + "/" + sourceTime + "/" + timeCat,
 	  async: false, 
 	  success: function(data) {
-
 		
 		var currentTime = new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
 		timeBusArrives = data[0].Time_bus_arrives;

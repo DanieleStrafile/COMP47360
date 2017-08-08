@@ -10,8 +10,6 @@ var waypts = [];
 var searchPreference;
 // The loading window which also shows the search preferences
 var infoWindow;
-// Information returned from map searches
-var topThreeRoutes;
 
 
 function initialize() {
@@ -50,9 +48,9 @@ function initialize() {
 			infoWindow.open(map);
 		
 			setTimeout(function(){
-			topThreeRoutes = getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());}, 1000);
+			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());}, 1000);
 			
-			setTimeout(function(){formatInfoWindow();}, 1000);
+			
 
 		} else {
 
@@ -64,119 +62,36 @@ function initialize() {
 
 //find best possible route jpid, get coords of its stops and display them
 function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
-	
-	
+
+	var temp = new Date();
+
+	var dateTime = [temp.toString(), temp.getDay(), temp.getHours(), temp.getMinutes(), temp.getSeconds()]
+
 	$.ajax({
 	  dataType: "json",
-	  url: $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon,
-	  async: false, 
+	  url: $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon + "/" + searchPreference + "/" + dateTime,
+	  async: true, 
 	  success: function(data) {
-
+		  
 		// For displaying the route number, or displaying an error
 		var result;
-				
-		// Get the 3 best routes based on search preference --> 2D array [[info, JPID], [...]]
-		bestRoutes = bestJourneysBySearchPreference(data);
 
-		for (var i = 0; i < bestRoutes.length; i++) {
+		for (var i = 0; i < data.length; i++) {
 			
-			information = bestRoutes[i][0];
-			jpid = bestRoutes[i][1];
+			information = data[i][0];
+			jpid = data[i][1];
 			
-			var srcStop = bestRoutes[i][2];
-			var destStop = bestRoutes[i][3];
+			var srcStop = data[i][2];
+			var destStop = data[i][3];
 			
 			drawMapRoute(map, srcStop, destStop);
 		}	
+		  setTimeout(function(){formatInfoWindow(data);}, 1000);
 	}
 	});
 		
-	return bestRoutes;
-
-}
-
-
-function bestJourneysBySearchPreference(data) {
-			
-	if (searchPreference == "searchByWalkingDistance") {
-		// The total walking involved
-		return getThreeRoutesBasedOnWalkingDistance(data);
-	} else if (searchPreference == "searchByFare") {
-		// How much it's going to cost
-		return getThreeRoutesBasedOnFare(data); 
-	} else {
-		// What time each bus/jpid arrives at the bus stop
-		return getThreeRoutesBasedOnArrivalTime(data);
-	}
-}
-
-
-function getThreeRoutesBasedOnFare(mapData) {
 	
-	var routes = [];
-	
-	_.forEach(mapData, function(journey) {
-						
-		// Reference Global 'jpid' from script.js
-		jpid = journey.JPID_Source;
-		var source = journey.STOP_ID_Source;
-		var destination = journey.Stop_ID_Destination;
-				
-		// Function from script.js
-		getPricing(jpid, source, destination, jpid.charAt(4))
-		
-		routes.push([adultFare, jpid, source, destination])
-	});
-		
-	routes.sort(sortFunction);
-	
-	return [routes[0], routes[1], routes[2]];
-	
-}
 
-
-function getThreeRoutesBasedOnArrivalTime(mapData) {
-	
-	var routes = [];
-	
-	_.forEach(mapData, function(journey) {
-						
-		// Reference Global 'jpid' from script.js
-		jpid = journey.JPID_Source;
-		var source = journey.STOP_ID_Source;
-		var destination = journey.Stop_ID_Destination;
-		var dateTime = new Date();
-				
-		// Function from script.js
-		getTravelTime(source, destination, dateTime);
-		
-		routes.push([timeBusArrives, jpid, source, destination])
-	});
-		
-	routes.sort(sortFunction);
-	
-	return [routes[0], routes[1], routes[2]];
-}
-
-// For getting the cheapest journey and the quickest journeys to arrive
-function sortFunction(a, b) {
-    if (a[0] === b[0]) {
-        return 0;
-    }
-    else {
-        return (a[0] < b[0]) ? -1 : 1;
-    }
-}
-
-
-function getThreeRoutesBasedOnWalkingDistance(data) {
-	
-	// It's already ordered by total walking so just take first three routes
-	var routes = [[data[0].Minimum_Total_Walking, data[0].JPID_Source, data[0].STOP_ID_Source, data[0].STOP_ID_Destination ],
-		[data[1].Minimum_Total_Walking, data[1].JPID_Source, data[1].STOP_ID_Source, data[1].STOP_ID_Destination],
-		[data[2].Minimum_Total_Walking, data[2].JPID_Source, data[2].STOP_ID_Source, data[2].STOP_ID_Destination]];
-		
-	return routes;
 }
 
 
@@ -269,8 +184,8 @@ function drawBusStops(stops, map) {
 }
 
 
-function formatInfoWindow() {
-
+function formatInfoWindow(topThreeRoutes) {
+	
     // Convert the JPID into a Line ID user can understand
     for (var i = 0; i < topThreeRoutes.length; i++) {
         var temp = topThreeRoutes[i][1].slice(0,4);

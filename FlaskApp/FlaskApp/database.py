@@ -14,7 +14,7 @@ class Db:
         """Connect to database"""
 
         self.conn = create_engine("mysql+pymysql://{}:{}@{}:{}/{}".format(name, password, rds_host,
-                                                                                 port, db_name), echo=True)
+                                                                                 port, db_name), echo=False)
 
     def disconnect(self):
         """Close connection"""
@@ -228,8 +228,7 @@ class Db:
         """
         
         self.df = pd.read_sql_query(self.sql8, self.conn, params={"source_lat" : source_lat, "source_lon" : source_lon, "destination_lat" : destination_lat,"destination_lon" : destination_lon })
-
-        return json.dumps(json.loads(self.df.to_json(orient='index')))
+        return json.loads(self.df.to_json(orient='index'))
 
     def get_gps(self, jpid, srcStop, destStop):
         """Return the set of GPS coordinates for a given journey pattern id
@@ -296,6 +295,14 @@ class Db:
         self.df.Time_bus_arrives = self.df.Time_bus_arrives.apply(lambda x : re.sub('\..*', '', x))
 
         return json.dumps(json.loads(self.df.to_json(orient='index')))
+
+    def get_bus_time_for_map(self, jpid, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
+        
+        """
+        Return time next bus is coming for map. Must be a specific JPID unlike the other query for final form
+        """
+
+        pass
     
     def get_stop_numbers(self, jpid, stop1, stop2):
         
