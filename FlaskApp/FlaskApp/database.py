@@ -165,7 +165,7 @@ class Db:
                     (SELECT first_query.JPID_Source, first_query.STOP_ID_Source, first_query.Distance_Source,
                         second_query.STOP_ID_Destination, second_query.Distance_Destination,
     
-                        MIN(ABS(first_query.Distance_Source + second_query.Distance_Destination)) as Minimum_Total_Walking
+                        MIN(first_query.Distance_Source + second_query.Distance_Destination) as Minimum_Total_Walking
     
                     FROM
     
