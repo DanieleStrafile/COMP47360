@@ -192,7 +192,19 @@ $(document).ready(function() {
 
          console.log(timetables);
          //just for testing
-    });
+
+         var options = "<table><tr><th>Day Category</th><th>Bus Time</th></tr>";
+
+
+         _.forEach(timetables, function(stop) {
+
+			options += "<tr>" + "<td>" + stop.Day_Cat + "</td> " + "<td>" + stop.Time_no_date + "</tr>" ;
+		})
+
+
+		//set html content of form
+		$("#selectedTimetableDiv").html(options + '</table>');
+    	});
 	
 		$("#lastForm").click(function() {
 			$("#loader").addClass("loader");
