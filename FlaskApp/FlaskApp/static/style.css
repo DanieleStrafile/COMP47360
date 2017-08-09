@@ -44,7 +44,7 @@ div:empty {display: none}
     font-size: 22px;
     padding-right: 1%;
     margin-bottom: 5%;
-    width: 50%;
+    width: 100%;
 }
 
 .customBusHeading {
@@ -54,6 +54,7 @@ div:empty {display: none}
 	border-width: 5px;
 	border-radius: 5px;
 	padding: 1.5%;
+	width: 100%;
 }
 
 .specialWidthSelectMenu {
