@@ -40,7 +40,12 @@ def get_three_routes_based_on_arrival_time(data, date_time):
         # Get the model's travel time predictions
         travel_times = get_distance_and_predict_with_model(jpid, source, destination, date_time)
         # The time the bus arrives HH:MM:SS
-        time_bus_arrives = find_time_bus_arrives(travel_times, date_time, jpid, source, destination)
+
+        try:
+            time_bus_arrives = find_time_bus_arrives(travel_times, date_time, jpid, source, destination)
+
+        except:
+            time_bus_arrives = "Not Known"
         routes.append([time_bus_arrives, jpid, source, destination])
 
     routes = sort_function(routes)  # Sort it by the next to arrive
@@ -54,8 +59,12 @@ def find_time_bus_arrives(travel_times, date_time, jpid, source, destination):
     time_to_source = travel_times[0]
     time_cat = get_time_cat(date_time[1])
 
-    time_bus_arrives = Db().get_bus_time_for_map(jpid, source, destination, date_time[2], date_time[3],
-                                                        date_time[4], time_to_source, time_cat)
+    print("Time to source", time_to_source)
+    print("Time cat", time_cat)
+
+    time_bus_arrives = Db().get_bus_time_for_map(jpid, source, destination, time_to_source, time_cat)
+
+    print("Time bus arrives XXXXXXXXXXXXXXXXXXXXXXx", time_bus_arrives)
 
     return time_bus_arrives
 

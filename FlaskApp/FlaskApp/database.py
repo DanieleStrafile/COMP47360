@@ -299,9 +299,7 @@ class Db:
 
         return json.dumps(json.loads(df.to_json(orient='index')))
 
-
-
-    def get_bus_time_for_map(self, jpid, srcStop, destStop, sourceTime, timeCat ):
+    def get_bus_time_for_map(self, jpid, srcStop, destStop, sourceTime, timeCat):
         
         """
         Return time next bus is coming for map. Must be a specific JPID unlike the other query for final form
@@ -337,7 +335,6 @@ class Db:
 
         return json.dumps(json.loads(df.to_json(orient='index')))
 
-    
     def get_stop_numbers(self, jpid, stop1, stop2):
         
         sql11 = """
