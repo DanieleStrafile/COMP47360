@@ -180,10 +180,20 @@ function formatInfoWindow(topThreeRoutes) {
 	
     // Convert the JPID into a Line ID user can understand
     for (var i = 0; i < topThreeRoutes.length; i++) {
+		
+		// If it's a subroute then display that info
+		var subRoute = topThreeRoutes[i][1][topThreeRoutes[i][1].length -1];
+		
+		console.log(subRoute, topThreeRoutes[i][1]);
+		
+		
         var temp = topThreeRoutes[i][1].slice(0,4);
         if (temp.charAt(0) == "0") temp = temp.replace(0, "");
         if (temp.charAt(0) == "0") temp = temp.replace(0, "");
         topThreeRoutes[i][1] = temp;
+		
+		if (subRoute != "1") topThreeRoutes[i][1] = topThreeRoutes[i][1] + " (Sub-Route)";
+		
     }
 
     // Convert the Time into hh:mm
