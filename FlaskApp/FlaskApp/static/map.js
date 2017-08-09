@@ -19,7 +19,8 @@ function initialize() {
 		zoom: 12,
 		center: myLatlng,
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
-		disableDefaultUI: true
+		disableDefaultUI: true,
+		clickableIcons: false
 		}
 	// Selected by 'onclick' by user
 	var source;
@@ -27,7 +28,7 @@ function initialize() {
 
 	// For the loading icon when a user picks a source and destination
     infoWindow = new google.maps.InfoWindow({
-          content: "<h2>Loading...</h2><BR><h3>(can take a while)</h3>"
+          content: "<h1>Loading...</h1><img src='static/ajax-loader.gif' style='display: block; margin: 0 auto;'>"
         });
 	
 	var map = new google.maps.Map(document.getElementById("googleMap"), myOptions);
@@ -70,6 +71,11 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 	  async: true, 
 	  success: function(data) {
 		  
+		  if (data == 'No Journey Found') {
+			  errorHandleNoRoutes(); 
+			  
+		  } else {
+		  
 		// For displaying the route number, or displaying an error
 		var result;
 
@@ -82,8 +88,15 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 			drawMapRoute(map, srcStop, destStop);
 		}	
 		  setTimeout(function(){formatInfoWindow(data);}, 1000);
-	}
+		}
+	  }
 	});
+	
+}
+
+
+function errorHandleNoRoutes() {
+	infoWindow.setContent("<h1>No Route Found</h1>");
 }
 
 
@@ -209,15 +222,28 @@ function formatInfoWindow(topThreeRoutes) {
             topThreeRoutes[i][0] = topThreeRoutes[i][0].slice(0, 5);
         }
     }
-
-    infoWindow.setContent(
-    "<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
-    "<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" +
-    "<h2 style='color:#FF0000;'>" + topThreeRoutes[2][1] + ": " + topThreeRoutes[2][0] + "</h2>");
+	
+	if (topThreeRoutes.length == 1) {
+		infoWindow.setContent(
+		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>");
+		
+	} else if (topThreeRoutes.length == 2) {
+		infoWindow.setContent(
+		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
+		"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>");
+		
+	} else {
+		infoWindow.setContent(
+		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
+		"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" +
+		"<h2 style='color:#FF0000;'>" + topThreeRoutes[2][1] + ": " + topThreeRoutes[2][0] + "</h2>");
+		}
 }
 
 
 function resetGlobals() {
+	
+	infoWindow.setContent("<h1>Loading...</h1><img src='static/ajax-loader.gif' style='display: block; margin: 0 auto;'>");
 
     for (var i = 0; i < markersArray.length; i++) {
         markersArray[i].setMap(null);

@@ -64,7 +64,10 @@ def possible_routes(srcLat, srcLon, destLat, destLon, searchPreference, dateTime
     dateTime = dateTime.split(",")
 
     routes = Db().get_best_route(srcLat, srcLon, destLat, destLon)
-    best_routes = get_three_best_routes(routes, searchPreference, dateTime)
+    try:
+        best_routes = get_three_best_routes(routes, searchPreference, dateTime)
+    except IndexError:
+        best_routes = "No Journey Found"
 
     return json.dumps(best_routes)
 

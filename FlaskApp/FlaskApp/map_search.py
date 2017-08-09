@@ -208,4 +208,11 @@ def get_three_routes_based_on_walking_distance(data):
 
     routes = sort_function(routes)
 
-    return [routes[0], routes[1], routes[2]]
+    if len(routes) == 2:
+        return [routes[0], routes[1]]
+
+    elif len(routes) == 1:
+        return [routes[0]]
+
+    else:
+        return [routes[0], routes[1], routes[2]]
