@@ -299,6 +299,8 @@ class Db:
 
         return json.dumps(json.loads(df.to_json(orient='index')))
 
+
+
     def get_bus_time_for_map(self, jpid, srcStop, destStop, sourceTime, timeCat ):
         
         """
@@ -334,6 +336,7 @@ class Db:
         df.Time_bus_arrives = df.Time_bus_arrives.apply(lambda x: re.sub('\..*', '', x))
 
         return json.dumps(json.loads(df.to_json(orient='index')))
+
     
     def get_stop_numbers(self, jpid, stop1, stop2):
         
