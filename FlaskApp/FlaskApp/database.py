@@ -227,7 +227,7 @@ class Db:
         
         #we need to delete duplicates from query
         #get index of min value of Minimum_Total_Walking for each jpid_source
-        idx = df.groupby(['JPID_Source'])['Minimum_Total_Walking'].transform(max) == df['Minimum_Total_Walking']
+        idx = df.groupby(['JPID_Source'])['Minimum_Total_Walking'].transform(min) == df['Minimum_Total_Walking']
         df = df[idx]
         
         #remove possible duplicates
