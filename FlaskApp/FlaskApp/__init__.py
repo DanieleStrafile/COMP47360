@@ -1,14 +1,11 @@
 import json
-import re
-import requests
 
 from flask import Flask, render_template
 from flask_cors import CORS
-from bs4 import BeautifulSoup
 
 from FlaskApp.database import Db
 from FlaskApp.model import get_travel_time
-from FlaskApp.map_search import get_three_best_routes
+from FlaskApp.map_search import get_three_best_routes, get_prices
 
 
 app = Flask(__name__)
@@ -84,7 +81,6 @@ def get_model_answer(jpid, source, destination, dateTime):
     """Get estimated travel time"""
 
     distances = Db().get_distance(jpid, source, destination)
-
     travel_time = get_travel_time(jpid, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
 
     return json.dumps(travel_time)
@@ -92,17 +88,19 @@ def get_model_answer(jpid, source, destination, dateTime):
 
 @app.route('/get_bus_time/<jpidTruncated>/<srcStop>/<destStop>/<hour>/<minute>/<sec>/<sourceTime>/<timeCat>')
 def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
+    """Returns selected timetable Mon-Fri, Sat & Sun for selected route"""
     
     return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat)
 
 
 @app.route('/getPricing/<jpid>/<stop1>/<stop2>/<direction>')
 def display_prices(jpid, stop1, stop2, direction):
+    """Scrapes Leap Card Travel Info Live From The Website for the app's final form"""
     
     try:
         # Get lineid and stop numbers of those stops
         df = Db().get_stop_numbers(jpid, stop1, stop2)
-        lineid = df.loc[0,"Line_ID"]
+        lineid = df.loc[0, "Line_ID"]
         
         # Convert upper cases to lower cases letter
         lineid = lineid.lower()
@@ -121,7 +119,7 @@ def display_prices(jpid, stop1, stop2, direction):
         
             article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
 
-            return get_prices(article_url)
+            return json.dumps(get_prices(article_url))
         
         except Exception as e: 
             if direction == '0' or direction == 0:
@@ -131,7 +129,7 @@ def display_prices(jpid, stop1, stop2, direction):
         
             article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber="+str(lineid)+"&direction="+str(direction)+"&board="+str(stop_number1)+"&alight="+str(stop_number2)
 
-            return get_prices(article_url)
+            return json.dumps(get_prices(article_url))
         
     except Exception as e:
         if stop_number2 - stop_number1 <= 10:
@@ -143,49 +141,8 @@ def display_prices(jpid, stop1, stop2, direction):
         else:
             article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=9&alight=46"
         
-        return get_prices(article_url)
+        return json.dumps(get_prices(article_url))
         pass
-
-# This is a helper method for function display_prices
-def get_prices(article_url):
-    
-    #get table with prices from url
-    page = requests.get(article_url)
-    soup = BeautifulSoup(page.text,"html.parser")
-    table = soup.find("div", class_="other-fares-display")
-    rows = table.findChildren(['th', 'tr'])
-    
-    
-    # We got the table with prices from url, now we need to organise it in a dictionary e.g. Adult prices : 2.4 Euros etc...
-    count = 0
-    dictionary = dict()
-
-    for row in rows:
-        cells = row.findChildren('td')
-        for cell in cells:
-            
-            # we want to stop here, the next cell is None
-            if count > 11:
-                break
-                
-            value = cell.string.strip()
-            
-            
-            # Even rows, these are our key pairs in dictionary, ie labels
-            if count % 2 == 0:
-                
-                key = value
-                
-            # Uneven rows, these are our value pairs in dictionary, ie prices
-            else:
-                
-                value = re.findall(r'\d+', value)
-                dictionary[key] = str(value[0]) + "."  + str(value[1]) + " Euros"
-                
-            count += 1
-    
-    # Return the dictionary as a json object
-    return json.dumps(dictionary)
 
 
 if __name__ == "__main__":

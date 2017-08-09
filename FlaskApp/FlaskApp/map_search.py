@@ -7,7 +7,6 @@ from FlaskApp.database import Db
 from FlaskApp.model import get_travel_time
 
 
-# --------------------------------------------------------------------------------------------------------------- #
 def get_three_best_routes(data, search_pref, date_time):
     """Returns three JPID's based on search preference"""
 
@@ -27,7 +26,6 @@ def sort_function(data):
     return sorted(data, key=lambda x: x[0])
 
 
-# --------------------------------------------------------------------------------------------------------------- #
 def get_three_routes_based_on_arrival_time(data, date_time):
     """Return three routes which arrive the soonest"""
 
@@ -41,10 +39,8 @@ def get_three_routes_based_on_arrival_time(data, date_time):
 
         # Get the model's travel time predictions
         travel_times = get_distance_and_predict_with_model(jpid, source, destination, date_time)
-
         # The time the bus arrives HH:MM:SS
         time_bus_arrives = find_time_bus_arrives(travel_times, date_time, jpid, source, destination)
-
         routes.append([time_bus_arrives, jpid, source, destination])
 
     routes = sort_function(routes)  # Sort it by the next to arrive
@@ -81,13 +77,11 @@ def get_distance_and_predict_with_model(jpid, source, destination, date_time):
     """Get travel time of route"""
 
     distances = Db().get_distance(jpid, source, destination)
-
     travel_times = get_travel_time(jpid, distances.loc[0, "Distance"], distances.loc[1, "Distance"], date_time[0])
 
     return travel_times
 
 
-# -------------------------------------------------------------------------------------------------------------- #
 def get_three_routes_based_on_fare(data):
     """Return the three most inexpensive routes"""
 
@@ -124,7 +118,7 @@ def get_three_routes_based_on_fare(data):
                     lineid) + "&direction=" + str(direction) + "&board=" + str(stop_number1) + "&alight=" + str(
                     stop_number2)
 
-                fare = get_prices(article_url)
+                fare = get_prices(article_url)["Adult Leap"]
 
             except Exception as e:
                 if direction == '0' or direction == 0:
@@ -136,7 +130,7 @@ def get_three_routes_based_on_fare(data):
                     lineid) + "&direction=" + str(direction) + "&board=" + str(stop_number1) + "&alight=" + str(
                     stop_number2)
 
-                fare = get_prices(article_url)
+                fare = get_prices(article_url)["Adult Leap"]
 
         except Exception as e:
             if stop_number2 - stop_number1 <= 10:
@@ -147,7 +141,7 @@ def get_three_routes_based_on_fare(data):
 
             else:
                 article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=9&alight=46"
-                fare = get_prices(article_url)
+                fare = get_prices(article_url)["Adult Leap"]
             pass
 
         routes.append([fare, jpid, stop1, stop2])
@@ -165,7 +159,7 @@ def get_prices(article_url):
     table = soup.find("div", class_="other-fares-display")
     rows = table.findChildren(['th', 'tr'])
 
-    # We got the table with prices from url, now we need to organise it in a dictionary e.g. Adult prices : 2.4 Euros etc...
+    # Organise price table into in a dictionary e.g. Adult prices : 2.4 Euros etc...
     count = 0
     dictionary = dict()
 
@@ -173,28 +167,26 @@ def get_prices(article_url):
         cells = row.findChildren('td')
         for cell in cells:
 
-            # we want to stop here, the next cell is None
+            # We want to stop here, the next cell is None
             if count > 11:
                 break
 
             value = cell.string.strip()
 
-            # even rows, these are our key pairs in dictionary, ie labels
+            # Even rows, these are our key pairs in dictionary, ie labels
             if count % 2 == 0:
                 key = value
 
-            # uneven rows, these are our value pairs in dictionary, ie prices
+            # Uneven rows, these are our value pairs in dictionary, ie prices
             else:
                 value = re.findall(r'\d+', value)
                 dictionary[key] = str(value[0]) + "." + str(value[1]) + " Euros"
 
             count += 1
 
-    # return the dictionary as a json object
-    return dictionary["Adult Leap"]
+    return dictionary
 
 
-# -------------------------------------------------------------------------------------------------------------- #
 def get_three_routes_based_on_walking_distance(data):
     """Return the three closest routes"""
 
@@ -203,13 +195,8 @@ def get_three_routes_based_on_walking_distance(data):
     for index, item in data.items():
 
         route = [item['Minimum_Total_Walking'], item['JPID_Source'], item['STOP_ID_Source'], item['Stop_ID_Destination']]
-
         routes.append(route)
 
-    print(routes)
-
     routes = sort_function(routes)
-
-    print(routes)
 
     return [routes[0], routes[1], routes[2]]

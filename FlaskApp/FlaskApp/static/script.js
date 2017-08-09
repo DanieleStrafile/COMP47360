@@ -1,17 +1,16 @@
-// Global Variables
-
 // This is needed to save the Line ID for the end of the form when the user requests a travel time estimation.
 var lineid;
 // To store the user's preference of searching by Stop ID or Addresses
 var pref;
-// Why do we need this??? (explain here)
+// Journey Pattern ID
 var jpid;
 
 
 $(document).ready(function() {
 	
-	$("#test").addClass("loader");
-	
+	// Populate Line ID Dropdown menu
+	dropDown();
+		
 	// Hide all items not needed on startup
 	$("#selectSourceDestDiv").hide();
 	$("#selectDirectionDiv").hide();
@@ -28,21 +27,18 @@ $(document).ready(function() {
 		$("#sourceDestTimeGoDiv").hide(700);
 		$("#loader").removeClass("loader");
 		$("#mapSearchPreferenceDiv").hide();
-	    	$("#timetableDiv").hide(700);
-
+	    $("#timetableDiv").hide(700);
 		$("#selectRouteAndSearchPreference").show(700);
-
 		clearBusTimeaAndPrediction();
     });
 	
     //         Timetable Button
     $("#showTimetables").click(function(){
-       	 	$("#selectRouteAndSearchPreference").hide(700);
-        	$("#selectSourceDestDiv").hide(700);
+       	$("#selectRouteAndSearchPreference").hide(700);
+        $("#selectSourceDestDiv").hide(700);
 		$("#selectDirectionDiv").hide(700);
 		$("#googleMapDiv").hide(700);
 		$("#sourceDestTimeGoDiv").hide(700);
-
 		$("#timetableDiv").show(700, function(){dropDownTimetable();});
     });
 	
@@ -54,8 +50,7 @@ $(document).ready(function() {
 		$("#sourceDestTimeGoDiv").hide(700);
 		$("#loader").removeClass("loader");
 		$("#selectRouteAndSearchPreference").hide(700);
-	    	$("#timetableDiv").hide(700);
-		
+	    $("#timetableDiv").hide(700);
 		// Show wanted div for search options
 		$("#mapSearchPreferenceDiv").show(700);
     });
@@ -66,7 +61,6 @@ $(document).ready(function() {
 		$("#sourceDestTimeGoDiv").hide(700);
 		$("#mapSearchPreferenceDiv").hide(700);
 		searchPreference = "searchByFare"
-		
 		$("#googleMapDiv").show(700, function() {initialize();});
     });
 	
@@ -76,7 +70,6 @@ $(document).ready(function() {
 		$("#sourceDestTimeGoDiv").hide(700);
 		$("#mapSearchPreferenceDiv").hide(700);
 		searchPreference = "searchByWalkingDistance"
-		
 		$("#googleMapDiv").show(700, function() {initialize();});
     });
 	
@@ -86,27 +79,19 @@ $(document).ready(function() {
 		$("#sourceDestTimeGoDiv").hide(700);
 		$("#mapSearchPreferenceDiv").hide(700);
 		searchPreference = "searchByArrivalTime"
-		
 		$("#googleMapDiv").show(700, function() {initialize();});
     });
-	
-	
-
 
 	// Toggle the direction options after first form
     $("#firstForm").click(function() {
 
-    	//show the div and work on it
+		//show the div and work on it
 		$("#selectDirectionDiv").show(700);
-
 		//get line id chosen by user
 		lineid = $("#form-control :selected").text();
-
 		//get choice between stopid or address chosen by user
 		pref = $('input[name=inlineRadioOptions]:checked').val();
-
 		getFirstandLastAddress();
-
 		//hide other divs
 		$("#selectRouteAndSearchPreference").hide(700);
     });
@@ -124,9 +109,7 @@ $(document).ready(function() {
 
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
-
         getSourceDestination($(this).val(),0,pref);
-
         //set jpid here
         jpid = $(this).val() + "";
 
@@ -137,44 +120,33 @@ $(document).ready(function() {
 
 		$("#selectDirectionDiv").hide(700);
         $("#sourceDestTimeGoDiv").slideToggle(700, function() {$( "#datepicker" ).datetimepicker();});
-
         getSourceDestination($(this).val(),1,pref);
-        
-
         //set jpid here
         jpid = $(this).val() + "";
 
     });
-    
-	dropDown();
 	
 	// 'GET' request for Time Estimation
 	$('#selectSourceDestFrom').ajaxForm(function() {
-		
+		// Reset
 		$("#loader").removeClass("loader");
 		document.getElementById("travelTimeDiv").innerHTML = "";
 		document.getElementById("travelPriceDiv").innerHTML = "";
 		$("#loader").addClass("loader");
-
+		
 		var source;
 		var destination;
-
+		
 		if (pref == "address") {
-
 			source = $('#form-control2 :selected').val();
 			destination = $('#form-control3 :selected').val();
-
 		}
-
 		else {
-
 			source = $('#form-control2 :selected').text();
 			destination = $('#form-control3 :selected').text();
-
 		}
 
 		var dateTime = $('#datepicker').datepicker('getDate');
-
 		getTravelTime(source, destination, dateTime);
 
 	});
@@ -189,7 +161,6 @@ $(document).ready(function() {
 
 		// Transfrom data into array of objects
          var data = $("#PickRouteTimetable :input").serializeArray();
-
          var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getSelectedTimetable/" + data[0].value, function(timetables) {
 
          console.log(timetables);
@@ -202,8 +173,6 @@ $(document).ready(function() {
 
 			options += "<tr>" + "<td>" + stop.Day_Cat + "</td> " + "<td>" + stop.Time_no_date + "</tr>" ;
 		})
-
-
 		//set html content of form
 		$("#selectedTimetableDiv").html(options + '</table>');
     	});
@@ -224,9 +193,7 @@ function dropDown() {
 		_.forEach(lineids, function(data) {
 
 			options += "<option>"+ data.Line_ID +"</option>";
-
 		})
-
 		$("#form-control").html(options);
 	})
 }
@@ -236,7 +203,6 @@ function dropDownTimetable() {
 
 // 'GET' request for timetable routes
     var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getRoutes", function(data) {
-
     lineids = data.lineids;
     var options = "";
 
@@ -245,7 +211,6 @@ function dropDownTimetable() {
         options += "<option>"+ lineid.Line_ID +"</option>";
 
     })
-
     $("#form-controltimetable").html(options);
 	})
 	;
@@ -259,7 +224,6 @@ function getFirstandLastAddress() {
 
 		var direction0 = $('#direction0');
 		var direction1 = $('#direction1');
-
 
 		//populating directions
 		direction0.html("<span class='glyphicon glyphicon-circle-arrow-right'></span>" + ' From ' + data[0].Short_Address_Source + ' To ' + data[0].Short_Address_Destination);
@@ -383,7 +347,6 @@ function getPricing(jpid, stop1, stop2, direction) {
 	}
 		
 	});
-
 }
 
 
@@ -409,7 +372,6 @@ function clearBusTimeaAndPrediction() {
 	$("#travelTimeDiv").html("");
 	$("#travelPriceDiv").html("");
 	$("#loader").removeClass("loader");
-
 }
 
 

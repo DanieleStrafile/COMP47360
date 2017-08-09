@@ -21,7 +21,7 @@ function initialize() {
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
 		disableDefaultUI: true
 		}
-
+	// Selected by 'onclick' by user
 	var source;
 	var destination;
 
@@ -50,8 +50,6 @@ function initialize() {
 			setTimeout(function(){
 			getJpidBestRoute(map, source.lat(), source.lng(), destination.lat(), destination.lng());}, 1000);
 			
-			
-
 		} else {
 
 			resetGlobals();
@@ -60,11 +58,10 @@ function initialize() {
 }
 
 
-//find best possible route jpid, get coords of its stops and display them
+// Find best possible route jpid, get coords of its stops and display them
 function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 
 	var temp = new Date();
-
 	var dateTime = [temp.toString(), temp.getDay(), temp.getHours(), temp.getMinutes(), temp.getSeconds()]
 
 	$.ajax({
@@ -80,18 +77,13 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 			
 			information = data[i][0];
 			jpid = data[i][1];
-			
 			var srcStop = data[i][2];
 			var destStop = data[i][3];
-			
 			drawMapRoute(map, srcStop, destStop);
 		}	
 		  setTimeout(function(){formatInfoWindow(data);}, 1000);
 	}
 	});
-		
-	
-
 }
 
 
@@ -263,5 +255,3 @@ function placeMarker(location, map) {
 
 	markersArray.push(marker);
 }
-
-

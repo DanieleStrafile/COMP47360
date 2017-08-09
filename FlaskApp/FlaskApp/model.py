@@ -8,17 +8,11 @@ from FlaskApp.static.Data_Structures import timeCategoryToSpeed
 def get_travel_time(journey_pattern_id, source, destination, date_time):
     """Takes in a user's query and returns the model's predictions"""
 
-    # Get Day
     day = get_day(date_time)
-
-    # Get Speed Category
     time_category = get_time_category(date_time)
-
     speed = timeCategoryToSpeed.time_cat[day][time_category]
-
     # Get model's predictions
     source_time = get_prediction(journey_pattern_id, source, speed, day)
-
     destination_time = get_prediction(journey_pattern_id, destination, speed, day)
 
     return [destination_time[0], source_time[0]]
@@ -44,7 +38,7 @@ def get_prediction(journey_pattern_id, distance, speed, day):
             prediction = lm.predict(df)
         
     except:
-        #if a bus does not work on a certain day and the user picks that day, return not a number
+        # If a bus does not work on a certain day and the user picks that day, return not a number
         prediction = ['A']
 
     return prediction
