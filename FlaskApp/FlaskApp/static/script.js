@@ -156,26 +156,61 @@ $(document).ready(function() {
 		// This is just to disable the form's usual function
 	});
 	
-	// 'GET' request for source and destination addresses after first form
+// 'GET' request for source and destination addresses after first form
 	$('#PickRouteTimetable').ajaxForm(function() {
 
 		// Transfrom data into array of objects
          var data = $("#PickRouteTimetable :input").serializeArray();
+
          var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getSelectedTimetable/" + data[0].value, function(timetables) {
 
          console.log(timetables);
          //just for testing
 
-         var options = "<table><tr><th>Day Category</th><th>Bus Time</th></tr>";
+         var option1 = "<table><tr><th>Monday to Friday</th></tr>";
 
 
          _.forEach(timetables, function(stop) {
 
-			options += "<tr>" + "<td>" + stop.Day_Cat + "</td> " + "<td>" + stop.Time_no_date + "</tr>" ;
+            if (stop.Day_Cat == "Mon-Fr"){
+
+            option1 += "<tr>" + "<td>" + stop.Time_no_date + "</td>" + "</tr>";
+
+            }
+
 		})
+
+		var option2 = "<table><tr><th>Saturday</th></tr>";
+
+		_.forEach(timetables, function(stop) {
+
+            if (stop.Day_Cat == "Sat"){
+
+            option2 += "<tr>" + "<td>" + stop.Time_no_date + "</td>" + "</tr>" ;
+
+            }
+
+		})
+
+
+        var option3 = "<table><tr><th>Sunday</th></tr>";
+
+		_.forEach(timetables, function(stop) {
+
+            if (stop.Day_Cat == "Sun"){
+
+            option3 += "<tr>" + "<td>" + stop.Time_no_date + "</td>" + "</tr>" ;
+
+            }
+
+		})
+
 		//set html content of form
-		$("#selectedTimetableDiv").html(options + '</table>');
+		$("#selectedTimetable1Div").html(option1 + '</table>');
+		$("#selectedTimetable2Div").html(option2 + '</table>');
+		$("#selectedTimetable3Div").html(option3 + '</table>');
     	});
+	
 	});
 
 });
