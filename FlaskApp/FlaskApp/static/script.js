@@ -224,14 +224,34 @@ function getFirstandLastAddress() {
 
 		var direction0 = $('#direction0');
 		var direction1 = $('#direction1');
+		
+		console.log("data length is " + data.length);
+		
+		//in case there is only one direction 
+		if (data.length == 1) {
+			
+			//hide div direction1
+			direction1.hide();
+			
+			direction0.html("<span class='glyphicon glyphicon-circle-arrow-right'></span>" + ' From ' + data[0].Short_Address_Source + ' To ' + data[0].Short_Address_Destination);
+			direction0.val(data[0].Journey_Pattern_ID + "");	
+		}
+		
+		else {
+			
+			//show div direction1
+			direction1.show();
+			
+			//populating directions
+			direction0.html("<span class='glyphicon glyphicon-circle-arrow-right'></span>" + ' From ' + data[0].Short_Address_Source + ' To ' + data[0].Short_Address_Destination);
+			direction1.html("<span class='glyphicon glyphicon-circle-arrow-left'></span>" + ' From ' + data[1].Short_Address_Source + ' To ' + data[1].Short_Address_Destination);
+			
+			//setting direction's value for later query in function getSourceDestination
+			direction0.val(data[0].Journey_Pattern_ID + "");
+			direction1.val(data[1].Journey_Pattern_ID + "");
+			
+		}
 
-		//populating directions
-		direction0.html("<span class='glyphicon glyphicon-circle-arrow-right'></span>" + ' From ' + data[0].Short_Address_Source + ' To ' + data[0].Short_Address_Destination);
-		direction1.html("<span class='glyphicon glyphicon-circle-arrow-left'></span>" + ' From ' + data[1].Short_Address_Source + ' To ' + data[1].Short_Address_Destination);
-
-		//setting direction's value for later query in function getSourceDestination
-		direction0.val(data[0].Journey_Pattern_ID + "");
-		direction1.val(data[1].Journey_Pattern_ID + "");
 	})
 }
 
