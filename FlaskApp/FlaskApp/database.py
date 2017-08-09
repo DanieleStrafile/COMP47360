@@ -232,8 +232,6 @@ class Db:
         
         #remove possible duplicates
         df.drop_duplicates('JPID_Source', inplace=True)
-        
-        print(df)
 
         return json.loads(df.to_json(orient='index'))
 
