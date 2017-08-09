@@ -330,6 +330,13 @@ function getTravelTime(source, destination, dateTime) {
 
 				//make jpid in the following form "0013000%" so that we can use the LIKE operator in mysql
 				var jpidTruncated = String(jpid);
+                //check if route is subroute
+                console.log(jpidTruncated);
+                console.log(jpid);
+                var route = jpidTruncated[jpidTruncated.length -1];
+                if (route != '1'){
+                    var subroute = true;
+                }
 				jpidTruncated = (jpidTruncated.slice(0,-1)) + "%";
 				//we dont need 25 in %25 but apache decodes %25 as % and % gives a 400 error so we have to go for this solution
 				jpidTruncated = (jpidTruncated.slice(0,-1)) + "%25";
@@ -339,7 +346,7 @@ function getTravelTime(source, destination, dateTime) {
 
 				//display travel time
 				getTravelTimeWithTimetable(jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
-						dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest);
+						dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest, subroute);
 
 				//display pricing
 				//jpid.charAt(4) is the direction already encoded within jpid
@@ -357,7 +364,7 @@ function getTravelTime(source, destination, dateTime) {
 
 
 // Give the time it will take for the bus to arrive at the user's location
-function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest) {
+function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest, subroute) {
 	
 	$.ajax({
 	  dataType: "json",
@@ -371,9 +378,11 @@ function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minu
 
 		var timeToArriveInMins = getTimeToArrive(timeBusArrives, currentTime);
 		var timeFromSourceToDestInMins = parseInt(timeFromSourceToDest/60);
+        var subrouteText = "";  
+        if (subroute) subrouteText = "<b> This bus is a subroute</b>";
 
 		$("#travelTimeDiv").html("The <b>" + lineid +  "</b>  will arrive at <b>" + timeBusArrives + "</b>.<BR>" +
-				"<BR>Your Travel time will be <b>" + timeFromSourceToDestInMins + "Mins</b> <BR><BR>").promise().done(function(){
+				"<BR>Your Travel time will be <b>" + timeFromSourceToDestInMins + "Mins</b> <BR><BR>" + subrouteText).promise().done(function(){
 			$("#loader").removeClass("loader");
 		});
 		
