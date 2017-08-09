@@ -333,7 +333,7 @@ class Db:
         # Delete everything after and including .  e.g. 10:40:00.000000000 will become 10:40:00
         df.Time_bus_arrives = df.Time_bus_arrives.apply(lambda x: re.sub('\..*', '', x))
 
-        return json.dumps(json.loads(df.to_json(orient='index')))
+        return df.loc[0,"Time_bus_arrives"]
 
     def get_stop_numbers(self, jpid, stop1, stop2):
         
