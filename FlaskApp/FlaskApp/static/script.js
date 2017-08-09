@@ -172,7 +172,7 @@ $(document).ready(function() {
 
          _.forEach(timetables, function(stop) {
 
-            if (stop.Day_Cat == "Mon-Fr"){
+            if (stop.Day_Cat == "Mon-Fri"){
 
             option1 += "<tr>" + "<td>" + stop.Time_no_date + "</td>" + "</tr>";
 
@@ -341,7 +341,7 @@ function getTravelTime(source, destination, dateTime) {
 				//we dont need 25 in %25 but apache decodes %25 as % and % gives a 400 error so we have to go for this solution
 				jpidTruncated = (jpidTruncated.slice(0,-1)) + "%25";
 
-				//get label "Mon-Fr" or "Sat" or "Sun" from datetime
+				//get label "Mon-Fri" or "Sat" or "Sun" from datetime
 				var timeCat = convertDateTimetoTimeCat(dateTime);
 
 				//display travel time
@@ -447,7 +447,7 @@ function convertDateTimetoTimeCat(dateTime) {
 	if (day == 0)
 		return "Sun";
 	else if (day >= 1 && day <= 5)
-		return "Mon-Fr";
+		return "Mon-Fri";
 	else
 		return "Sat";
 }
