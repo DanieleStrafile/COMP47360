@@ -161,7 +161,7 @@ class Db:
                     (SELECT first_query.JPID_Source, first_query.STOP_ID_Source, first_query.Distance_Source,
                         second_query.STOP_ID_Destination, second_query.Distance_Destination,
     
-                        MIN(first_query.Distance_Source + second_query.Distance_Destination) as Minimum_Total_Walking
+                        first_query.Distance_Source + second_query.Distance_Destination as Minimum_Total_Walking
     
                     FROM
     
@@ -200,7 +200,7 @@ class Db:
                         HAVING Distance_Destination <= 1.0) as second_query
     
                     ON first_query.JPID_Source = second_query.JPID_Destination
-                    GROUP BY JPID_Source) AS third_query
+                    ) AS third_query
                     
             INNER JOIN
     
@@ -224,6 +224,16 @@ class Db:
         """
         
         df = pd.read_sql_query(sql8, self.conn, params={"source_lat": source_lat, "source_lon": source_lon, "destination_lat": destination_lat, "destination_lon": destination_lon})
+        
+        #we need to delete duplicates from query
+        #get index of min value of Minimum_Total_Walking for each jpid_source
+        idx = df.groupby(['JPID_Source'])['Minimum_Total_Walking'].transform(max) == df['Minimum_Total_Walking']
+        df = df[idx]
+        
+        #remove possible duplicates
+        df.drop_duplicates('JPID_Source', inplace=True)
+        
+        print(df)
 
         return json.loads(df.to_json(orient='index'))
 
