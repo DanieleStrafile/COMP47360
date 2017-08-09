@@ -356,3 +356,5 @@ class Db:
 def myconverter(o):
     if isinstance(o, str):
         return o.__str__()      
+
+# print(Db().get_bus_time_for_map('00661001', 3983, 3372, 560.6, 'Mon-Fri'))

@@ -39,32 +39,33 @@ def get_three_routes_based_on_arrival_time(data, date_time):
 
         # Get the model's travel time predictions
         travel_times = get_distance_and_predict_with_model(jpid, source, destination, date_time)
-        # The time the bus arrives HH:MM:SS
 
         try:
+            # The time the bus arrives HH:MM:SS
             time_bus_arrives = find_time_bus_arrives(travel_times, date_time, jpid, source, destination)
-
+            routes.append([time_bus_arrives, jpid, source, destination])
         except:
-            time_bus_arrives = "Not Known"
-        routes.append([time_bus_arrives, jpid, source, destination])
+            pass
 
     routes = sort_function(routes)  # Sort it by the next to arrive
 
-    return [routes[0], routes[1], routes[2]]
+    if len(routes) == 2:
+        return [routes[0], routes[1]]
+    elif len(routes) == 1:
+        return [routes[0]]
+    elif len(routes) == 0:
+        return "No Journey Found"
+    else:
+        return [routes[0], routes[1], routes[2]]
 
 
 def find_time_bus_arrives(travel_times, date_time, jpid, source, destination):
     """Find the actual time the bus arrives"""
 
-    time_to_source = travel_times[0]
+    time_to_source = travel_times[1]
     time_cat = get_time_cat(date_time[1])
 
-    print("Time to source", time_to_source)
-    print("Time cat", time_cat)
-
-    time_bus_arrives = Db().get_bus_time_for_map(jpid, source, destination, time_to_source, time_cat)
-
-    print("Time bus arrives XXXXXXXXXXXXXXXXXXXXXXx", time_bus_arrives)
+    time_bus_arrives = Db().get_bus_time_for_map(str(jpid), int(source), int(destination), float(time_to_source), str(time_cat))
 
     return time_bus_arrives
 
@@ -157,7 +158,14 @@ def get_three_routes_based_on_fare(data):
 
     routes = sort_function(routes)  # Sort it by the next to arrive
 
-    return [routes[0], routes[1], routes[2]]
+    if len(routes) == 2:
+        return [routes[0], routes[1]]
+    elif len(routes) == 1:
+        return [routes[0]]
+    elif len(routes) == 0:
+        return "No Journey Found"
+    else:
+        return [routes[0], routes[1], routes[2]]
 
 
 # this is a helper method for function display_prices
@@ -210,9 +218,9 @@ def get_three_routes_based_on_walking_distance(data):
 
     if len(routes) == 2:
         return [routes[0], routes[1]]
-
     elif len(routes) == 1:
         return [routes[0]]
-
+    elif len(routes) == 0:
+        return "No Journey Found"
     else:
         return [routes[0], routes[1], routes[2]]
