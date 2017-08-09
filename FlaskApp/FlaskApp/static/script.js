@@ -400,14 +400,14 @@ function getPricing(jpid, stop1, stop2, direction) {
 	  async: true, 
 	  success: function(data) {
 
-		options = "<b>Prices</b> : <BR>";
+		options = "<b>Fare Prices</b>: <BR>";
 
 		_.each(data, function(value, key) {
 			
-			options += key + " : " + value + "<BR>";
+			options += key + ": €" + value.replace("Euros", "") + "<BR>";
 		});
 
-		$("#travelPriceDiv").html(options);
+		$("#travelPriceDiv").html(options + "*No change given on cash fares");
 	}
 		
 	});
