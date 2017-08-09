@@ -300,6 +300,8 @@ class Db:
         
         """
         Return time next bus is coming for map. Must be a specific JPID unlike the other query for final form
+
+        Just return a string displaying the time the bus arrives...
         """
 
         pass

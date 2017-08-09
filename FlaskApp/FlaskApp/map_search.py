@@ -58,10 +58,10 @@ def find_time_bus_arrives(travel_times, date_time, jpid, source, destination):
     time_to_source = travel_times[0]
     time_cat = get_time_cat(date_time[1])
 
-    data = Db().get_bus_time_for_map(jpid, source, destination, date_time[2], date_time[3],
+    time_bus_arrives = Db().get_bus_time_for_map(jpid, source, destination, date_time[2], date_time[3],
                                                         date_time[4], time_to_source, time_cat)
 
-    return data[0].Time_bus_arrives
+    return time_bus_arrives
 
 
 def get_time_cat(day):

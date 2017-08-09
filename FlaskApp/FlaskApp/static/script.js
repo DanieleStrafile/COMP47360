@@ -6,13 +6,11 @@ var lineid;
 var pref;
 // Why do we need this??? (explain here)
 var jpid;
-// Organizing the 3 best map routes by arrival time
-var timeBusArrives;
-// For organizing map by prices
-var adultFare;
 
 
 $(document).ready(function() {
+	
+	$("#test").addClass("loader");
 	
 	// Hide all items not needed on startup
 	$("#selectSourceDestDiv").hide();
@@ -152,6 +150,11 @@ $(document).ready(function() {
 	
 	// 'GET' request for Time Estimation
 	$('#selectSourceDestFrom').ajaxForm(function() {
+		
+		$("#loader").removeClass("loader");
+		document.getElementById("travelTimeDiv").innerHTML = "";
+		document.getElementById("travelPriceDiv").innerHTML = "";
+		$("#loader").addClass("loader");
 
 		var source;
 		var destination;
@@ -173,7 +176,6 @@ $(document).ready(function() {
 		var dateTime = $('#datepicker').datepicker('getDate');
 
 		getTravelTime(source, destination, dateTime);
-
 
 	});
 
@@ -205,13 +207,6 @@ $(document).ready(function() {
 		//set html content of form
 		$("#selectedTimetableDiv").html(options + '</table>');
     	});
-	
-		$("#lastForm").click(function() {
-			$("#loader").addClass("loader");
-			document.getElementById("travelTimeDiv").innerHTML = "";
-			document.getElementById("travelPriceDiv").innerHTML = "";
-		});
-	
 	});
 
 });
@@ -303,7 +298,7 @@ function getTravelTime(source, destination, dateTime) {
 	$.ajax({
 	  dataType: "json",
 	  url: $SCRIPT_ROOT + "/_getTravelTime/" + jpid + "/" + source + "/" + destination + "/" + dateTime,
-	  async: false, 
+	  async: true, 
 	  success: function(info) {
 
 		  //seconds it takes for bus to travel from terminus to source chosen by user
@@ -349,11 +344,11 @@ function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minu
 	  dataType: "json",
 	  url: $SCRIPT_ROOT + "/get_bus_time/"  + jpidTruncated + "/" + srcStop + "/" + destStop + "/" + hour + "/" + minute + "/"
 			+ sec + "/" + sourceTime + "/" + timeCat,
-	  async: false, 
+	  async: true, 
 	  success: function(data) {
 		
 		var currentTime = new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
-		timeBusArrives = data[0].Time_bus_arrives;
+		var timeBusArrives = data[0].Time_bus_arrives;
 
 		var timeToArriveInMins = getTimeToArrive(timeBusArrives, currentTime);
 		var timeFromSourceToDestInMins = parseInt(timeFromSourceToDest/60);
@@ -374,15 +369,13 @@ function getPricing(jpid, stop1, stop2, direction) {
 	$.ajax({
 	  dataType: "json",
 	  url: $SCRIPT_ROOT + "/getPricing/" + jpid + "/" + stop1 + "/" + stop2 + "/" + direction,
-	  async: false, 
+	  async: true, 
 	  success: function(data) {
 
 		options = "<b>Prices</b> : <BR>";
 
 		_.each(data, function(value, key) {
 			
-			// For map.js file when getting cheapest journeys			
-			if (key == "Adult Leap") adultFare = value;
 			options += key + " : " + value + "<BR>";
 		});
 
