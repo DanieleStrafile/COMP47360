@@ -93,6 +93,13 @@ def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, source
     return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat)
 
 
+@app.route('/get_bus_time_map/<jpid>/<srcStop>/<destStop>/<sourceTime>/<timeCat>')
+def get_bus_timetable_map(jpid, srcStop, destStop, sourceTime, timeCat ):
+    """Returns selected timetable Mon-Fri, Sat & Sun for selected route"""
+    
+    return Db().get_bus_time_for_map(jpid, srcStop, destStop, sourceTime, timeCat)
+
+
 @app.route('/getPricing/<jpid>/<stop1>/<stop2>/<direction>')
 def display_prices(jpid, stop1, stop2, direction):
     """Scrapes Leap Card Travel Info Live From The Website for the app's final form"""

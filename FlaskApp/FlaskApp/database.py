@@ -299,15 +299,41 @@ class Db:
 
         return json.dumps(json.loads(df.to_json(orient='index')))
 
-    def get_bus_time_for_map(self, jpid, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
+    def get_bus_time_for_map(self, jpid, srcStop, destStop, sourceTime, timeCat ):
         
         """
         Return time next bus is coming for map. Must be a specific JPID unlike the other query for final form
 
         Just return a string displaying the time the bus arrives...
+        
+        Use CURTIME() +1 hour to get current time in ireland
         """
 
-        pass
+        sql9 = """
+        SELECT j.Journey_Pattern_ID,
+            ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s)) AS Time_bus_arrives
+        FROM Timetable as t, JourneyPatternID_StopID as j
+        WHERE j.Journey_Pattern_ID = %(jpid)s  AND j.Journey_Pattern_ID = t.Journey_Pattern_ID 
+            AND (j.Stop_ID = %(srcStop)s OR j.Stop_ID = %(destStop)s) AND t.Day_Cat = %(timeCat)s
+            AND DATE_ADD(CURTIME(), INTERVAL 1 HOUR) <= ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s))
+        ORDER BY TIMESTAMPDIFF(SECOND, ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s)), DATE_ADD(CURTIME(), INTERVAL 1 HOUR) ) DESC
+        LIMIT 1
+        """
+        
+        df = pd.read_sql_query(sql9, self.conn, params={"jpid" : jpid,
+                                                                   "srcStop" : srcStop,
+                                                                    "destStop" : destStop,
+                                                                    "sourceTime" : sourceTime,
+                                                                    "timeCat" : timeCat  })
+        
+        df.Time_bus_arrives = df.Time_bus_arrives.astype(str)
+        # Format string time_no_date
+        # Delete 0 days e.g. 0 days 10:40:00.000000000 will become 10:40:00.000000000
+        df.Time_bus_arrives = df.Time_bus_arrives.apply(lambda x: re.sub('0 days ', '', x))
+        # Delete everything after and including .  e.g. 10:40:00.000000000 will become 10:40:00
+        df.Time_bus_arrives = df.Time_bus_arrives.apply(lambda x: re.sub('\..*', '', x))
+
+        return json.dumps(json.loads(df.to_json(orient='index')))
     
     def get_stop_numbers(self, jpid, stop1, stop2):
         
