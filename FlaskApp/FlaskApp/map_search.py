@@ -168,9 +168,10 @@ def get_three_routes_based_on_fare(data):
         return [routes[0], routes[1], routes[2]]
 
 
-# this is a helper method for function display_prices
 def get_prices(article_url):
-    # get table with prices from url
+    """Get leap card price information into a dictionary"""
+
+    # Get table with prices from url
     page = requests.get(article_url)
     soup = BeautifulSoup(page.text, "html.parser")
     table = soup.find("div", class_="other-fares-display")
