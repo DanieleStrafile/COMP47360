@@ -72,9 +72,13 @@ def possible_routes(srcLat, srcLon, destLat, destLon, searchPreference, dateTime
         best_routes = "No Journey Found"
 
     # Get the address for map display purposes
-    for i in range(len(best_routes)):
-        address = Db().get_single_address(best_routes[i][2])['0']['Address']
-        best_routes[i].append(address)
+    try:
+        for i in range(len(best_routes)):
+            address = Db().get_single_address(best_routes[i][2])['0']['Address']
+            best_routes[i].append(address)
+    except IndexError:
+        # In case the source is outside Dublin
+        best_routes = "No Journey Found"
 
     return json.dumps(best_routes)
 
