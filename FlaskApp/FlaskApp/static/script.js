@@ -39,6 +39,7 @@ $(document).ready(function() {
 		$("#selectDirectionDiv").hide(700);
 		$("#googleMapDiv").hide(700);
 		$("#sourceDestTimeGoDiv").hide(700);
+		$("#mapSearchPreferenceDiv").hide();
 		$("#timetableDiv").show(700, function(){dropDownTimetable();});
     });
 	

@@ -2,10 +2,10 @@ import json
 import pandas as pd
 import re
 
-from flask import *
-from sqlalchemy import *
+from flask import jsonify
+from sqlalchemy import create_engine
 
-from FlaskApp.db_info import *
+from FlaskApp.db_info import name, password, rds_host, port, db_name
 
 
 class Db:
@@ -225,12 +225,12 @@ class Db:
         
         df = pd.read_sql_query(sql8, self.conn, params={"source_lat": source_lat, "source_lon": source_lon, "destination_lat": destination_lat, "destination_lon": destination_lon})
         
-        #we need to delete duplicates from query
-        #get index of min value of Minimum_Total_Walking for each jpid_source
+        # We need to delete duplicates from query
+        # Get index of min value of Minimum_Total_Walking for each jpid_source
         idx = df.groupby(['JPID_Source'])['Minimum_Total_Walking'].transform(min) == df['Minimum_Total_Walking']
         df = df[idx]
         
-        #remove possible duplicates
+        # Remove possible duplicates
         df.drop_duplicates('JPID_Source', inplace=True)
 
         return json.loads(df.to_json(orient='index'))
@@ -260,13 +260,13 @@ class Db:
 
         return json.dumps(json.loads(df.to_json(orient='records')))
     
-    def get_bus_time(self, jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
+    def get_bus_time(self, jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat):
         
         """
         Return time next bus is coming
         """
         
-        # Maketime takes as input (hour,min,sec) and outputs hour:min:sec
+        # Takes as input (hour,min,sec) and outputs hour:min:sec
         
         sql9 = """
         SELECT j.Journey_Pattern_ID,
@@ -279,14 +279,14 @@ class Db:
         LIMIT 1
         """
     
-        df = pd.read_sql_query(sql9, self.conn, params={"jpidTruncated" : jpidTruncated,
-                                                                   "srcStop" : srcStop,
-                                                                    "destStop" : destStop,
-                                                                    "hour" : hour,
-                                                                    "minute" : minute,
-                                                                    "sec" : sec,
-                                                                    "sourceTime" : sourceTime,
-                                                                    "timeCat" : timeCat  })
+        df = pd.read_sql_query(sql9, self.conn, params={"jpidTruncated": jpidTruncated,
+                                                                   "srcStop": srcStop,
+                                                                    "destStop": destStop,
+                                                                    "hour": hour,
+                                                                    "minute": minute,
+                                                                    "sec": sec,
+                                                                    "sourceTime": sourceTime,
+                                                                    "timeCat": timeCat})
 
         df.Time_bus_arrives = df.Time_bus_arrives.astype(str)
         # Format string time_no_date
@@ -318,11 +318,11 @@ class Db:
         LIMIT 1
         """
         
-        df = pd.read_sql_query(sql9, self.conn, params={"jpid" : jpid,
-                                                                   "srcStop" : srcStop,
-                                                                    "destStop" : destStop,
-                                                                    "sourceTime" : sourceTime,
-                                                                    "timeCat" : timeCat  })
+        df = pd.read_sql_query(sql9, self.conn, params={"jpid": jpid,
+                                                                   "srcStop": srcStop,
+                                                                    "destStop": destStop,
+                                                                    "sourceTime": sourceTime,
+                                                                    "timeCat": timeCat})
         
         df.Time_bus_arrives = df.Time_bus_arrives.astype(str)
         # Format string time_no_date
@@ -345,16 +345,9 @@ class Db:
         
         """
         
-        df = pd.read_sql_query(sql11, self.conn, params={"jpid" : jpid,
-                                                                   "stop1" : stop1,
-                                                                    "stop2" : stop2
+        df = pd.read_sql_query(sql11, self.conn, params={"jpid": jpid,
+                                                                   "stop1": stop1,
+                                                                    "stop2": stop2
                                                                      })
 
         return df
-        
-        
-def myconverter(o):
-    if isinstance(o, str):
-        return o.__str__()      
-
-# print(Db().get_bus_time_for_map('00661001', 3983, 3372, 560.6, 'Mon-Fri'))

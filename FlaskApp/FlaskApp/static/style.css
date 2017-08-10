@@ -135,7 +135,10 @@ div.travelPriceDiv:empty {display: none}
 }
 
 .threePicturesForMapSearch {
-/*	make it nicer*/
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+	font-size: 35px;
 }
 
 .loader2 {

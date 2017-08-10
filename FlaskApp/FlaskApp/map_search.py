@@ -98,7 +98,7 @@ def get_three_routes_based_on_fare(data):
     routes = list()
 
     for index, journey in data.items():
-        fare = "9.99 Euros"
+        fare = "3.10 Euros"
         jpid = journey['JPID_Source']
         stop1 = journey['STOP_ID_Source']
         stop2 = journey['Stop_ID_Destination']
