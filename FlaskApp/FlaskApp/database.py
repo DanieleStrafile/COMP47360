@@ -351,3 +351,19 @@ class Db:
                                                                      })
 
         return df
+
+    def get_single_address(self, stop_id):
+        """Get the addresses for a given stop ID
+
+        This is for the map to display the address of the closest stops"""
+
+        sql_12 = """
+           SELECT Address
+           FROM Stop_ID_Address
+           WHERE (Stop_ID = %(stop_id)s)
+           """
+
+        df = pd.read_sql_query(sql_12, self.conn, params={"stop_id": stop_id})
+
+        return json.loads(df.to_json(orient='index'))
+

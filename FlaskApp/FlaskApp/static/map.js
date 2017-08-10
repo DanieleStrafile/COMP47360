@@ -223,20 +223,28 @@ function formatInfoWindow(topThreeRoutes) {
         }
     }
 	
+	debugger;
+	
 	if (topThreeRoutes.length == 1) {
 		infoWindow.setContent(
-		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>");
+		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
+		topThreeRoutes[0][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[0][2]);
 		
 	} else if (topThreeRoutes.length == 2) {
 		infoWindow.setContent(
 		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
-		"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>");
+		topThreeRoutes[0][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[0][2] +
+		"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" +
+		+ topThreeRoutes[1][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[1][2]);
 		
 	} else {
 		infoWindow.setContent(
 		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
+			topThreeRoutes[0][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[0][2] + 
 		"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" +
-		"<h2 style='color:#FF0000;'>" + topThreeRoutes[2][1] + ": " + topThreeRoutes[2][0] + "</h2>");
+			topThreeRoutes[1][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[1][2] +
+		"<h2 style='color:#FF0000;'>" + topThreeRoutes[2][1] + ": " + topThreeRoutes[2][0] + "</h2>" +
+		topThreeRoutes[2][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[2][2]);
 		}
 }
 
