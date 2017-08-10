@@ -159,58 +159,184 @@ $(document).ready(function() {
 	
 // 'GET' request for source and destination addresses after first form
 	$('#PickRouteTimetable').ajaxForm(function() {
-
+		
 		// Transfrom data into array of objects
-         var data = $("#PickRouteTimetable :input").serializeArray();
+        var data = $("#PickRouteTimetable :input").serializeArray();
+		
+		var addresses;
+
+			$.ajax({
+			  dataType: "json",
+			  url: $SCRIPT_ROOT + "/_getStartEndAddresses/" + data[0].value,
+			  async: false, 
+			  success: function(info) {
+				addresses = info;
+				}
+			});
+				
+		var dir0Source = addresses[0].Short_Address_Source;
+		var dir0Dest = addresses[0].Short_Address_Destination;
+		var dir1Source = addresses[1].Short_Address_Source;
+		var dir1Dest = addresses[1].Short_Address_Destination;
+		
+		console.log(dir0Dest, dir0Source, dir1Dest, dir1Source);
 
          var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getSelectedTimetable/" + data[0].value, function(timetables) {
 
-         console.log(timetables);
-         //just for testing
+			 console.log(timetables);
+			 
+			var direction0 = [];
+			var direction1 = [];
+			 
+			 _.forEach(timetables, function(stop) {
+				 if(stop.Journey_Pattern_ID.charAt(4) =='0') direction0.push(stop);
+				 if(stop.Journey_Pattern_ID.charAt(4) =='1') direction1.push(stop);
+			 })
 
-         var option1 = "<table><tr><th>Monday to Friday</th></tr>";
+			var option1 = "<table class='t01'><tr><th>Monday to Friday</th></tr><tr>";
 
+			var count = 0;
 
-         _.forEach(timetables, function(stop) {
+			 _.forEach(direction0, function(stop) {
 
-            if (stop.Day_Cat == "Mon-Fri"){
+				if (stop.Day_Cat == "Mon-Fri"){
 
-            option1 += "<tr>" + "<td>" + stop.Time_no_date + "</td>" + "</tr>";
+					if (count <= 3) {
+						count += 1;
+						option1 += "<td>" + stop.Time_no_date + "</td>";
+					} 
+					else {
+						count = 0;
+						option1 += "</tr><tr>";
+					}
+				}
 
-            }
+			})
+			 count = 0;
+			 option1 = option1.slice(0, -5) + "</table>";
 
-		})
+			var option2 = "<table class='t01'><tr><th>Saturday</th></tr><tr>";
 
-		var option2 = "<table><tr><th>Saturday</th></tr>";
+				 var count = 0;
 
-		_.forEach(timetables, function(stop) {
+			 _.forEach(direction0, function(stop) {
 
-            if (stop.Day_Cat == "Sat"){
+				if (stop.Day_Cat == "Sat"){
 
-            option2 += "<tr>" + "<td>" + stop.Time_no_date + "</td>" + "</tr>" ;
+					if (count <= 3) {
+						count += 1;
+						option2 += "<td>" + stop.Time_no_date + "</td>";
+					} 
+					else {
+						count = 0;
+						option2 += "</tr><tr>";
+					}
+				}
 
-            }
+			})
+			 count = 0;
+			 option2 = option2.slice(0, -5) + "</table>";
 
-		})
+		   var option3 = "<table class='t01'><tr><th>Sunday</th></tr><tr>";
 
+				 var count = 0;
 
-        var option3 = "<table><tr><th>Sunday</th></tr>";
+			 _.forEach(direction0, function(stop) {
 
-		_.forEach(timetables, function(stop) {
+				if (stop.Day_Cat == "Sun"){
 
-            if (stop.Day_Cat == "Sun"){
+					if (count <= 3) {
+						count += 1;
+						option3 += "<td>" + stop.Time_no_date + "</td>";
+					} 
+					else {
+						count = 0;
+						option3 += "</tr><tr>";
+					}
+				}
 
-            option3 += "<tr>" + "<td>" + stop.Time_no_date + "</td>" + "</tr>" ;
+			})
+			 count = 0;
+			 option3 = option3.slice(0, -5) + "</table>";
+			 
+			 var option4 = "<table class='t01'><tr><th>Monday to Friday</th></tr><tr>";
 
-            }
+			var count = 0;
 
-		})
+			 _.forEach(direction1, function(stop) {
 
-		//set html content of form
-		$("#selectedTimetable1Div").html(option1 + '</table>');
-		$("#selectedTimetable2Div").html(option2 + '</table>');
-		$("#selectedTimetable3Div").html(option3 + '</table>');
-    	});
+				if (stop.Day_Cat == "Mon-Fri"){
+
+					if (count <= 3) {
+						count += 1;
+						option4 += "<td>" + stop.Time_no_date + "</td>";
+					} 
+					else {
+						count = 0;
+						option4 += "</tr><tr>";
+					}
+				}
+
+			})
+			 count = 0;
+			 option4 = option4.slice(0, -5) + "</table>";
+
+			var option5 = "<table class='t01'><tr><th>Saturday</th></tr><tr>";
+
+			var count = 0;
+
+			 _.forEach(direction1, function(stop) {
+
+				if (stop.Day_Cat == "Sat"){
+
+					if (count <= 3) {
+						count += 1;
+						option5 += "<td>" + stop.Time_no_date + "</td>";
+					} 
+					else {
+						count = 0;
+						option5 += "</tr><tr>";
+					}
+				}
+
+			})
+			 count = 0;
+			 option5 = option5.slice(0, -5) + "</table>";
+
+		   var option6 = "<table class='t01'><tr><th>Sunday</th></tr><tr>";
+
+				 var count = 0;
+
+			 _.forEach(direction1, function(stop) {
+
+				if (stop.Day_Cat == "Sun"){
+
+					if (count <= 3) {
+						count += 1;
+						option6 += "<td>" + stop.Time_no_date + "</td>";
+					} 
+					else {
+						count = 0;
+						option6 += "</tr><tr>";
+					}
+				}
+
+			})
+			 option6 = option6.slice(0, -5) + "</table>";
+
+			//set html content of form
+			 
+			 $("#direction0TimeTable").html("<h1>" + dir0Source + " to " + dir0Dest + "</h1>");
+			  $("#direction1TimeTable").html("<h1>" + dir1Source + " to " + dir1Dest + "</h1>")
+			 
+			$("#selectedTimetable1Div").html(option1);
+			$("#selectedTimetable2Div").html(option2);
+			$("#selectedTimetable3Div").html(option3);
+			 
+			$("#selectedTimetable1Div2").html(option4);
+			$("#selectedTimetable2Div2").html(option5);
+			$("#selectedTimetable3Div2").html(option6);
+		});
 	
 	});
 
@@ -260,9 +386,7 @@ function getFirstandLastAddress() {
 
 		var direction0 = $('#direction0');
 		var direction1 = $('#direction1');
-		
-		console.log("data length is " + data.length);
-		
+				
 		//in case there is only one direction 
 		if (data.length == 1) {
 			
@@ -331,9 +455,8 @@ function getTravelTime(source, destination, dateTime) {
 
 				//make jpid in the following form "0013000%" so that we can use the LIKE operator in mysql
 				var jpidTruncated = String(jpid);
+				
                 //check if route is subroute
-                console.log(jpidTruncated);
-                console.log(jpid);
                 var route = jpidTruncated[jpidTruncated.length -1];
                 if (route != '1'){
                     var subroute = true;
@@ -348,9 +471,6 @@ function getTravelTime(source, destination, dateTime) {
 				//display travel time
 				getTravelTimeWithTimetable(jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
 						dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest, subroute);
-
-				//display pricing
-				//jpid.charAt(4) is the direction already encoded within jpid
 
 				getPricing(jpid, source, destination, jpid.charAt(4));
 

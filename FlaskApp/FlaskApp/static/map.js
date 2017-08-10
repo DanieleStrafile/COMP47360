@@ -222,9 +222,7 @@ function formatInfoWindow(topThreeRoutes) {
             topThreeRoutes[i][0] = topThreeRoutes[i][0].slice(0, 5);
         }
     }
-	
-	debugger;
-	
+		
 	if (topThreeRoutes.length == 1) {
 		infoWindow.setContent(
 		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +

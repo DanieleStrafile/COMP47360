@@ -1,1 +1,2 @@
 \FlaskApp\FlaskApp\db_info.py
+\FlaskApp\FlaskApp\static\models
