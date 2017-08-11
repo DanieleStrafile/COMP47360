@@ -8,9 +8,12 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
 
     day = get_day(date_time)
     time_category = get_time_category(date_time)
+    
+    absolute_path = os.path.dirname(os.path.realpath(__file__))
+    absolute_path = absolute_path.replace('\\', '/')
 
     # Map time category to the new speed category with the model's pickle file
-    with open('static/Models/' + journey_pattern_id + '_speeds.pickle', 'rb') as handle:
+    with open( os.path.abspath(absolute_path +'/static/Models/' + journey_pattern_id + '_speeds.pickle'), 'rb') as handle:
         hash_table = pickle.load(handle)
 
         try:
