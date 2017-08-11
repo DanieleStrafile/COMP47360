@@ -2,7 +2,7 @@ import pickle
 import pandas as pd
 import os
 
-from FlaskApp.static.Data_Structures import timeCategoryToSpeed
+from static.Data_Structures import timeCategoryToSpeed
 
 
 def get_travel_time(journey_pattern_id, source, destination, date_time):

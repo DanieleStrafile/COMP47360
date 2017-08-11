@@ -3,8 +3,8 @@ import requests
 
 from bs4 import BeautifulSoup
 
-from FlaskApp.database import Db
-from FlaskApp.model import get_travel_time
+from database import Db
+from model import get_travel_time
 
 
 def get_three_best_routes(data, search_pref, date_time):

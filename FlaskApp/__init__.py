@@ -1,8 +1,8 @@
 import json
 from flask import Flask, render_template
 from flask_cors import CORS
-from FlaskApp.database import Db
-from FlaskApp.model import get_travel_time
+from database import Db
+from model import get_travel_time
 import requests
 from bs4 import BeautifulSoup
 import re

@@ -1,7 +1,7 @@
 import json
 
-from FlaskApp.map_search import get_prices
-from FlaskApp.database import Db
+from map_search import get_prices
+from database import Db
 
 
 def scrape_fare(jpid, stop1, stop2, direction):
@@ -30,6 +30,7 @@ def scrape_fare(jpid, stop1, stop2, direction):
             article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=" + str(
                 lineid) + "&direction=" + str(direction) + "&board=" + str(stop_number1) + "&alight=" + str(
                 stop_number2)
+            print(article_url)
 
             return json.dumps(get_prices(article_url))
 
@@ -42,6 +43,7 @@ def scrape_fare(jpid, stop1, stop2, direction):
             article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=" + str(
                 lineid) + "&direction=" + str(direction) + "&board=" + str(stop_number1) + "&alight=" + str(
                 stop_number2)
+            print(article_url)
 
             return json.dumps(get_prices(article_url))
 
