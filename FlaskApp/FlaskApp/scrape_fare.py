@@ -48,14 +48,14 @@ def scrape_fare(jpid, stop1, stop2, direction):
             return json.dumps(get_prices(article_url))
 
     except Exception as e:
-        if stop_number2 - stop_number1 <= 10:
-            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=0&alight=10"
+        if stop_number2 - stop_number1 <= 3:
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=1&direction=I&board=1&alight=3"
 
-        elif stop_number2 - stop_number1 <= 30:
-            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=0&alight=31"
+        elif stop_number2 - stop_number1 <= 13:
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=1&direction=I&board=1&alight=13"
 
         else:
-            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=140&direction=I&board=9&alight=46"
+            article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=1&direction=I&board=9&alight=20"
 
         return json.dumps(get_prices(article_url))
         pass
