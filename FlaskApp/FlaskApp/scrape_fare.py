@@ -1,7 +1,7 @@
 import json
 
-from FlaskApp.map_search import get_prices
-from FlaskApp.database import Db
+from map_search import get_prices
+from database import Db
 
 
 def scrape_fare(jpid, stop1, stop2, direction):
