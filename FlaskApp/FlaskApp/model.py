@@ -2,21 +2,29 @@ import pickle
 import pandas as pd
 import os
 
-from static.Data_Structures import timeCategoryToSpeed
-
 
 def get_travel_time(journey_pattern_id, source, destination, date_time):
     """Takes in a user's query and returns the model's predictions"""
 
     day = get_day(date_time)
     time_category = get_time_category(date_time)
-    speed = timeCategoryToSpeed.time_cat[day][time_category]
+
+    # Map time category to the new speed category with the model's pickle file
+    with open('static/Models/' + journey_pattern_id + '_speeds.pickle', 'rb') as handle:
+        hash_table = pickle.load(handle)
+
+        try:
+            speed = hash_table[day][time_category]
+
+        except:
+            # If there's no data for that day
+            speed = "NA"
+
     # Get model's predictions
     source_time = get_prediction(journey_pattern_id, source, speed, day)
     destination_time = get_prediction(journey_pattern_id, destination, speed, day)
 
     return [destination_time[0], source_time[0]]
-
 
 def get_prediction(journey_pattern_id, distance, speed, day):
     """Return model's prediction"""
@@ -32,7 +40,7 @@ def get_prediction(journey_pattern_id, distance, speed, day):
     absolute_path = absolute_path.replace('\\', '/')
 
     try:
-        with open( os.path.abspath(absolute_path + '/static/Models/' + journey_pattern_id + '.sav'), 'rb') as handle:
+        with open( os.path.abspath(absolute_path + '/static/Models/' + journey_pattern_id + '.pickle'), 'rb') as handle:
             lm = pickle.load(handle)
 
             prediction = lm.predict(df)
@@ -51,9 +59,9 @@ def get_time_category(date_time):
     mins = time_cat[3:]
 
     if int(mins) >= 30:
-        ans = "30"
+        ans = "30:00"
     else:
-        ans = "00"
+        ans = "00:00"
 
     return time_cat[:3] + ans
 
