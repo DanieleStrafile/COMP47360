@@ -13,7 +13,7 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
     absolute_path = absolute_path.replace('\\', '/')
 
     # Map time category to the new speed category with the model's pickle file
-    with open( os.path.abspath(absolute_path +'/static/Models/' + journey_pattern_id + '_speeds.pickle'), 'rb') as handle:
+    with open(os.path.abspath(absolute_path + '/static/Models/' + journey_pattern_id + '_speeds.pickle'), 'rb') as handle:
         hash_table = pickle.load(handle)
 
         try:
@@ -28,6 +28,7 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
     destination_time = get_prediction(journey_pattern_id, destination, speed, day)
 
     return [destination_time[0], source_time[0]]
+
 
 def get_prediction(journey_pattern_id, distance, speed, day):
     """Return model's prediction"""

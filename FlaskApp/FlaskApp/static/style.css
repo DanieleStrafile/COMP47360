@@ -88,6 +88,12 @@ div.travelPriceDiv:empty {display: none}
     font-size: 16px;
 }
 
+#form-controltimetable {
+	width: 100%;
+	margin-top: 6%;
+	font-size: 30px;
+}
+
 .travelTimeDiv {
     margin: 5%;
     margin-left: 17%;
@@ -134,11 +140,13 @@ div.travelPriceDiv:empty {display: none}
 	
 }
 
+
+
 .threePicturesForMapSearch {
 	display: block;
 	margin: 0 auto;
 	text-align: center;
-	font-size: 35px;
+	font-size: 25px;
 }
 
 .loader2 {

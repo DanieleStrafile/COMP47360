@@ -3,10 +3,10 @@ import json
 from flask import Flask, render_template
 from flask_cors import CORS
 
-from database import Db
-from model import get_travel_time
-from map_search import get_three_best_routes, get_prices
-from scrape_fare import scrape_fare
+from FlaskApp.database import Db
+from FlaskApp.model import get_travel_time
+from FlaskApp.map_search import get_three_best_routes, get_prices
+from FlaskApp.scrape_fare import scrape_fare
 
 
 app = Flask(__name__)
@@ -94,8 +94,15 @@ def retrieve_gps(jpid, srcStop, destStop):
 def get_model_answer(jpid, source, destination, dateTime):
     """Get estimated travel time"""
 
-    distances = Db().get_distance(jpid, source, destination)
-    travel_time = get_travel_time(jpid, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
+    try:
+        distances = Db().get_distance(jpid, source, destination)
+    except:
+        distances = 'NA'
+
+    try:
+        travel_time = get_travel_time(jpid, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
+    except:
+        travel_time = "Not Known"
 
     return json.dumps(travel_time)
 
@@ -110,9 +117,13 @@ def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, source
 @app.route('/getPricing/<jpid>/<stop1>/<stop2>/<direction>')
 def display_prices(jpid, stop1, stop2, direction):
     """Scrapes Leap Card Travel Info Live From The Website for the app's final form"""
-    
-    return scrape_fare(jpid, stop1, stop2, direction)
 
+    try:
+        fare = scrape_fare(jpid, stop1, stop2, direction)
+    except:
+        fare = "No Fare Found"
+
+    return fare
 
 if __name__ == "__main__":
     app.run(debug=True)

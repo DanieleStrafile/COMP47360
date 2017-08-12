@@ -1,11 +1,11 @@
 import json
 
-from map_search import get_prices
-from database import Db
+from FlaskApp.map_search import get_prices
+from FlaskApp.database import Db
 
 
 def scrape_fare(jpid, stop1, stop2, direction):
-    """Scapes the current live price information from leapcard"""
+    """Scrapes the current live price information from dublinbus.ie"""
 
     try:
         # Get lineid and stop numbers of those stops

@@ -32,7 +32,7 @@ $(document).ready(function() {
 		clearBusTimeaAndPrediction();
     });
 	
-    //         Timetable Button
+    // Timetable Button
     $("#showTimetables").click(function(){
        	$("#selectRouteAndSearchPreference").hide(700);
         $("#selectSourceDestDiv").hide(700);
@@ -475,9 +475,10 @@ function getTravelTime(source, destination, dateTime) {
 				getPricing(jpid, source, destination, jpid.charAt(4));
 
 			} else {
-
-				$("#travelTimeDiv").html("Bus does not run on this day");
-
+				$("#loader").removeClass("loader");
+				document.getElementById("travelTimeDiv").innerHTML = "";
+				document.getElementById("travelPriceDiv").innerHTML = "";
+				$("#travelTimeDiv").html("Bus does not run at this time/day")
 			}
 	  }
 	});

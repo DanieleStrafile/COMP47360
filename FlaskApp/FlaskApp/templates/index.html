@@ -94,15 +94,19 @@
 				<div class="frame2">
 					<div class="row" id="timetableDropdownRow">
 						<form id = "PickRouteTimetable">
-							<div class="col-md-12">
-								<h2 class="bg-info">Pick Route Timetable</h2>
+							<div class="row">
+							<div class="col-md-4">
+								<h2 class="bg-info">Pick Route</h2>
+							</div>
+							<div class="col-md-4">
+							
 								<select id="form-controltimetable" name="pickRouteTimetable"></select>
 							</div>
 
 							<div class="col-md-4">
 								<h2 class="bg-info"><button type="submit" class="btn btn-primary btn-lg btn-block" id="secondForm">Go!</button></h2>
 							</div>
-
+							</div>
 						</form>
 					</div>
 					
@@ -119,10 +123,6 @@
 							<div id="selectedTimetable3Div"></div> 
 						</div>
 					</div>
-					
-					<BR>
-					<HR>
-					<BR>
 						
 					<div id="direction1TimeTable"></div>
 					
@@ -217,24 +217,35 @@
 				<div class="frame2">
 					
 					<div class="row">
-							<div class="col-md-12">
-
-								<h1 class="bg-primary"><p class="text-center">Select Search Preference</p></h1>
-								<h3 class="text-center"><i>Click map twice for source & destination</i></h3>
-
+						<div class="col-md-12">
+							<h1 class="bg-primary"><p class="text-center">Select Search Preference</p></h1>
+							<h3 class="text-center"><i>(Click map twice for source & destination)</i></h3>
+						</div>
+					</div>
+					<BR>
+					<BR>
+						<div class="row">
 							<div class="threePicturesForMapSearch">
 								<ul class="nav nav-pills">
+									
+									
+									<div class="col-md-4">
 									<li role="presentation"><a href="#"><div id="searchByFare"><span class="glyphicon glyphicon-euro"> Best Fare</span></div></a></li>
+									</div>
+										
+									<div class="col-md-4">	
 									<li role="presentation"><a href="#"><div id="searchByWalkingDistance"><span class="glyphicon glyphicon-fullscreen"> Least Walking</span></div></a></li>
+									</div>
+									<div class="col-md-4">
 									<li role="presentation"><a href="#"><div id="searchByArrivalTime"><span class="glyphicon glyphicon-dashboard"> Next Arrival</span></div></a></li>
+									</div>
+									
+									
 								</ul>
 							</div>
 						</div>
-					</div>
 				</div>
 			</div>
-			
-			
 		</div>
 	</body>
 </html>
