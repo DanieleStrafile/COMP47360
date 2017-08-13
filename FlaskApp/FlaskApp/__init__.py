@@ -108,10 +108,10 @@ def get_model_answer(jpid, source, destination, dateTime):
 
 
 @app.route('/get_bus_time/<jpidTruncated>/<srcStop>/<destStop>/<hour>/<minute>/<sec>/<sourceTime>/<timeCat>')
-def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat ):
+def get_bus_timetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat):
     """Returns selected timetable Mon-Fri, Sat & Sun for selected route"""
-    
-    return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute,sec, sourceTime, timeCat)
+
+    return Db().get_bus_time(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat)
 
 
 @app.route('/getPricing/<jpid>/<stop1>/<stop2>/<direction>')

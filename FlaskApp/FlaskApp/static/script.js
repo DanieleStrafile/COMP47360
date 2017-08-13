@@ -360,7 +360,7 @@ function dropDown() {
 	})
 }
 
-// Function to popilate the line id dropdown menu on the timetable page
+// Function to populate the line id dropdown menu on the timetable page
 function dropDownTimetable() {
 
 // 'GET' request for timetable routes
@@ -458,9 +458,7 @@ function getTravelTime(source, destination, dateTime) {
 				
                 //check if route is subroute
                 var route = jpidTruncated[jpidTruncated.length -1];
-                if (route != '1'){
-                    var subroute = true;
-                }
+				
 				jpidTruncated = (jpidTruncated.slice(0,-1)) + "%";
 				//we dont need 25 in %25 but apache decodes %25 as % and % gives a 400 error so we have to go for this solution
 				jpidTruncated = (jpidTruncated.slice(0,-1)) + "%25";
@@ -470,7 +468,7 @@ function getTravelTime(source, destination, dateTime) {
 
 				//display travel time
 				getTravelTimeWithTimetable(jpidTruncated, source, destination, dateTime.getHours(), dateTime.getMinutes(),
-						dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest, subroute);
+						dateTime.getSeconds(), timeFromTerminusToSource, timeCat, timeFromSourceToDest);
 
 				getPricing(jpid, source, destination, jpid.charAt(4));
 
@@ -494,6 +492,15 @@ function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minu
 			+ sec + "/" + sourceTime + "/" + timeCat,
 	  async: true, 
 	  success: function(data) {
+		  
+		  var route_or_sub = data[0].Journey_Pattern_ID;
+		  
+		  var subroute = false;
+                if (route_or_sub.charAt(route_or_sub.length -1) != '1'){
+                    subroute = true;
+                }
+		  
+		  console.log(route_or_sub);
 		
 		var currentTime = new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
 		var timeBusArrives = data[0].Time_bus_arrives;

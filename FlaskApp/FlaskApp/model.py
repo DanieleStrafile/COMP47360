@@ -21,7 +21,9 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
 
         except:
             # If there's no data for that day
-            speed = "NA"
+            speed = "Medium"
+
+    print("Speed:", speed)
 
     # Get model's predictions
     source_time = get_prediction(journey_pattern_id, source, speed, day)
