@@ -16,12 +16,20 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
     with open(os.path.abspath(absolute_path + '/static/Models/' + journey_pattern_id + '_speeds.pickle'), 'rb') as handle:
         hash_table = pickle.load(handle)
 
+        # If the bus runs then get the speed
         try:
             speed = hash_table[day][time_category]
 
         except:
-            # If there's no data for that day
+            # If there's no data for that day (this is an issue with our application - Shouldn't need this, but we do)
             speed = "Medium"
+
+        # If the Day doesn't exist then return (bus doesn't run that day)
+        try:
+            hash_table[day]
+
+        except:
+            speed = 'NA'
 
     print("Speed:", speed)
 

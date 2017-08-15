@@ -96,11 +96,13 @@ def get_model_answer(jpid, source, destination, dateTime):
 
     try:
         distances = Db().get_distance(jpid, source, destination)
+
     except:
         distances = 'NA'
 
     try:
-        travel_time = get_travel_time(jpid, distances.loc[0,"Distance"], distances.loc[1,"Distance"], dateTime)
+        travel_time = get_travel_time(jpid, distances.loc[0, "Distance"], distances.loc[1, "Distance"], dateTime)
+
     except:
         travel_time = "Not Known"
 
