@@ -415,7 +415,8 @@ function getFirstandLastAddress() {
 	})
 }
 
-// Get the first and last addresses for the direction menu
+
+// Get stops or addresses on a chosen line based on pref 
 function getSourceDestination(jpid,direction,pref) {
 
 	var jqxhr2 = $.getJSON($SCRIPT_ROOT + "/_preference/" + pref + "/" + jpid, function(data) {
@@ -426,10 +427,25 @@ function getSourceDestination(jpid,direction,pref) {
 
 			options += '<option value = "' + stop.Stop_ID + '">' +  stop.Stop_info + "</option>";
 		})
+        
+        srcdestoptions = options;
 		//set html content of form
 		$("#form-control2").html(options);
-		$("#form-control3").html(options);
-	})
+	});
+}
+
+//function below populates the dest drop down menu depending upon the src stop chosen
+
+function makeDestDropDown(options){
+    var src = document.getElementById('form-control2').value;
+    var regex=".*?("+ src + ")";
+    var re = new RegExp(regex, "g");
+    var newoptions = options.replace(re, "");
+    
+    newoptions = '<option value =' + newoptions;
+    
+    $("#form-control3").html(newoptions);
+
 }
 
 
