@@ -476,7 +476,7 @@ function getTravelTime(source, destination, dateTime) {
 				$("#loader").removeClass("loader");
 				document.getElementById("travelTimeDiv").innerHTML = "";
 				document.getElementById("travelPriceDiv").innerHTML = "";
-				$("#travelTimeDiv").html("Bus does not run at this time/day")
+				$("#travelTimeDiv").html("Bus does not run on this day or none left.")
 			}
 	  }
 	});
@@ -493,28 +493,39 @@ function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minu
 	  async: true, 
 	  success: function(data) {
 		  
+		  // In case the bus doesn't run anymore today or not this day at all
+		  try {
+		  
 		  var route_or_sub = data[0].Journey_Pattern_ID;
 		  
+		  // Account for the possibility of tis being a sub route
 		  var subroute = false;
                 if (route_or_sub.charAt(route_or_sub.length -1) != '1'){
                     subroute = true;
                 }
-		  
-		  console.log(route_or_sub);
-		
+		  		
 		var currentTime = new Date().toLocaleTimeString('en-GB', { hour: "numeric", minute: "numeric"});
 		var timeBusArrives = data[0].Time_bus_arrives;
 
 		var timeToArriveInMins = getTimeToArrive(timeBusArrives, currentTime);
 		var timeFromSourceToDestInMins = parseInt(timeFromSourceToDest/60);
         var subrouteText = "";  
+		  
+		// If it's a sub route then add in this text to tell the user
         if (subroute) subrouteText = "<b> This bus is a subroute</b>";
 
 		$("#travelTimeDiv").html("The <b>" + lineid +  "</b>  will arrive at <b>" + timeBusArrives + "</b>.<BR>" +
 				"<BR>Your Travel time will be <b>" + timeFromSourceToDestInMins + "Mins</b> <BR><BR>" + subrouteText).promise().done(function(){
 			$("#loader").removeClass("loader");
 		});
-		
+		  
+		  
+				} catch(TypeError) {
+			  $("#loader").removeClass("loader");
+				document.getElementById("travelTimeDiv").innerHTML = "";
+				document.getElementById("travelPriceDiv").innerHTML = "";
+				$("#travelTimeDiv").html("Bus does not run on this day or none left.")
+		  }
 	}
 	});
 }
