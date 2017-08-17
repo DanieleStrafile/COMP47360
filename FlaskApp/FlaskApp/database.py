@@ -5,7 +5,7 @@ import re
 from flask import jsonify
 from sqlalchemy import create_engine
 
-from FlaskApp.db_info import name, password, rds_host, port, db_name
+from db_info import name, password, rds_host, port, db_name
 
 
 class Db:
@@ -24,7 +24,7 @@ class Db:
     def get_line_ids(self):
         """Query a list of all Line ID's"""
         
-        sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End ORDER BY Line_ID + 0 ASC;"
+        sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End ORDER BY Line_ID + 0 DESC;"
         rows = self.conn.execute(sql1).fetchall()
 
         return jsonify(lineids=[dict(row.items()) for row in rows])
