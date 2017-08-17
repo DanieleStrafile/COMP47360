@@ -181,11 +181,14 @@ $(document).ready(function() {
 				
 		var dir0Source = addresses[0].Short_Address_Source;
 		var dir0Dest = addresses[0].Short_Address_Destination;
+		
+		// In case there is only one direction in the route
+		if (addresses.length == 2) {
 		var dir1Source = addresses[1].Short_Address_Source;
 		var dir1Dest = addresses[1].Short_Address_Destination;
+			
+		}
 		
-		console.log(dir0Dest, dir0Source, dir1Dest, dir1Source);
-
          var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getSelectedTimetable/" + data[0].value, function(timetables) {
 
 			 console.log(timetables);
@@ -261,6 +264,10 @@ $(document).ready(function() {
 				}
 
 			})
+			 
+			 // In case there is only one direction in the route
+			 if (addresses.length == 2){
+				 
 			 count = 0;
 			 option3 = option3.slice(0, -5) + "</table>";
 			 
@@ -328,19 +335,24 @@ $(document).ready(function() {
 
 			})
 			 option6 = option6.slice(0, -5) + "</table>";
+				 
+			$("#direction1TimeTable").html("<h1>" + dir1Source + " to " + dir1Dest + "</h1>")
+			$("#selectedTimetable1Div2").html(option4);
+			$("#selectedTimetable2Div2").html(option5);
+			$("#selectedTimetable3Div2").html(option6);
+				 
+			 }
 
 			//set html content of form
 			 
 			 $("#direction0TimeTable").html("<h1>" + dir0Source + " to " + dir0Dest + "</h1>");
-			  $("#direction1TimeTable").html("<h1>" + dir1Source + " to " + dir1Dest + "</h1>")
+			  
 			 
 			$("#selectedTimetable1Div").html(option1);
 			$("#selectedTimetable2Div").html(option2);
 			$("#selectedTimetable3Div").html(option3);
 			 
-			$("#selectedTimetable1Div2").html(option4);
-			$("#selectedTimetable2Div2").html(option5);
-			$("#selectedTimetable3Div2").html(option6);
+			
 		});
 	
 	});
