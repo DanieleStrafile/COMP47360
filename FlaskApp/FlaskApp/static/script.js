@@ -10,6 +10,11 @@ $(document).ready(function() {
 	
 	// Populate Line ID Dropdown menu
 	dropDown();
+	
+	//populate destination stop/add dropdown
+    $('#form-control2').on('change', (function() {
+    makeDestDropDown(srcdestoptions);
+    }));
 		
 	// Hide all items not needed on startup
 	$("#selectSourceDestDiv").hide();
@@ -437,13 +442,14 @@ function getSourceDestination(jpid,direction,pref) {
 //function below populates the dest drop down menu depending upon the src stop chosen
 
 function makeDestDropDown(options){
+		
     var src = document.getElementById('form-control2').value;
     var regex=".*?("+ src + ")";
     var re = new RegExp(regex, "g");
     var newoptions = options.replace(re, "");
     
     newoptions = '<option value =' + newoptions;
-    
+	    
     $("#form-control3").html(newoptions);
 
 }

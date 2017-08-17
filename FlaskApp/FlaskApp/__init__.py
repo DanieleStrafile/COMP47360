@@ -122,6 +122,7 @@ def display_prices(jpid, stop1, stop2, direction):
 
     try:
         fare = scrape_fare(jpid, stop1, stop2, direction)
+
     except:
         fare = "No Fare Found"
 
