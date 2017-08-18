@@ -4,7 +4,6 @@ var lineid;
 var pref;
 // Journey Pattern ID
 var jpid;
-
 //source stop ID in third form
 var srcdestoptions;
 
@@ -196,18 +195,23 @@ $(document).ready(function() {
 
 			 console.log(timetables);
 			 
+			 
+			 
 			var direction0 = [];
 			var direction1 = [];
 			 
 			 _.forEach(timetables, function(stop) {
 				 if(stop.Journey_Pattern_ID.charAt(4) =='0') direction0.push(stop);
 				 if(stop.Journey_Pattern_ID.charAt(4) =='1') direction1.push(stop);
+				 if(stop.Journey_Pattern_ID.charAt(4) =='X') direction0.push(stop);
+				 if(stop.Journey_Pattern_ID.charAt(0) =='P') direction0.push(stop);
+				 
 			 })
 
 			var option1 = "<table class='t01'><tr><th>Monday to Friday</th></tr><tr>";
 
 			var count = 0;
-
+			 // Sort the times into nice tables
 			 _.forEach(direction0, function(stop) {
 
 				if (stop.Day_Cat == "Mon-Fri"){
@@ -268,8 +272,7 @@ $(document).ready(function() {
 
 			})
 			 
-			 // In case there is only one direction in the route
-			 if (addresses.length == 2){
+			 
 				 
 			 count = 0;
 			 option3 = option3.slice(0, -5) + "</table>";
@@ -338,23 +341,58 @@ $(document).ready(function() {
 
 			})
 			 option6 = option6.slice(0, -5) + "</table>";
+			 
+			 console.log("dir 0 source: " + dir0Source + "   dir1Source: " + dir1Source);
+			 
+			 // If it's not a single direction route
+			 if (dir1Source == undefined) {
 				 
-			$("#direction1TimeTable").html("<h1>" + dir1Source + " to " + dir1Dest + "</h1>")
-			$("#selectedTimetable1Div2").html(option4);
-			$("#selectedTimetable2Div2").html(option5);
-			$("#selectedTimetable3Div2").html(option6);
+				$("#direction1TimeTable").html("")
+				$("#selectedTimetable1Div2").html("");
+				$("#selectedTimetable2Div2").html("");
+				$("#selectedTimetable3Div2").html("");
+
+				//set html content of form
+				$("#direction0TimeTable").html("");
+				$("#selectedTimetable1Div").html("");
+				$("#selectedTimetable2Div").html("");
+				$("#selectedTimetable3Div").html("");
+
+				//set html content of form
+				$("#direction0TimeTable").html("<h1>" + dir0Source + " to " + dir0Dest + "</h1>");
+				$("#selectedTimetable1Div").html(option1);
+				$("#selectedTimetable2Div").html(option2);
+				$("#selectedTimetable3Div").html(option3);
+
+				 
+				 
+			 } else {
+				 
+				 
+				$("#direction1TimeTable").html("")
+				$("#selectedTimetable1Div2").html("");
+				$("#selectedTimetable2Div2").html("");
+				$("#selectedTimetable3Div2").html("");
+
+				//set html content of form
+				$("#direction0TimeTable").html("");
+				$("#selectedTimetable1Div").html("");
+				$("#selectedTimetable2Div").html("");
+				$("#selectedTimetable3Div").html("");
+				 
+				$("#direction1TimeTable").html("<h1>" + dir1Source + " to " + dir1Dest + "</h1>")
+				$("#selectedTimetable1Div2").html(option4);
+				$("#selectedTimetable2Div2").html(option5);
+				$("#selectedTimetable3Div2").html(option6);
+
+				//set html content of form
+				$("#direction0TimeTable").html("<h1>" + dir0Source + " to " + dir0Dest + "</h1>");
+				$("#selectedTimetable1Div").html(option1);
+				$("#selectedTimetable2Div").html(option2);
+				$("#selectedTimetable3Div").html(option3);
+				 
 				 
 			 }
-
-			//set html content of form
-			 
-			 $("#direction0TimeTable").html("<h1>" + dir0Source + " to " + dir0Dest + "</h1>");
-			  
-			 
-			$("#selectedTimetable1Div").html(option1);
-			$("#selectedTimetable2Div").html(option2);
-			$("#selectedTimetable3Div").html(option3);
-			 
 			
 		});
 	
