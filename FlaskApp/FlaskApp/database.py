@@ -19,13 +19,14 @@ class Db:
     def disconnect(self):
         """Close connection"""
 
-        self.conn.close()
+        self.conn.dispose()
 
     def get_line_ids(self):
         """Query a list of all Line ID's"""
         
         sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End ORDER BY Line_ID + 0 DESC;"
         rows = self.conn.execute(sql1).fetchall()
+        self.disconnect()
 
         return jsonify(lineids=[dict(row.items()) for row in rows])
     
@@ -41,6 +42,8 @@ class Db:
         """
         
         df = pd.read_sql_query(sql12, self.conn, params={"line_id": line_id})
+        
+        self.disconnect()
 
         df.Time_no_date = df.Time_no_date.astype(str)
         # format string time_no_date
@@ -84,7 +87,9 @@ class Db:
         """
         
         df = pd.read_sql_query(sql2, self.conn, params={"line_id": line_id})
-            
+        
+        self.disconnect()
+        
         return json.dumps(json.loads(df.to_json(orient='records')),ensure_ascii=False)
 
     def get_stop_id(self, jpid):
@@ -104,7 +109,9 @@ class Db:
         """
 
         df = pd.read_sql_query(sql3, self.conn, params={"jpid": jpid})
-
+        
+        self.disconnect()
+        
         return json.dumps(json.loads(df.to_json(orient='index')),ensure_ascii=True).encode('latin-1')
 
     def get_addresses(self, jpid):
@@ -126,7 +133,9 @@ class Db:
         """
 
         df = pd.read_sql_query(sql4, self.conn, params={"jpid": jpid})
-
+        
+        self.disconnect()
+        
         return json.dumps(json.loads(df.to_json(orient='index')))
 
     def get_distance(self, jpid, source, destination):
@@ -141,7 +150,9 @@ class Db:
         """
             
         df = pd.read_sql_query(sql5, self.conn, params={"jpid" : jpid, "source": source, "destination":destination })
-
+        
+        self.disconnect()
+        
         return df
 
     def get_best_route(self, source_lat, source_lon, destination_lat, destination_lon):
@@ -225,6 +236,8 @@ class Db:
         
         df = pd.read_sql_query(sql8, self.conn, params={"source_lat": source_lat, "source_lon": source_lon, "destination_lat": destination_lat, "destination_lon": destination_lon})
         
+        self.disconnect()
+        
         # We need to delete duplicates from query
         # Get index of min value of Minimum_Total_Walking for each jpid_source
         idx = df.groupby(['JPID_Source'])['Minimum_Total_Walking'].transform(min) == df['Minimum_Total_Walking']
@@ -257,7 +270,9 @@ class Db:
         """
 
         df = pd.read_sql_query(sql7, self.conn, params={"jpid": jpid, "srcStop": srcStop, "destStop": destStop})
-
+        
+        self.disconnect()
+        
         return json.dumps(json.loads(df.to_json(orient='records')))
     
     def get_bus_time(self, jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat):
@@ -287,7 +302,9 @@ class Db:
                                                                     "sec": sec,
                                                                     "sourceTime": sourceTime,
                                                                     "timeCat": timeCat})
-
+        
+        self.disconnect()
+        
         df.Time_bus_arrives = df.Time_bus_arrives.astype(str)
         # Format string time_no_date
         # Delete 0 days e.g. 0 days 10:40:00.000000000 will become 10:40:00.000000000
@@ -323,6 +340,7 @@ class Db:
                                                                     "destStop": destStop,
                                                                     "sourceTime": sourceTime,
                                                                     "timeCat": timeCat})
+        self.disconnect()
         
         df.Time_bus_arrives = df.Time_bus_arrives.astype(str)
         # Format string time_no_date
@@ -349,7 +367,8 @@ class Db:
                                                                    "stop1": stop1,
                                                                     "stop2": stop2
                                                                      })
-
+        self.disconnect()
+        
         return df
 
     def get_single_address(self, stop_id):
@@ -364,6 +383,8 @@ class Db:
            """
 
         df = pd.read_sql_query(sql_12, self.conn, params={"stop_id": stop_id})
-
+        
+        self.disconnect()
+        
         return json.loads(df.to_json(orient='index'))
 
