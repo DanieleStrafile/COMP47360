@@ -11,21 +11,22 @@ from db_info import name, password, rds_host, port, db_name
 class Db:
 
     def __init__(self):
-        """Connect to database"""
-
-        self.conn = create_engine("mysql+pymysql://{}:{}@{}:{}/{}".format(name, password, rds_host,
+        """connect to database"""
+        
+        #private data field
+        self.__conn = create_engine("mysql+pymysql://{}:{}@{}:{}/{}".format(name, password, rds_host,
                                                                                  port, db_name), echo=False)
 
     def disconnect(self):
         """Close connection"""
 
-        self.conn.dispose()
+        self.__conn.dispose()
 
     def get_line_ids(self):
         """Query a list of all Line ID's"""
         
         sql1 = "SELECT DISTINCT Line_ID FROM JPID_LineID_Start_End ORDER BY Line_ID + 0 DESC;"
-        rows = self.conn.execute(sql1).fetchall()
+        rows = self.__conn.execute(sql1).fetchall()
         self.disconnect()
 
         return jsonify(lineids=[dict(row.items()) for row in rows])
@@ -41,7 +42,7 @@ class Db:
                                         WHERE x.Line_ID = %(line_id)s)
         """
         
-        df = pd.read_sql_query(sql12, self.conn, params={"line_id": line_id})
+        df = pd.read_sql_query(sql12, self.__conn, params={"line_id": line_id})
         
         self.disconnect()
 
@@ -86,7 +87,7 @@ class Db:
         ON third_query.Destination_Stop_ID = fourth_query.Stop_ID2
         """
         
-        df = pd.read_sql_query(sql2, self.conn, params={"line_id": line_id})
+        df = pd.read_sql_query(sql2, self.__conn, params={"line_id": line_id})
         
         self.disconnect()
         
@@ -108,7 +109,7 @@ class Db:
         ORDER BY j.Distance ASC
         """
 
-        df = pd.read_sql_query(sql3, self.conn, params={"jpid": jpid})
+        df = pd.read_sql_query(sql3, self.__conn, params={"jpid": jpid})
         
         self.disconnect()
         
@@ -132,7 +133,7 @@ class Db:
         ORDER BY j.Distance ASC
         """
 
-        df = pd.read_sql_query(sql4, self.conn, params={"jpid": jpid})
+        df = pd.read_sql_query(sql4, self.__conn, params={"jpid": jpid})
         
         self.disconnect()
         
@@ -149,7 +150,7 @@ class Db:
         ORDER BY j.Distance ASC
         """
             
-        df = pd.read_sql_query(sql5, self.conn, params={"jpid" : jpid, "source": source, "destination":destination })
+        df = pd.read_sql_query(sql5, self.__conn, params={"jpid" : jpid, "source": source, "destination":destination })
         
         self.disconnect()
         
@@ -234,7 +235,7 @@ class Db:
         
         """
         
-        df = pd.read_sql_query(sql8, self.conn, params={"source_lat": source_lat, "source_lon": source_lon, "destination_lat": destination_lat, "destination_lon": destination_lon})
+        df = pd.read_sql_query(sql8, self.__conn, params={"source_lat": source_lat, "source_lon": source_lon, "destination_lat": destination_lat, "destination_lon": destination_lon})
         
         self.disconnect()
         
@@ -269,7 +270,7 @@ class Db:
         ORDER BY j.Distance ASC
         """
 
-        df = pd.read_sql_query(sql7, self.conn, params={"jpid": jpid, "srcStop": srcStop, "destStop": destStop})
+        df = pd.read_sql_query(sql7, self.__conn, params={"jpid": jpid, "srcStop": srcStop, "destStop": destStop})
         
         self.disconnect()
         
@@ -294,7 +295,7 @@ class Db:
         LIMIT 1
         """
     
-        df = pd.read_sql_query(sql9, self.conn, params={"jpidTruncated": jpidTruncated,
+        df = pd.read_sql_query(sql9, self.__conn, params={"jpidTruncated": jpidTruncated,
                                                                    "srcStop": srcStop,
                                                                     "destStop": destStop,
                                                                     "hour": hour,
@@ -335,7 +336,7 @@ class Db:
         LIMIT 1
         """
         
-        df = pd.read_sql_query(sql9, self.conn, params={"jpid": jpid,
+        df = pd.read_sql_query(sql9, self.__conn, params={"jpid": jpid,
                                                                    "srcStop": srcStop,
                                                                     "destStop": destStop,
                                                                     "sourceTime": sourceTime,
@@ -363,7 +364,7 @@ class Db:
         
         """
         
-        df = pd.read_sql_query(sql11, self.conn, params={"jpid": jpid,
+        df = pd.read_sql_query(sql11, self.__conn, params={"jpid": jpid,
                                                                    "stop1": stop1,
                                                                     "stop2": stop2
                                                                      })
@@ -382,7 +383,7 @@ class Db:
            WHERE (Stop_ID = %(stop_id)s)
            """
 
-        df = pd.read_sql_query(sql_12, self.conn, params={"stop_id": stop_id})
+        df = pd.read_sql_query(sql_12, self.__conn, params={"stop_id": stop_id})
         
         self.disconnect()
         
