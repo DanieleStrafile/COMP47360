@@ -3,8 +3,8 @@ import requests
 
 from bs4 import BeautifulSoup
 
-from FlaskApp.database import Db
-from FlaskApp.model import get_travel_time
+from database import Db
+from model import get_travel_time
 
 
 def get_three_best_routes(data, search_pref, date_time):
@@ -172,37 +172,48 @@ def get_prices(article_url):
     """Get leap card price information into a dictionary"""
 
     # Get table with prices from url
-    page = requests.get(article_url)
-    soup = BeautifulSoup(page.text, "html.parser")
-    table = soup.find("div", class_="other-fares-display")
-    rows = table.findChildren(['th', 'tr'])
-
-    # Organise price table into in a dictionary e.g. Adult prices : 2.4 Euros etc...
-    count = 0
-    dictionary = dict()
-
-    for row in rows:
-        cells = row.findChildren('td')
-        for cell in cells:
-
-            # We want to stop here, the next cell is None
-            if count > 11:
-                break
-
-            value = cell.string.strip()
-
-            # Even rows, these are our key pairs in dictionary, ie labels
-            if count % 2 == 0:
-                key = value
-
-            # Uneven rows, these are our value pairs in dictionary, ie prices
-            else:
-                value = re.findall(r'\d+', value)
-                dictionary[key] = str(value[0]) + "." + str(value[1]) + " Euros"
-
-            count += 1
-
-    return dictionary
+    try:
+        page = requests.get(article_url)
+        soup = BeautifulSoup(page.text, "html.parser")
+        table = soup.find("div", class_="other-fares-display")
+        rows = table.findChildren(['th', 'tr'])
+    
+        # Organise price table into in a dictionary e.g. Adult prices : 2.4 Euros etc...
+        count = 0
+        dictionary = dict()
+    
+        for row in rows:
+            cells = row.findChildren('td')
+            for cell in cells:
+    
+                # We want to stop here, the next cell is None
+                if count > 11:
+                    break
+    
+                value = cell.string.strip()
+    
+                # Even rows, these are our key pairs in dictionary, ie labels
+                if count % 2 == 0:
+                    key = value
+    
+                # Uneven rows, these are our value pairs in dictionary, ie prices
+                else:
+                    value = re.findall(r'\d+', value)
+                    dictionary[key] = str(value[0]) + "." + str(value[1]) + " Euros"
+    
+                count += 1
+    
+        return dictionary
+    
+    #if http request to url fails, we craft a default response
+    except:
+        
+        print("error in parsing price url from Dublin bus, default will be used")
+    
+        return {"Adult Cash": "2.70 Euros", "Adult Leap": "2.05 Euros",
+                "Child Cash (Under 16)": "1.15 Euros",
+                "Child Leap (Under 19)": "0.90 Euros",
+                "School Hours Cash": "1.00 Euros", "School Hours Leap": "0.79 Euros"}
 
 
 def get_three_routes_based_on_walking_distance(data):
