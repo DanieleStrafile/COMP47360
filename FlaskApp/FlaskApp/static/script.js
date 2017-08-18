@@ -5,6 +5,9 @@ var pref;
 // Journey Pattern ID
 var jpid;
 
+//source stop ID in third form
+var srcdestoptions;
+
 
 $(document).ready(function() {
 	
@@ -445,9 +448,14 @@ function getSourceDestination(jpid,direction,pref) {
 			options += '<option value = "' + stop.Stop_ID + '">' +  stop.Stop_info + "</option>";
 		})
         
+		//set options to global variable srcdestoptions
         srcdestoptions = options;
 		//set html content of form
 		$("#form-control2").html(options);
+		
+		//populate dest dropdown menu when page is first loaded
+		makeDestDropDown(options);
+		
 	});
 }
 
@@ -461,7 +469,10 @@ function makeDestDropDown(options){
     var newoptions = options.replace(re, "");
     
     newoptions = '<option value =' + newoptions;
-	    
+    
+    //remove first blank option
+    newoptions = newoptions.replace(/^(.*?)<\/option>/, "");
+    
     $("#form-control3").html(newoptions);
 
 }
