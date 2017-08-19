@@ -64,6 +64,7 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 
 	var temp = new Date();
 	var dateTime = [temp.toString(), temp.getDay(), temp.getHours(), temp.getMinutes(), temp.getSeconds()]
+	
 
 	$.ajax({
 	  dataType: "json",
@@ -76,8 +77,6 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 			  
 		  } else {
 		  
-		// For displaying the route number, or displaying an error
-		var result;
 
 		for (var i = 0; i < data.length; i++) {
 			
@@ -191,14 +190,13 @@ function drawBusStops(stops, map) {
 
 function formatInfoWindow(topThreeRoutes) {
 	
+	console.log(topThreeRoutes);
+	
     // Convert the JPID into a Line ID user can understand
     for (var i = 0; i < topThreeRoutes.length; i++) {
 		
 		// If it's a subroute then display that info
 		var subRoute = topThreeRoutes[i][1][topThreeRoutes[i][1].length -1];
-		
-		console.log(subRoute, topThreeRoutes[i][1]);
-		
 		
         var temp = topThreeRoutes[i][1].slice(0,4);
         if (temp.charAt(0) == "0") temp = temp.replace(0, "");
@@ -229,11 +227,12 @@ function formatInfoWindow(topThreeRoutes) {
 		topThreeRoutes[0][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[0][2]);
 		
 	} else if (topThreeRoutes.length == 2) {
+		
 		infoWindow.setContent(
 		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
 		topThreeRoutes[0][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[0][2] +
 		"<h2 style='color:#ffd800;'>" + topThreeRoutes[1][1] + ": " + topThreeRoutes[1][0] + "</h2>" +
-		+ topThreeRoutes[1][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[1][2]);
+		topThreeRoutes[1][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[1][2]);
 		
 	} else {
 		infoWindow.setContent(

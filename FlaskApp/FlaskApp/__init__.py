@@ -74,13 +74,14 @@ def possible_routes(srcLat, srcLon, destLat, destLon, searchPreference, dateTime
     # Get the address for map display purposes
     try:
         for i in range(len(best_routes)):
-            address = Db().get_single_address(best_routes[i][2])['0']['Address']
+            #address is a dataframe, hency the use of .loc
+            address = Db().get_single_address(best_routes[i][2]).loc[0,"Address"]
             best_routes[i].append(address)
     except IndexError:
         # In case the source is outside Dublin
         best_routes = "No Journey Found"
 
-    return json.dumps(best_routes)
+    return json.dumps(best_routes, ensure_ascii=False)
 
 
 @app.route('/gps_coords/<jpid>/<srcStop>/<destStop>', methods=['GET'])

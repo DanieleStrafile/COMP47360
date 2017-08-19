@@ -387,5 +387,5 @@ class Db:
         
         self.disconnect()
         
-        return json.loads(df.to_json(orient='index'))
+        return df
 
