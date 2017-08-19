@@ -5,8 +5,7 @@ import re
 from flask import jsonify
 from sqlalchemy import create_engine
 
-from db_info import name, password, rds_host, port, db_name
-
+from FlaskApp.db_info import name, password, rds_host, port, db_name
 
 class Db:
 
