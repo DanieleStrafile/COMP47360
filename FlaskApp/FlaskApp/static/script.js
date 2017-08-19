@@ -193,10 +193,7 @@ $(document).ready(function() {
 		
          var jqxhr = $.getJSON($SCRIPT_ROOT + "/_getSelectedTimetable/" + data[0].value, function(timetables) {
 
-			 console.log(timetables);
-			 
-			 
-			 
+ 
 			var direction0 = [];
 			var direction1 = [];
 			 
@@ -341,8 +338,6 @@ $(document).ready(function() {
 
 			})
 			 option6 = option6.slice(0, -5) + "</table>";
-			 
-			 console.log("dir 0 source: " + dir0Source + "   dir1Source: " + dir1Source);
 			 
 			 // If it's not a single direction route
 			 if (dir1Source == undefined) {

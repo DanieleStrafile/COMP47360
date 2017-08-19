@@ -190,8 +190,6 @@ function drawBusStops(stops, map) {
 
 function formatInfoWindow(topThreeRoutes) {
 	
-	console.log(topThreeRoutes);
-	
     // Convert the JPID into a Line ID user can understand
     for (var i = 0; i < topThreeRoutes.length; i++) {
 		
