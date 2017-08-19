@@ -205,11 +205,9 @@ def get_prices(article_url):
     
         return dictionary
     
-    #if http request to url fails, we craft a default response
+    # If http request to url fails, we craft a default response
     except:
-        
-        print("error in parsing price url from Dublin bus, default will be used")
-    
+
         return {"Adult Cash": "2.70 Euros", "Adult Leap": "2.05 Euros",
                 "Child Cash (Under 16)": "1.15 Euros",
                 "Child Leap (Under 19)": "0.90 Euros",

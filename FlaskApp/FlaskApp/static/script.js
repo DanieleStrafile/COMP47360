@@ -337,6 +337,7 @@ $(document).ready(function() {
 				}
 
 			})
+			 
 			 option6 = option6.slice(0, -5) + "</table>";
 			 
 			 // If it's not a single direction route

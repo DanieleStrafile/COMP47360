@@ -31,8 +31,6 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
         except:
             speed = 'NA'
 
-    print("Speed:", speed)
-
     # Get model's predictions
     source_time = get_prediction(journey_pattern_id, source, speed, day)
     destination_time = get_prediction(journey_pattern_id, destination, speed, day)

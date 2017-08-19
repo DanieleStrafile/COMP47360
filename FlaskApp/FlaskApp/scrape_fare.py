@@ -29,12 +29,10 @@ def scrape_fare(jpid, stop1, stop2, direction):
         article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=" + str(
             lineid) + "&direction=" + str(direction) + "&board=" + str(stop_number1) + "&alight=" + str(
             stop_number2)
-        print(article_url)
 
         return json.dumps(get_prices(article_url))
 
     except:
-        
         if direction == '0' or direction == 0:
             direction = 'O'
         else:
@@ -43,7 +41,5 @@ def scrape_fare(jpid, stop1, stop2, direction):
         article_url = "https://www.dublinbus.ie/Fare-Calculator/Fare-Calculator-Results/?routeNumber=" + str(
             lineid) + "&direction=" + str(direction) + "&board=" + str(stop_number1) + "&alight=" + str(
             stop_number2)
-        print(article_url)
 
         return json.dumps(get_prices(article_url))
-

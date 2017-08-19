@@ -65,7 +65,6 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 	var temp = new Date();
 	var dateTime = [temp.toString(), temp.getDay(), temp.getHours(), temp.getMinutes(), temp.getSeconds()]
 	
-
 	$.ajax({
 	  dataType: "json",
 	  url: $SCRIPT_ROOT + "/best_route/" + srcLat + "/" + srcLon + "/" + destLat + "/" + destLon + "/" + searchPreference + "/" + dateTime,
@@ -77,7 +76,6 @@ function getJpidBestRoute(map, srcLat, srcLon, destLat, destLon) {
 			  
 		  } else {
 		  
-
 		for (var i = 0; i < data.length; i++) {
 			
 			information = data[i][0];
@@ -142,7 +140,6 @@ function drawMapRoute(map, srcStop, destStop) {
 		flightPath[flightPath.length - 1].setMap(map);
 		drawBusStops(waypts[waypts.length - 1], map);
 		animateCircle(flightPath[flightPath.length - 1]);
-
 	});
 }
 
@@ -233,6 +230,7 @@ function formatInfoWindow(topThreeRoutes) {
 		topThreeRoutes[1][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[1][2]);
 		
 	} else {
+		
 		infoWindow.setContent(
 		"<h2 style='color:#0014ff;'>" + topThreeRoutes[0][1] + ": " + topThreeRoutes[0][0] + "</h2>" +
 			topThreeRoutes[0][4] + "<br><b>Stop ID:</b> " + topThreeRoutes[0][2] + 
