@@ -18,6 +18,19 @@ div.travelPriceDiv:empty {display: none}
 	padding-top: 3px;
 }
 
+#returnHomeButton {
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+#showTimetables {
+	padding-top: 5px;
+}
+
+#selectMapSearch {
+	padding-top: 5px;
+}
+
 .frame2 {
 	background-color: yellow;
 	border-radius: 30px;
