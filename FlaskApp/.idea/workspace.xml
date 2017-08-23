@@ -62,7 +62,7 @@
       <file leaf-file-name="style.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/FlaskApp/static/style.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2397">
+            <state relative-caret-position="2618">
               <caret line="154" column="0" lean-forward="false" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
               <folding />
             </state>
@@ -72,8 +72,8 @@
       <file leaf-file-name="scrape_fare.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/FlaskApp/scrape_fare.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="34" column="11" lean-forward="false" selection-start-line="34" selection-start-column="11" selection-end-line="34" selection-end-column="11" />
+            <state relative-caret-position="267">
+              <caret line="16" column="43" lean-forward="true" selection-start-line="16" selection-start-column="43" selection-end-line="16" selection-end-column="43" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -192,8 +192,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -781,7 +781,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FlaskApp/static/style.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2397">
+        <state relative-caret-position="2618">
           <caret line="154" column="0" lean-forward="false" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
           <folding />
         </state>
@@ -820,8 +820,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/FlaskApp/scrape_fare.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="34" column="11" lean-forward="false" selection-start-line="34" selection-start-column="11" selection-end-line="34" selection-end-column="11" />
+        <state relative-caret-position="267">
+          <caret line="16" column="43" lean-forward="true" selection-start-line="16" selection-start-column="43" selection-end-line="16" selection-end-column="43" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
