@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 import re
-
 from flask import jsonify
 from sqlalchemy import create_engine
 
@@ -57,8 +56,8 @@ class Db:
     def get_first_and_last_address(self, line_id):
         """Return the first and last address of both directions for a Line ID
 
-        This must be the journey pattern id's which end in '001', anything else is sub-routes. We need this so the
-        user can pick a direction and allow us to display the appropriate information."""
+        This must use journey pattern id's which end in '001', anything else is a sub-route. We need this so the
+        user can pick a direction and we can display the appropriate information."""
 
         sql2 = """
         SELECT third_query.Journey_Pattern_ID, third_query.Short_Address_Source, fourth_query.Short_Address_Destination
@@ -95,10 +94,9 @@ class Db:
     def get_stop_id(self, jpid):
         """Get the stop ID's for a given line ID in a single direction
 
-        When the user clicks a certain direction we must display options for source and destination
-        stops. Here it is also important to distinguish between the main route and the sub routes so that
-        we can inform the user if the particular bus they are taking will go to where they want (a sub route
-        will not always go all the way). So return an object which allows easy access to the main and sub route
+        When the user clicks a certain direction we must display options for the source and destination
+        stop. Must distinguish between main route and the sub routes to inform the user if the particular bus they are taking will go to where they want (a sub route
+        will not travel the whole route. Object returned must allow easy access to main and sub route
         information."""
 
         sql3 = """
@@ -118,12 +116,10 @@ class Db:
         """Get the addresses for a given line ID in a single direction
 
         When the user clicks a certain direction we must display options for source and destination
-        stops. Here it is also important to distinguish between the main route and the sub routes so that
-        we can inform the user if the particular bus they are taking will go to where they want (a sub route
-        will not always go all the way). So return an object which allows easy access to the main and sub route
+        stops. It is also important to distinguish between the main route and the sub routes. Object returned must allow easy access to the main and sub route
         information.
 
-        This needs to return both Journey Pattern ID's for both directions also."""
+        This needs to return both Journey Pattern ID's for both directions."""
 
         sql4 = """
         SELECT s.Stop_ID, j.Distance, s.Address as Stop_info
@@ -156,10 +152,7 @@ class Db:
         return df
 
     def get_best_route(self, source_lat, source_lon, destination_lat, destination_lon):
-        """Returns the closest route to a source and destination GPS
-
-        On Google maps we must display the best bus route for a person who queries with a source and destination
-        GPS. It is possible that this query could return several options for best routes, but for now one is okay."""
+        """Returns the closest route to a source and destination GPS"""
 
         sql8 = """
         SELECT fifth_query.JPID_Source, fifth_query.STOP_ID_Source, fifth_query.Distance_Source,
@@ -249,10 +242,7 @@ class Db:
         return json.loads(df.to_json(orient='index'))
 
     def get_gps(self, jpid, srcStop, destStop):
-        """Return the set of GPS coordinates for a given journey pattern id
-
-        On Google maps when the user discovers the best bus route this query will return the full set of GPS
-        coordinates for the route displaying it on the map alongside their source and destination icons."""
+        """Return the set of GPS coordinates for a given journey pattern id - necessary to draw routes with the polylines"""
         
         sql7 = """
         SELECT s.Latitude, s.Longitude, s.Stop_ID
@@ -282,7 +272,6 @@ class Db:
         """
         
         # Takes as input (hour,min,sec) and outputs hour:min:sec
-        
         sql9 = """
         SELECT j.Journey_Pattern_ID,
             ADDTIME(t.Time_no_date, SEC_TO_TIME(%(sourceTime)s)) AS Time_bus_arrives
