@@ -493,7 +493,7 @@ function getSourceDestination(jpid,direction,pref) {
 	});
 }
 
-//function below populates the dest drop down menu depending upon the src stop chosen
+// populates the destination drop down menu depending upon the source stop chosen
 
 function makeDestDropDown(options){
 		
@@ -563,6 +563,7 @@ function getTravelTime(source, destination, dateTime) {
 
 
 // Give the time it will take for the bus to arrive at the user's location
+
 function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest, subroute) {
 	
 	$.ajax({
@@ -609,6 +610,8 @@ function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minu
 	});
 }
 
+
+//ajax call to backend to get fare prices from Dublin Bus Fare calculator
 function getPricing(jpid, stop1, stop2, direction) {
 
 	info = ["Adult Cash", "Adult Leap", "Child Cash (Under 16)", "Child Leap (Under 19)", "School Hours Cash", "School Hours Leap"]
@@ -633,8 +636,8 @@ function getPricing(jpid, stop1, stop2, direction) {
 }
 
 
+//slice date time string to get time
 function getTimeToArrive(arrival, current) {
-	// This won't work if a bus goes past midnight --> Something to fix
 
 	arrival = arrival.slice(0,5);
 	var arrivalHour = parseInt(arrival.slice(0,2));
