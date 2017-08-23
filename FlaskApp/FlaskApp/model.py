@@ -21,7 +21,7 @@ def get_travel_time(journey_pattern_id, source, destination, date_time):
             speed = hash_table[day][time_category]
 
         except:
-            # If there's no data for that day (this is an issue with our application - Shouldn't need this, but we do)
+            # If there's no data for that day
             speed = "Medium"
 
         # If the Day doesn't exist then return (bus doesn't run that day)

@@ -7,7 +7,7 @@ from FlaskApp.database import Db
 def scrape_fare(jpid, stop1, stop2, direction):
     """Scrapes the current live price information from dublinbus.ie"""
 
-    # Get lineid and stop numbers of those stops
+    # Get line ID and stop numbers of those stops
     df = Db().get_stop_numbers(jpid, stop1, stop2)
     lineid = df.loc[0, "Line_ID"]
 
