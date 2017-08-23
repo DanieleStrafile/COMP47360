@@ -398,6 +398,7 @@ $(document).ready(function() {
 //------------------------------------------------------------------------------------------------------------- //
 // POPULATE MENUS ON APPLICATION
 
+
 // Function to populate the line id dropdown menu on front page
 function dropDown() {
 
@@ -413,6 +414,7 @@ function dropDown() {
 		$("#form-control").html(options);
 	})
 }
+
 
 // Function to populate the line id dropdown menu on the timetable page
 function dropDownTimetable() {
@@ -493,8 +495,8 @@ function getSourceDestination(jpid,direction,pref) {
 	});
 }
 
-// populates the destination drop down menu depending upon the source stop chosen
 
+// populates the destination drop down menu depending upon the source stop chosen
 function makeDestDropDown(options){
 		
     var src = document.getElementById('form-control2').value;
@@ -563,7 +565,6 @@ function getTravelTime(source, destination, dateTime) {
 
 
 // Give the time it will take for the bus to arrive at the user's location
-
 function getTravelTimeWithTimetable(jpidTruncated, srcStop, destStop, hour, minute, sec, sourceTime, timeCat, timeFromSourceToDest, subroute) {
 	
 	$.ajax({
@@ -674,7 +675,10 @@ function convertDateTimetoTimeCat(dateTime) {
 		return "Sat";
 }
 
+
 //function that return true if n is a number (float or integer), false otherwise
 function isNumeric(val) {
+	
     return Number(parseFloat(val)) == val;
+    
 }
