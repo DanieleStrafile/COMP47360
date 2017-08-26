@@ -2,6 +2,7 @@ import json
 
 from flask import Flask, render_template
 from flask_cors import CORS
+
 from FlaskApp.database import Db
 from FlaskApp.model import get_travel_time
 from FlaskApp.map_search import get_three_best_routes, get_prices
